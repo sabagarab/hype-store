@@ -1,4 +1,9 @@
 import { listProducts } from "@lib/data/products"
+import BlurFade from "@modules/common/components/blur-fade"
+import {
+  PRODUCT_GRID_CLASS,
+  revealDelay,
+} from "@modules/products/components/product-preview/grid"
 import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import Product from "../product-preview"
@@ -57,10 +62,12 @@ export default async function RelatedProducts({
         </p>
       </div>
 
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
-        {products.map((product) => (
+      <ul className={PRODUCT_GRID_CLASS}>
+        {products.map((product, i) => (
           <li key={product.id}>
-            <Product region={region} product={product} />
+            <BlurFade delay={revealDelay(i)}>
+              <Product region={region} product={product} />
+            </BlurFade>
           </li>
         ))}
       </ul>

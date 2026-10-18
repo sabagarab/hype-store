@@ -1,4 +1,9 @@
 import { listProductsWithSort } from "@lib/data/products"
+import BlurFade from "@modules/common/components/blur-fade"
+import {
+  PRODUCT_GRID_CLASS,
+  revealDelay,
+} from "@modules/products/components/product-preview/grid"
 import { getRegion } from "@lib/data/regions"
 import { OptionValueIds } from "@lib/util/product-option-filters"
 import ProductPreview from "@modules/products/components/product-preview"
@@ -73,13 +78,15 @@ export default async function PaginatedProducts({
   return (
     <>
       <ul
-        className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+        className={`${PRODUCT_GRID_CLASS} w-full`}
         data-testid="products-list"
       >
-        {products.map((p) => {
+        {products.map((p, i) => {
           return (
             <li key={p.id}>
-              <ProductPreview product={p} region={region} />
+              <BlurFade delay={revealDelay(i)}>
+                <ProductPreview product={p} region={region} />
+              </BlurFade>
             </li>
           )
         })}

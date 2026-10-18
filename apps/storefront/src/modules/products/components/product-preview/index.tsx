@@ -1,48 +1,95 @@
-import { Text } from "@modules/common/components/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
+import { isSoldOut, singleSize } from "@lib/util/product-availability"
 import { HttpTypes } from "@medusajs/types"
+import FadeInImage from "@modules/common/components/fade-in-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Thumbnail from "../thumbnail"
+import MagicCard from "@modules/common/components/magic-card"
+import { clx } from "@modules/common/components/ui"
 import PreviewPrice from "./price"
+
+const IMAGE_SIZES = "(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
 
 export default async function ProductPreview({
   product,
-  isFeatured,
   region: _region,
 }: {
   product: HttpTypes.StoreProduct
-  isFeatured?: boolean
   region: HttpTypes.StoreRegion
 }) {
-  // const pricedProduct = await listProducts({
-  //   regionId: region.id,
-  //   queryParams: { id: [product.id!] },
-  // }).then(({ response }) => response.products[0])
-
-  // if (!pricedProduct) {
-  //   return null
-  // }
-
   const { cheapestPrice } = getProductPrice({
     product,
   })
 
+  const soldOut = isSoldOut(product)
+  const size = singleSize(product)
+  // Brand is the product's Type in Admin (Type = brand, Categories = kind).
+  const brand = product.type?.value
+
+  const primaryImage = product.thumbnail || product.images?.[0]?.url
+  const hoverImage = product.images?.find(
+    (image) => image.url && image.url !== primaryImage
+  )?.url
+
   return (
-    <LocalizedClientLink href={`/products/${product.handle}`} className="group">
-      <div data-testid="product-wrapper">
-        <Thumbnail
-          thumbnail={product.thumbnail}
-          images={product.images}
-          size="full"
-          isFeatured={isFeatured}
-        />
-        <div className="flex txt-compact-medium mt-4 justify-between">
-          <Text className="text-ui-fg-subtle" data-testid="product-title">
-            {product.title}
-          </Text>
-          <div className="flex items-center gap-x-2">
-            {cheapestPrice && <PreviewPrice price={cheapestPrice} />}
-          </div>
+    <LocalizedClientLink
+      href={`/products/${product.handle}`}
+      className="group/card block rounded-large"
+      data-testid="product-wrapper"
+    >
+      <MagicCard className="aspect-[4/5] rounded-large">
+        <div
+          className={clx(
+            "relative h-full w-full bg-ink",
+            soldOut && "opacity-60 grayscale"
+          )}
+        >
+          {primaryImage && (
+            <FadeInImage
+              src={primaryImage}
+              alt={product.title}
+              fill
+              sizes={IMAGE_SIZES}
+              className="object-cover"
+            />
+          )}
+          {/* Second image crossfades in on hover; not rendered (or loaded)
+              on touch devices. */}
+          {hoverImage && (
+            <div className="absolute inset-0 hidden opacity-0 transition-opacity duration-200 [@media(hover:hover)]:block [@media(hover:hover)]:group-hover/card:opacity-100 motion-reduce:transition-none">
+              <FadeInImage
+                src={hoverImage}
+                alt=""
+                fill
+                sizes={IMAGE_SIZES}
+                className="object-cover"
+              />
+            </div>
+          )}
+        </div>
+        {soldOut && (
+          <span className="absolute left-3 top-3 z-30 rounded-full bg-ember-deep px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-bone">
+            Sold
+          </span>
+        )}
+      </MagicCard>
+
+      <div className="mt-3 flex flex-col gap-y-0.5 px-0.5">
+        {brand && (
+          <p className="truncate text-[11px] font-medium uppercase tracking-widest text-bone/55">
+            {brand}
+          </p>
+        )}
+        <h3
+          className="line-clamp-2 text-sm font-medium text-bone"
+          data-testid="product-title"
+        >
+          {product.title}
+        </h3>
+        <div className="flex items-center gap-x-2 text-sm">
+          {cheapestPrice && (
+            <PreviewPrice price={cheapestPrice} soldOut={soldOut} />
+          )}
+          {size && <span className="text-bone/55">Size {size}</span>}
         </div>
       </div>
     </LocalizedClientLink>

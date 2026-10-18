@@ -1,12 +1,11 @@
-import { Container } from "@modules/common/components/ui"
-
 const SkeletonProductPreview = () => {
   return (
     <div className="animate-pulse">
-      <Container className="aspect-[9/16] w-full bg-ui-bg-component bg-ui-bg-subtle" />
-      <div className="flex justify-between text-base-regular mt-2">
-        <div className="w-2/5 h-6 bg-ui-bg-component"></div>
-        <div className="w-1/5 h-6 bg-ui-bg-component"></div>
+      <div className="aspect-[4/5] w-full rounded-large bg-ink" />
+      <div className="mt-3 flex flex-col gap-y-1.5 px-0.5">
+        <div className="h-2.5 w-1/3 rounded-soft bg-ui-bg-component" />
+        <div className="h-3.5 w-3/4 rounded-soft bg-ui-bg-component" />
+        <div className="h-3.5 w-1/4 rounded-soft bg-ui-bg-component" />
       </div>
     </div>
   )
