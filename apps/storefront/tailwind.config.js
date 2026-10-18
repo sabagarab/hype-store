@@ -20,6 +20,15 @@ module.exports = {
         padding: "padding-top padding-right padding-bottom padding-left",
       },
       colors: {
+        // Brand tokens. Values live in src/styles/globals.css (:root) as RGB
+        // channels so Tailwind opacity modifiers (bg-ink/60) work.
+        black: "rgb(var(--color-black) / <alpha-value>)",
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        bone: "rgb(var(--color-bone) / <alpha-value>)",
+        ember: {
+          DEFAULT: "rgb(var(--color-ember) / <alpha-value>)",
+          deep: "rgb(var(--color-ember-deep) / <alpha-value>)",
+        },
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -59,7 +68,7 @@ module.exports = {
       },
       fontFamily: {
         sans: [
-          "Inter",
+          "var(--font-satoshi)",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",

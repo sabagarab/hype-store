@@ -72,3 +72,6 @@ export const noDivisionCurrencies = [
   "xdr",
   "xau",
 ]
+
+// Store brand name. Not final yet: change it here only.
+export const STORE_NAME = "STORE"

@@ -2,6 +2,96 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/*
+ * Brand tokens, stored as RGB channels so Tailwind can apply opacity
+ * (see tailwind.config.js). Only use these; don't add new colors.
+ */
+:root {
+  --color-black: 0 0 0; /* #000000 */
+  --color-ink: 17 17 17; /* #111111 */
+  --color-bone: 237 232 223; /* #EDE8DF */
+  --color-ember: 204 85 0; /* #CC5500 */
+  --color-ember-deep: 163 68 0; /* #A34400 */
+
+  color-scheme: dark;
+
+  /*
+   * Remap @medusajs/ui-preset variables to the brand palette so starter
+   * components using ui-* classes render dark. Shades are brand tokens at
+   * reduced opacity. Error/tag colors keep the preset values.
+   */
+  --bg-base: rgb(var(--color-black));
+  --bg-base-hover: rgb(var(--color-ink));
+  --bg-base-pressed: rgb(var(--color-bone) / 0.08);
+  --bg-subtle: rgb(var(--color-ink));
+  --bg-subtle-hover: rgb(var(--color-bone) / 0.08);
+  --bg-subtle-pressed: rgb(var(--color-bone) / 0.12);
+  --bg-component: rgb(var(--color-ink));
+  --bg-component-hover: rgb(var(--color-bone) / 0.08);
+  --bg-component-pressed: rgb(var(--color-bone) / 0.12);
+  --bg-field: rgb(var(--color-ink));
+  --bg-field-hover: rgb(var(--color-bone) / 0.08);
+  --bg-field-component: rgb(var(--color-ink));
+  --bg-field-component-hover: rgb(var(--color-bone) / 0.08);
+  --bg-disabled: rgb(var(--color-bone) / 0.06);
+  --bg-highlight: rgb(var(--color-ember) / 0.15);
+  --bg-highlight-hover: rgb(var(--color-ember) / 0.25);
+  --bg-interactive: rgb(var(--color-ember));
+  --bg-overlay: rgb(var(--color-black) / 0.7);
+  --bg-switch-off: rgb(var(--color-bone) / 0.2);
+  --bg-switch-off-hover: rgb(var(--color-bone) / 0.28);
+
+  --fg-base: rgb(var(--color-bone));
+  --fg-subtle: rgb(var(--color-bone) / 0.72);
+  --fg-muted: rgb(var(--color-bone) / 0.55);
+  --fg-disabled: rgb(var(--color-bone) / 0.35);
+  --fg-interactive: rgb(var(--color-ember));
+  --fg-interactive-hover: rgb(var(--color-bone));
+  --fg-on-color: rgb(var(--color-bone));
+  --fg-on-inverted: rgb(var(--color-black));
+
+  --border-base: rgb(var(--color-bone) / 0.12);
+  --border-strong: rgb(var(--color-bone) / 0.24);
+  --border-interactive: rgb(var(--color-ember));
+  --border-menu-top: rgb(var(--color-bone) / 0.1);
+  --border-menu-bot: rgb(var(--color-bone) / 0.1);
+
+  --button-neutral: rgb(var(--color-ink));
+  --button-neutral-hover: rgb(var(--color-bone) / 0.08);
+  --button-neutral-pressed: rgb(var(--color-bone) / 0.12);
+  --button-inverted: rgb(var(--color-bone));
+  --button-inverted-hover: rgb(var(--color-bone) / 0.9);
+  --button-inverted-pressed: rgb(var(--color-bone) / 0.8);
+  --button-transparent: transparent;
+  --button-transparent-hover: rgb(var(--color-bone) / 0.08);
+  --button-transparent-pressed: rgb(var(--color-bone) / 0.12);
+}
+
+@layer base {
+  body {
+    @apply bg-black text-bone antialiased;
+  }
+
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-ember;
+  }
+
+  ::selection {
+    @apply bg-ember text-black;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
@@ -35,9 +125,9 @@
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    border: 1px solid rgb(var(--color-bone) / 0.24);
+    -webkit-text-fill-color: rgb(var(--color-bone));
+    -webkit-box-shadow: 0 0 0px 1000px rgb(var(--color-ink)) inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -55,7 +145,26 @@
   }
 
   .contrast-btn {
-    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+    @apply px-4 py-2 border border-bone rounded-full hover:bg-bone hover:text-black transition-colors duration-200 ease-in;
+  }
+
+  /* Frosted surface: solid ink first, translucent + blur only where supported. */
+  .glass {
+    background-color: rgb(var(--color-ink));
+  }
+
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .glass {
+      background-color: rgb(var(--color-ink) / 0.6);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+    }
+  }
+
+  /* ui-preset's txt-* classes hard-code Inter; keep Satoshi as the only family. */
+  [class^="txt-"],
+  [class*=" txt-"] {
+    font-family: theme("fontFamily.sans");
   }
 
   .text-xsmall-regular {
