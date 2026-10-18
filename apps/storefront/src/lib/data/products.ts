@@ -93,6 +93,34 @@ export const listProducts = async ({
 }
 
 /**
+ * Full product data for the given ids, in the same order. The store page uses
+ * this to turn search hits (title, thumbnail, price only) into full product
+ * cards with brand, hover image, stock and size.
+ */
+export const listProductsByIds = async ({
+  ids,
+  countryCode,
+}: {
+  ids: string[]
+  countryCode: string
+}): Promise<HttpTypes.StoreProduct[]> => {
+  if (!ids.length) {
+    return []
+  }
+
+  const {
+    response: { products },
+  } = await listProducts({
+    countryCode,
+    queryParams: { id: ids, limit: ids.length },
+  })
+
+  const byId = new Map(products.map((product) => [product.id, product]))
+
+  return ids.flatMap((id) => byId.get(id) ?? [])
+}
+
+/**
  * This will fetch 100 products to the Next.js cache and sort them based on the sortBy parameter.
  * It will then return the paginated products based on the page and limit parameters.
  */

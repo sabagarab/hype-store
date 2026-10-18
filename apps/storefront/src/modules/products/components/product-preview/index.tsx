@@ -2,6 +2,7 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import { isSoldOut, singleSize } from "@lib/util/product-availability"
 import { HttpTypes } from "@medusajs/types"
 import FadeInImage from "@modules/common/components/fade-in-image"
+import ImagePlaceholder from "@modules/common/components/image-placeholder"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import MagicCard from "@modules/common/components/magic-card"
 import { clx } from "@modules/common/components/ui"
@@ -9,12 +10,14 @@ import PreviewPrice from "./price"
 
 const IMAGE_SIZES = "(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
 
-export default async function ProductPreview({
+// Plain (non-async) component so client listings, such as the store page's
+// search results, can render the same card.
+export default function ProductPreview({
   product,
   region: _region,
 }: {
   product: HttpTypes.StoreProduct
-  region: HttpTypes.StoreRegion
+  region?: HttpTypes.StoreRegion
 }) {
   const { cheapestPrice } = getProductPrice({
     product,
@@ -23,7 +26,11 @@ export default async function ProductPreview({
   const soldOut = isSoldOut(product)
   const size = singleSize(product)
   // Brand is the product's Type in Admin (Type = brand, Categories = kind).
+  // An optional short_name in the Type's metadata is used below 640px.
   const brand = product.type?.value
+  const shortName = product.type?.metadata?.short_name
+  const brandShort =
+    typeof shortName === "string" && shortName.trim() ? shortName : brand
 
   const primaryImage = product.thumbnail || product.images?.[0]?.url
   const hoverImage = product.images?.find(
@@ -43,14 +50,17 @@ export default async function ProductPreview({
             soldOut && "opacity-60 grayscale"
           )}
         >
-          {primaryImage && (
+          {primaryImage ? (
             <FadeInImage
               src={primaryImage}
               alt={product.title}
               fill
               sizes={IMAGE_SIZES}
               className="object-cover"
+              fallback={<ImagePlaceholder />}
             />
+          ) : (
+            <ImagePlaceholder />
           )}
           {/* Second image crossfades in on hover; not rendered (or loaded)
               on touch devices. */}
@@ -76,7 +86,8 @@ export default async function ProductPreview({
       <div className="mt-3 flex flex-col gap-y-0.5 px-0.5">
         {brand && (
           <p className="truncate text-[11px] font-medium uppercase tracking-widest text-bone/55">
-            {brand}
+            <span className="sm:hidden">{brandShort}</span>
+            <span className="hidden sm:inline">{brand}</span>
           </p>
         )}
         <h3

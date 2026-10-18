@@ -1,16 +1,23 @@
 "use client"
 
+import { HttpTypes } from "@medusajs/types"
 import type { Hit } from "instantsearch.js"
-import { useEffect, useRef } from "react"
+import { useParams } from "next/navigation"
+import { useEffect, useRef, useState } from "react"
 import { useHits, useInstantSearch } from "react-instantsearch"
 
+import { listProductsByIds } from "@lib/data/products"
 import useSearchSettled from "@lib/hooks/use-search-settled"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import BlurFade from "@modules/common/components/blur-fade"
 import { Text } from "@modules/common/components/ui"
-import Thumbnail from "@modules/products/components/thumbnail"
+import ProductPreview from "@modules/products/components/product-preview"
+import {
+  PRODUCT_GRID_CLASS,
+  revealDelay,
+} from "@modules/products/components/product-preview/grid"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import SearchPagination from "./pagination"
-import HitPrice, { HitPricing } from "./price"
+import { HitPricing } from "./price"
 
 type ProductHit = Hit<
   {
@@ -25,8 +32,47 @@ type StoreHitsProps = {
   currencyCode: string
 }
 
-const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
+// Search supplies the matching ids (and filters); the full products for the
+// current page are then loaded so the store page shows the same card as
+// every other listing (brand, hover image, live SOLD state, size).
+const useFullProducts = (ids: string[]) => {
+  const { countryCode } = useParams<{ countryCode: string }>()
+  const idsKey = ids.join(",")
+  const [loaded, setLoaded] = useState<{
+    key: string
+    products: HttpTypes.StoreProduct[]
+  } | null>(null)
+  const [failedKey, setFailedKey] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const pageIds = idsKey ? idsKey.split(",") : []
+
+    listProductsByIds({ ids: pageIds, countryCode })
+      .then((products) => {
+        if (!cancelled) setLoaded({ key: idsKey, products })
+      })
+      .catch(() => {
+        if (!cancelled) setFailedKey(idsKey)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [idsKey, countryCode])
+
+  return {
+    products: loaded?.key === idsKey ? loaded.products : null,
+    failed: failedKey === idsKey,
+  }
+}
+
+// `currencyCode` was used to show search-index prices; cards now use the
+// full products' calculated prices.
+const StoreHits = ({ hitsPerPage }: StoreHitsProps) => {
   const { items } = useHits<ProductHit>()
+  const productIds = items.filter((hit) => hit.handle).map((hit) => hit.objectID)
+  const { products, failed } = useFullProducts(productIds)
   const { status, error, indexUiState } = useInstantSearch()
   const { isSearching, hasNoResultsYet } = useSearchSettled()
 
@@ -46,9 +92,12 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
     refinementKey === settled.current.refinementKey &&
     currentPage !== settled.current.page
 
-  const showSkeleton = hasNoResultsYet || (isSearching && isPagingOnly)
+  const showSkeleton =
+    hasNoResultsYet ||
+    (isSearching && isPagingOnly) ||
+    (items.length > 0 && !products)
 
-  if (status === "error") {
+  if (status === "error" || failed) {
     return (
       <Text
         className="py-16 text-center text-ui-fg-error"
@@ -73,32 +122,16 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
         </Text>
       ) : (
         <ul
-          className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+          className={`${PRODUCT_GRID_CLASS} w-full`}
           data-testid="products-list"
         >
-          {items.map((hit) =>
-            hit.handle ? (
-              <li key={hit.objectID}>
-                <LocalizedClientLink
-                  href={`/products/${hit.handle}`}
-                  className="group"
-                >
-                  <div data-testid="product-wrapper">
-                    <Thumbnail thumbnail={hit.thumbnail} size="full" />
-                    <div className="flex txt-compact-medium mt-4 justify-between">
-                      <Text
-                        className="text-ui-fg-subtle"
-                        data-testid="product-title"
-                      >
-                        {hit.title}
-                      </Text>
-                      <HitPrice hit={hit} currencyCode={currencyCode} />
-                    </div>
-                  </div>
-                </LocalizedClientLink>
-              </li>
-            ) : null
-          )}
+          {(products ?? []).map((product, i) => (
+            <li key={product.id}>
+              <BlurFade delay={revealDelay(i)}>
+                <ProductPreview product={product} />
+              </BlurFade>
+            </li>
+          ))}
         </ul>
       )}
       <SearchPagination />
