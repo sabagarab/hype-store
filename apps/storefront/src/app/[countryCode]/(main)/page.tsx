@@ -6,6 +6,8 @@ import Hero from "@modules/home/components/hero"
 import { HERO_CONTENT } from "@modules/home/components/hero/content"
 import { getCollectionByHandle, listCollections } from "@lib/data/collections"
 import { listProducts } from "@lib/data/products"
+import { listBrands } from "@lib/data/brands"
+import BrandsSection from "@modules/home/components/brands-carousel"
 import { HeroProduct } from "@modules/home/components/hero-parallax"
 import { getRegion } from "@lib/data/regions"
 
@@ -51,11 +53,13 @@ export default async function Home(props: {
 
   const region = await getRegion(countryCode)
 
-  const [{ collections }, heroProducts] = await Promise.all([
+  const [{ collections }, heroProducts, brands] = await Promise.all([
     listCollections({
       fields: "id, handle, title",
     }),
     getHeroProducts(countryCode),
+    // A failure hides the brands section instead of breaking the page.
+    listBrands(countryCode).catch(() => []),
   ])
 
   if (!collections || !region) {
@@ -65,6 +69,7 @@ export default async function Home(props: {
   return (
     <>
       <Hero products={heroProducts} />
+      <BrandsSection brands={brands} />
       <div className="py-12">
         <ul className="flex flex-col gap-x-6">
           <FeaturedProducts collections={collections} region={region} />
