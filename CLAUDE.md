@@ -12,6 +12,14 @@ An online store in **Lebanon** reselling hype streetwear: Supreme, Fear of God E
 - Customers mostly shop on **mobile**, coming from Instagram.
 - Owner: Seb (solo developer + store owner). He manages products himself through the Medusa Admin.
 
+### Brands
+
+How brand names are written in all copy, metadata and content files:
+
+- **Fear of God Essentials** is one brand (Fear of God's diffusion line). Write it as "Fear of God Essentials", or "FOG Essentials" where space is tight. Never "Essentials" alone, and never list "Fear of God" and "Essentials" as two brands.
+- **Supreme** as is.
+- Brand lists shown in the storefront (e.g. the announcement marquee) live in `content.ts` files next to their component, so brands can be added without touching component code.
+
 ## 2. Stack & layout
 
 Monorepo created with `create-medusa-app` (Medusa v2).
