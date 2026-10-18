@@ -1,9 +1,13 @@
 import { HttpTypes } from "@medusajs/types"
 import { NextRequest, NextResponse } from "next/server"
 
+import { STOREFRONT_COUNTRIES } from "@lib/storefront-countries"
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "dk"
+const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "lb"
+// Matches the catalog cache fallback in src/lib/data/cookies.ts.
+const REGION_MAP_TTL_SECONDS = 300
 
 const regionMapCache = {
   regionMap: new Map<string, HttpTypes.StoreRegion>(),
@@ -21,7 +25,7 @@ async function getRegionMap(cacheId: string) {
 
   if (
     !regionMap.keys().next().value ||
-    regionMapUpdated < Date.now() - 3600 * 1000
+    regionMapUpdated < Date.now() - REGION_MAP_TTL_SECONDS * 1000
   ) {
     // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
     const response = await fetch(`${BACKEND_URL}/store/regions`, {
@@ -30,8 +34,9 @@ async function getRegionMap(cacheId: string) {
         "x-publishable-api-key": PUBLISHABLE_API_KEY!,
       },
       next: {
-        revalidate: 3600,
-        tags: [`regions-${cacheId}`],
+        revalidate: REGION_MAP_TTL_SECONDS,
+        // "regions" lets /api/revalidate refresh this for every visitor.
+        tags: [`regions-${cacheId}`, "regions"],
       },
       cache: "force-cache",
     })
@@ -49,9 +54,13 @@ async function getRegionMap(cacheId: string) {
     }
 
     // Create a map of country codes to regions.
+    // Only countries the storefront serves; other regions' URLs redirect.
+    regionMapCache.regionMap.clear()
     regions.forEach((region: HttpTypes.StoreRegion) => {
       region.countries?.forEach((c) => {
-        regionMapCache.regionMap.set(c.iso_2 ?? "", region)
+        if (STOREFRONT_COUNTRIES.includes(c.iso_2 ?? "")) {
+          regionMapCache.regionMap.set(c.iso_2 ?? "", region)
+        }
       })
     })
 
@@ -127,9 +136,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // if the url doesn't have the country, redirect to it
-  const redirectPath =
-    request.nextUrl.pathname === "/" ? "" : request.nextUrl.pathname
+  // if the url doesn't have the country, redirect to it. A two-letter first
+  // segment is a country the storefront doesn't serve (e.g. an old /dk link):
+  // swap it for the served country instead of prefixing it.
+  const pathname = /^[a-z]{2}$/.test(firstPathSegment ?? "")
+    ? request.nextUrl.pathname.slice(3)
+    : request.nextUrl.pathname
+  const redirectPath = pathname === "/" ? "" : pathname
   const queryString = request.nextUrl.search || ""
   const redirectUrl = `${request.nextUrl.origin}/${country}${redirectPath}${queryString}`
 

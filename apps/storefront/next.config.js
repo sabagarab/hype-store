@@ -48,6 +48,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    // 50: product thumbnails (src/modules/products/components/thumbnail); 75: default.
+    qualities: [50, 75],
     remotePatterns: [
       // Admin uploads served by the local Medusa backend (dev only).
       {

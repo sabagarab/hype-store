@@ -34,12 +34,13 @@ export const getCacheTag = async (tag: string): Promise<string> => {
 }
 
 // Catalog data shared by all visitors. The backend clears these tags through
-// /api/revalidate when products, stock or collections change in Admin.
+// /api/revalidate when products, stock, collections or regions change in Admin.
 export const CATALOG_CACHE_TAGS = [
   "products",
   "variants",
   "collections",
   "categories",
+  "regions",
 ] as const
 
 // Fallback in case an on-demand revalidation call is missed.

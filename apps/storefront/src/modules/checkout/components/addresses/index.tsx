@@ -107,16 +107,30 @@ const Addresses = ({
                       {cart.shipping_address.last_name}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
-                      {cart.shipping_address.address_1}{" "}
-                      {cart.shipping_address.address_2}
+                      {[
+                        cart.shipping_address.address_1,
+                        cart.shipping_address.address_2,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
-                      {cart.shipping_address.postal_code},{" "}
-                      {cart.shipping_address.city}
+                      {[
+                        cart.shipping_address.postal_code,
+                        cart.shipping_address.city,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")}
                     </Text>
                     <Text className="txt-medium text-ui-fg-subtle">
                       {cart.shipping_address.country_code?.toUpperCase()}
                     </Text>
+                    {typeof cart.metadata?.delivery_notes === "string" &&
+                      cart.metadata.delivery_notes && (
+                        <Text className="txt-medium text-ui-fg-subtle mt-2">
+                          Notes: {cart.metadata.delivery_notes}
+                        </Text>
+                      )}
                   </div>
 
                   <div
@@ -153,12 +167,20 @@ const Addresses = ({
                           {cart.billing_address?.last_name}
                         </Text>
                         <Text className="txt-medium text-ui-fg-subtle">
-                          {cart.billing_address?.address_1}{" "}
-                          {cart.billing_address?.address_2}
+                          {[
+                            cart.billing_address?.address_1,
+                            cart.billing_address?.address_2,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
                         </Text>
                         <Text className="txt-medium text-ui-fg-subtle">
-                          {cart.billing_address?.postal_code},{" "}
-                          {cart.billing_address?.city}
+                          {[
+                            cart.billing_address?.postal_code,
+                            cart.billing_address?.city,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
                         </Text>
                         <Text className="txt-medium text-ui-fg-subtle">
                           {cart.billing_address?.country_code?.toUpperCase()}

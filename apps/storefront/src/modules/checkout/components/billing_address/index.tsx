@@ -8,8 +8,8 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
     "billing_address.first_name": cart?.billing_address?.first_name || "",
     "billing_address.last_name": cart?.billing_address?.last_name || "",
     "billing_address.address_1": cart?.billing_address?.address_1 || "",
+    "billing_address.address_2": cart?.billing_address?.address_2 || "",
     "billing_address.company": cart?.billing_address?.company || "",
-    "billing_address.postal_code": cart?.billing_address?.postal_code || "",
     "billing_address.city": cart?.billing_address?.city || "",
     "billing_address.country_code": cart?.billing_address?.country_code || "",
     "billing_address.province": cart?.billing_address?.province || "",
@@ -58,6 +58,14 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-address-input"
         />
         <Input
+          label="Building / Floor"
+          name="billing_address.address_2"
+          autoComplete="address-line2"
+          value={formData["billing_address.address_2"]}
+          onChange={handleChange}
+          data-testid="billing-address-2-input"
+        />
+        <Input
           label="Company"
           name="billing_address.company"
           value={formData["billing_address.company"]}
@@ -66,16 +74,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-company-input"
         />
         <Input
-          label="Postal code"
-          name="billing_address.postal_code"
-          autoComplete="postal-code"
-          value={formData["billing_address.postal_code"]}
-          onChange={handleChange}
-          required
-          data-testid="billing-postal-input"
-        />
-        <Input
-          label="City"
+          label="City / Area"
           name="billing_address.city"
           autoComplete="address-level2"
           value={formData["billing_address.city"]}

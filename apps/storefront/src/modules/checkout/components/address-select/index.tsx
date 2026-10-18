@@ -94,7 +94,9 @@ const AddressSelect = ({
                           )}
                         </span>
                         <span>
-                          {address.postal_code}, {address.city}
+                          {[address.postal_code, address.city]
+                            .filter(Boolean)
+                            .join(", ")}
                         </span>
                         <span>
                           {address.province && `${address.province}, `}

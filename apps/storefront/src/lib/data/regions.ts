@@ -2,7 +2,20 @@
 
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
+import { STOREFRONT_COUNTRIES } from "@lib/storefront-countries"
 import { getCacheOptions } from "./cookies"
+
+// Keep only regions (and their countries) the storefront serves, so regions
+// like Europe stay in Medusa but never appear in the storefront.
+const onlyStorefrontCountries = (regions: HttpTypes.StoreRegion[]) =>
+  regions
+    .map((region) => ({
+      ...region,
+      countries: region.countries?.filter((c) =>
+        STOREFRONT_COUNTRIES.includes(c?.iso_2 ?? "")
+      ),
+    }))
+    .filter((region) => region.countries?.length)
 
 export const listRegions = async () => {
   const next = {
@@ -15,7 +28,7 @@ export const listRegions = async () => {
       next,
       cache: "force-cache",
     })
-    .then(({ regions }) => regions)
+    .then(({ regions }) => onlyStorefrontCountries(regions))
 }
 
 export const retrieveRegion = async (id: string) => {

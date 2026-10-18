@@ -13,7 +13,13 @@ import type { Logger } from "@medusajs/framework/types"
 // fallback.
 
 // Must match CATALOG_CACHE_TAGS in apps/storefront/src/lib/data/cookies.ts.
-const CATALOG_TAGS = ["products", "variants", "collections", "categories"]
+const CATALOG_TAGS = [
+  "products",
+  "variants",
+  "collections",
+  "categories",
+  "regions",
+]
 
 const BATCH_WINDOW_MS = 1000
 const REQUEST_TIMEOUT_MS = 5000
@@ -95,6 +101,9 @@ export const config: SubscriberConfig = {
     "reservation-item.created",
     "reservation-item.updated",
     "reservation-item.deleted",
+    "region.created",
+    "region.updated",
+    "region.deleted",
     "order.placed",
     "order.canceled",
   ],

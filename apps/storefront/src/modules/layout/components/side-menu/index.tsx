@@ -29,6 +29,9 @@ type SideMenuProps = {
 const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
   const countryToggleState = useToggleState()
   const languageToggleState = useToggleState()
+  // Only offer a country switch when the storefront serves more than one.
+  const countryCount =
+    regions?.reduce((n, region) => n + (region.countries?.length ?? 0), 0) ?? 0
 
   return (
     <div className="h-full">
@@ -109,24 +112,24 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                           />
                         </div>
                       )}
-                      <div
-                        className="flex justify-between"
-                        onMouseEnter={countryToggleState.open}
-                        onMouseLeave={countryToggleState.close}
-                      >
-                        {regions && (
+                      {regions && countryCount > 1 && (
+                        <div
+                          className="flex justify-between"
+                          onMouseEnter={countryToggleState.open}
+                          onMouseLeave={countryToggleState.close}
+                        >
                           <CountrySelect
                             toggleState={countryToggleState}
                             regions={regions}
                           />
-                        )}
-                        <ArrowRightMini
-                          className={clx(
-                            "transition-transform duration-150",
-                            countryToggleState.state ? "-rotate-90" : ""
-                          )}
-                        />
-                      </div>
+                          <ArrowRightMini
+                            className={clx(
+                              "transition-transform duration-150",
+                              countryToggleState.state ? "-rotate-90" : ""
+                            )}
+                          />
+                        </div>
+                      )}
                       <Text className="flex justify-between txt-compact-small">
                         © {new Date().getFullYear()} {STORE_NAME}. All rights
                         reserved.

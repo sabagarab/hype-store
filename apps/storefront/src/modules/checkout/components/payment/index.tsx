@@ -1,6 +1,6 @@
 "use client"
 import { RadioGroup } from "@headlessui/react"
-import { isStripeLike, paymentInfoMap } from "@lib/constants"
+import { isManual, isStripeLike, paymentInfoMap } from "@lib/constants"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import ErrorMessage from "@modules/checkout/components/error-message"
@@ -233,7 +233,11 @@ const Payment = ({
                       <CreditCard />
                     )}
                   </Container>
-                  <Text>Another step will appear</Text>
+                  <Text>
+                    {isManual(activeSession?.provider_id)
+                      ? "Pay in cash when your order arrives."
+                      : "Another step will appear"}
+                  </Text>
                 </div>
               </div>
             </div>

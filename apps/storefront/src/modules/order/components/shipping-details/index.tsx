@@ -27,16 +27,25 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
             {order.shipping_address?.last_name}
           </Text>
           <Text className="txt-medium text-ui-fg-subtle">
-            {order.shipping_address?.address_1}{" "}
-            {order.shipping_address?.address_2}
+            {[order.shipping_address?.address_1, order.shipping_address?.address_2]
+              .filter(Boolean)
+              .join(", ")}
           </Text>
           <Text className="txt-medium text-ui-fg-subtle">
-            {order.shipping_address?.postal_code},{" "}
-            {order.shipping_address?.city}
+            {[order.shipping_address?.postal_code, order.shipping_address?.city]
+              .filter(Boolean)
+              .join(", ")}
           </Text>
           <Text className="txt-medium text-ui-fg-subtle">
             {order.shipping_address?.country_code?.toUpperCase()}
           </Text>
+          {typeof order.shipping_address?.metadata?.delivery_notes ===
+            "string" &&
+            order.shipping_address.metadata.delivery_notes && (
+              <Text className="txt-medium text-ui-fg-subtle mt-2">
+                Notes: {order.shipping_address.metadata.delivery_notes}
+              </Text>
+            )}
         </div>
 
         <div

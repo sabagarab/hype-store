@@ -108,11 +108,14 @@
   }
 
   input:focus ~ label,
-  input:not(:placeholder-shown) ~ label {
+  input:not(:placeholder-shown) ~ label,
+  textarea:focus ~ label,
+  textarea:not(:placeholder-shown) ~ label {
     @apply -translate-y-2 text-xsmall-regular;
   }
 
-  input:focus ~ label {
+  input:focus ~ label,
+  textarea:focus ~ label {
     @apply left-0;
   }
 

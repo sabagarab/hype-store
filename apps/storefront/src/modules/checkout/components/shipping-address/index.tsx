@@ -2,6 +2,7 @@ import { HttpTypes } from "@medusajs/types"
 import { Container } from "@modules/common/components/ui"
 import Checkbox from "@modules/common/components/checkbox"
 import Input from "@modules/common/components/input"
+import Textarea from "@modules/common/components/textarea"
 import { mapKeys } from "lodash"
 import React, { useEffect, useMemo, useState } from "react"
 import AddressSelect from "../address-select"
@@ -22,13 +23,17 @@ const ShippingAddress = ({
     "shipping_address.first_name": cart?.shipping_address?.first_name || "",
     "shipping_address.last_name": cart?.shipping_address?.last_name || "",
     "shipping_address.address_1": cart?.shipping_address?.address_1 || "",
+    "shipping_address.address_2": cart?.shipping_address?.address_2 || "",
     "shipping_address.company": cart?.shipping_address?.company || "",
-    "shipping_address.postal_code": cart?.shipping_address?.postal_code || "",
     "shipping_address.city": cart?.shipping_address?.city || "",
     "shipping_address.country_code": cart?.shipping_address?.country_code || "",
     "shipping_address.province": cart?.shipping_address?.province || "",
     "shipping_address.phone": cart?.shipping_address?.phone || "",
     email: cart?.email || "",
+    delivery_notes:
+      typeof cart?.metadata?.delivery_notes === "string"
+        ? cart.metadata.delivery_notes
+        : "",
   })
 
   const countriesInRegion = useMemo(
@@ -55,8 +60,8 @@ const ShippingAddress = ({
         "shipping_address.first_name": address?.first_name || "",
         "shipping_address.last_name": address?.last_name || "",
         "shipping_address.address_1": address?.address_1 || "",
+        "shipping_address.address_2": address?.address_2 || "",
         "shipping_address.company": address?.company || "",
-        "shipping_address.postal_code": address?.postal_code || "",
         "shipping_address.city": address?.city || "",
         "shipping_address.country_code": address?.country_code || "",
         "shipping_address.province": address?.province || "",
@@ -85,7 +90,7 @@ const ShippingAddress = ({
 
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement | HTMLInputElement | HTMLSelectElement
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
     setFormData({
@@ -141,6 +146,14 @@ const ShippingAddress = ({
           data-testid="shipping-address-input"
         />
         <Input
+          label="Building / Floor"
+          name="shipping_address.address_2"
+          autoComplete="address-line2"
+          value={formData["shipping_address.address_2"]}
+          onChange={handleChange}
+          data-testid="shipping-address-2-input"
+        />
+        <Input
           label="Company"
           name="shipping_address.company"
           value={formData["shipping_address.company"]}
@@ -149,16 +162,7 @@ const ShippingAddress = ({
           data-testid="shipping-company-input"
         />
         <Input
-          label="Postal code"
-          name="shipping_address.postal_code"
-          autoComplete="postal-code"
-          value={formData["shipping_address.postal_code"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-postal-code-input"
-        />
-        <Input
-          label="City"
+          label="City / Area"
           name="shipping_address.city"
           autoComplete="address-level2"
           value={formData["shipping_address.city"]}
@@ -208,10 +212,23 @@ const ShippingAddress = ({
         <Input
           label="Phone"
           name="shipping_address.phone"
+          type="tel"
           autoComplete="tel"
           value={formData["shipping_address.phone"]}
           onChange={handleChange}
+          required
           data-testid="shipping-phone-input"
+        />
+      </div>
+      <div className="mb-4">
+        {/* Saved on the cart's metadata; Medusa copies it to the order. */}
+        <Textarea
+          label="Delivery notes (landmarks)"
+          name="delivery_notes"
+          rows={3}
+          value={formData.delivery_notes}
+          onChange={handleChange}
+          data-testid="shipping-delivery-notes-input"
         />
       </div>
     </>

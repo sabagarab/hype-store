@@ -92,27 +92,18 @@ const AddAddress = ({
                 data-testid="address-1-input"
               />
               <Input
-                label="Apartment, suite, etc."
+                label="Building / Floor"
                 name="address_2"
                 autoComplete="address-line2"
                 data-testid="address-2-input"
               />
-              <div className="grid grid-cols-[144px_1fr] gap-x-2">
-                <Input
-                  label="Postal code"
-                  name="postal_code"
-                  required
-                  autoComplete="postal-code"
-                  data-testid="postal-code-input"
-                />
-                <Input
-                  label="City"
-                  name="city"
-                  required
-                  autoComplete="locality"
-                  data-testid="city-input"
-                />
-              </div>
+              <Input
+                label="City / Area"
+                name="city"
+                required
+                autoComplete="locality"
+                data-testid="city-input"
+              />
               <Input
                 label="Province / State"
                 name="province"
@@ -129,7 +120,9 @@ const AddAddress = ({
               <Input
                 label="Phone"
                 name="phone"
-                autoComplete="phone"
+                type="tel"
+                autoComplete="tel"
+                required
                 data-testid="phone-input"
               />
             </div>

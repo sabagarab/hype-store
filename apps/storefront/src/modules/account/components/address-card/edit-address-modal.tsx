@@ -91,7 +91,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               {address.address_2 && <span>, {address.address_2}</span>}
             </span>
             <span data-testid="address-postal-city">
-              {address.postal_code}, {address.city}
+              {[address.postal_code, address.city].filter(Boolean).join(", ")}
             </span>
             <span data-testid="address-province-country">
               {address.province && `${address.province}, `}
@@ -161,30 +161,20 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 data-testid="address-1-input"
               />
               <Input
-                label="Apartment, suite, etc."
+                label="Building / Floor"
                 name="address_2"
                 autoComplete="address-line2"
                 defaultValue={address.address_2 || undefined}
                 data-testid="address-2-input"
               />
-              <div className="grid grid-cols-[144px_1fr] gap-x-2">
-                <Input
-                  label="Postal code"
-                  name="postal_code"
-                  required
-                  autoComplete="postal-code"
-                  defaultValue={address.postal_code || undefined}
-                  data-testid="postal-code-input"
-                />
-                <Input
-                  label="City"
-                  name="city"
-                  required
-                  autoComplete="locality"
-                  defaultValue={address.city || undefined}
-                  data-testid="city-input"
-                />
-              </div>
+              <Input
+                label="City / Area"
+                name="city"
+                required
+                autoComplete="locality"
+                defaultValue={address.city || undefined}
+                data-testid="city-input"
+              />
               <Input
                 label="Province / State"
                 name="province"
@@ -203,7 +193,9 @@ const EditAddress: React.FC<EditAddressProps> = ({
               <Input
                 label="Phone"
                 name="phone"
-                autoComplete="phone"
+                type="tel"
+                autoComplete="tel"
+                required
                 defaultValue={address.phone || undefined}
                 data-testid="phone-input"
               />

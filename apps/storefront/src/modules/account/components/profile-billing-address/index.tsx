@@ -82,7 +82,9 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
           {billingAddress.address_2 ? `, ${billingAddress.address_2}` : ""}
         </span>
         <span>
-          {billingAddress.postal_code}, {billingAddress.city}
+          {[billingAddress.postal_code, billingAddress.city]
+            .filter(Boolean)
+            .join(", ")}
         </span>
         <span>{country}</span>
       </div>
@@ -140,27 +142,18 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             data-testid="billing-address-1-input"
           />
           <Input
-            label="Apartment, suite, etc."
+            label="Building / Floor"
             name="address_2"
             defaultValue={billingAddress?.address_2 || undefined}
             data-testid="billing-address-2-input"
           />
-          <div className="grid grid-cols-[144px_1fr] gap-x-2">
-            <Input
-              label="Postal code"
-              name="postal_code"
-              defaultValue={billingAddress?.postal_code || undefined}
-              required
-              data-testid="billing-postcal-code-input"
-            />
-            <Input
-              label="City"
-              name="city"
-              defaultValue={billingAddress?.city || undefined}
-              required
-              data-testid="billing-city-input"
-            />
-          </div>
+          <Input
+            label="City / Area"
+            name="city"
+            defaultValue={billingAddress?.city || undefined}
+            required
+            data-testid="billing-city-input"
+          />
           <Input
             label="Province"
             name="province"

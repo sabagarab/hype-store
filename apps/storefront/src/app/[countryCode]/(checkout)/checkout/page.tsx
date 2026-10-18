@@ -1,5 +1,7 @@
 import { retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
+import { getRegion } from "@lib/data/regions"
+import CartRegionSync from "@modules/cart/components/cart-region-sync"
 import PaymentWrapper from "@modules/checkout/components/payment-wrapper"
 import CheckoutForm from "@modules/checkout/templates/checkout-form"
 import CheckoutSummary from "@modules/checkout/templates/checkout-summary"
@@ -10,14 +12,25 @@ export const metadata: Metadata = {
   title: "Checkout",
 }
 
-export default async function Checkout() {
+export default async function Checkout(props: {
+  params: Promise<{ countryCode: string }>
+}) {
+  const { countryCode } = await props.params
   const cart = await retrieveCart()
 
   if (!cart) {
     return notFound()
   }
 
-  const customer = await retrieveCustomer()
+  const [customer, region] = await Promise.all([
+    retrieveCustomer(),
+    getRegion(countryCode),
+  ])
+
+  // A cart from another region (e.g. an old Europe cart) is moved first.
+  if (region && cart.region_id !== region.id) {
+    return <CartRegionSync countryCode={countryCode} />
+  }
 
   return (
     <div className="grid grid-cols-1 small:grid-cols-[1fr_416px] content-container gap-x-40 py-12">

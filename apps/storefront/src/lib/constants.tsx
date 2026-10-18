@@ -1,39 +1,19 @@
-import { CreditCard } from "@medusajs/icons"
-import Bancontact from "@modules/common/icons/bancontact"
-import Ideal from "@modules/common/icons/ideal"
-import PayPal from "@modules/common/icons/paypal"
+import { Cash } from "@medusajs/icons"
 import React from "react"
 
-/* Map of payment provider_id to their title and icon. Add in any payment providers you want to use. */
+/* Map of payment provider_id to the title and icon shown at checkout. Only
+providers enabled on the storefront's regions are offered, so this store
+(Lebanon) shows Cash on Delivery only. */
 export const paymentInfoMap: Record<
   string,
   { title: string; icon: React.JSX.Element }
 > = {
-  pp_stripe_stripe: {
-    title: "Credit card",
-    icon: <CreditCard />,
-  },
-  "pp_medusa-payments_default": {
-    title: "Credit card",
-    icon: <CreditCard />,
-  },
-  "pp_stripe-ideal_stripe": {
-    title: "iDeal",
-    icon: <Ideal />,
-  },
-  "pp_stripe-bancontact_stripe": {
-    title: "Bancontact",
-    icon: <Bancontact />,
-  },
-  pp_paypal_paypal: {
-    title: "PayPal",
-    icon: <PayPal />,
-  },
+  // Medusa's system (manual) provider: payment is collected on delivery and
+  // captured in Admin.
   pp_system_default: {
-    title: "Manual Payment",
-    icon: <CreditCard />,
+    title: "Cash on Delivery",
+    icon: <Cash />,
   },
-  // Add more payment providers here
 }
 
 // This only checks if it is native stripe or medusa payments for card payments, it ignores the other stripe-based providers

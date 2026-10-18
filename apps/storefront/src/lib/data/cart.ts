@@ -344,41 +344,52 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
       throw new Error("No existing cart found when setting addresses")
     }
 
-    const data = {
-      shipping_address: {
-        first_name: formData.get("shipping_address.first_name"),
-        last_name: formData.get("shipping_address.last_name"),
-        address_1: formData.get("shipping_address.address_1"),
-        address_2: "",
-        company: formData.get("shipping_address.company"),
-        postal_code: formData.get("shipping_address.postal_code"),
-        city: formData.get("shipping_address.city"),
-        country_code: formData.get("shipping_address.country_code"),
-        province: formData.get("shipping_address.province"),
-        phone: formData.get("shipping_address.phone"),
-      },
-      email: formData.get("email"),
-    } as any
+    const field = (name: string) => String(formData.get(name) ?? "").trim()
 
-    const sameAsBilling = formData.get("same_as_billing")
-    if (sameAsBilling === "on") data.billing_address = data.shipping_address
+    // Couriers call or WhatsApp before a Cash on Delivery drop-off.
+    const phone = field("shipping_address.phone")
+    if (!phone) {
+      throw new Error("Please enter a phone number for the delivery.")
+    }
 
-    if (sameAsBilling !== "on")
-      data.billing_address = {
-        first_name: formData.get("billing_address.first_name"),
-        last_name: formData.get("billing_address.last_name"),
-        address_1: formData.get("billing_address.address_1"),
-        address_2: "",
-        company: formData.get("billing_address.company"),
-        postal_code: formData.get("billing_address.postal_code"),
-        city: formData.get("billing_address.city"),
-        country_code: formData.get("billing_address.country_code"),
-        province: formData.get("billing_address.province"),
-        phone: formData.get("billing_address.phone"),
-      }
+    // Postal codes aren't used in Lebanon, so none is collected.
+    // "Building / Floor" is stored as address_2 (visible in Admin).
+    const addressFrom = (
+      prefix: "shipping_address" | "billing_address"
+    ): HttpTypes.StoreAddAddress => ({
+      first_name: field(`${prefix}.first_name`),
+      last_name: field(`${prefix}.last_name`),
+      address_1: field(`${prefix}.address_1`),
+      address_2: field(`${prefix}.address_2`),
+      company: field(`${prefix}.company`),
+      city: field(`${prefix}.city`),
+      country_code: field(`${prefix}.country_code`),
+      province: field(`${prefix}.province`),
+      phone: field(`${prefix}.phone`),
+    })
+
+    const deliveryNotes = field("delivery_notes")
+    // The store API doesn't return order metadata, so the notes are also kept
+    // on the shipping address for the customer's order confirmation.
+    const shippingAddress = {
+      ...addressFrom("shipping_address"),
+      metadata: { delivery_notes: deliveryNotes },
+    }
+    const sameAsBilling = formData.get("same_as_billing") === "on"
+
+    const data: HttpTypes.StoreUpdateCart = {
+      shipping_address: shippingAddress,
+      billing_address: sameAsBilling
+        ? shippingAddress
+        : addressFrom("billing_address"),
+      email: field("email"),
+      // Medusa copies cart metadata to the order, so the notes show in Admin.
+      metadata: { delivery_notes: deliveryNotes },
+    }
+
     await updateCart(data)
-  } catch (e: any) {
-    return e.message
+  } catch (e) {
+    return e instanceof Error ? e.message : String(e)
   }
 
   redirect(
@@ -430,6 +441,22 @@ export async function placeOrder(cartId?: string) {
  * @param regionId
  * @param countryCode
  */
+/**
+ * Moves the current cart to the region of the given country (e.g. an old
+ * Europe cart opened under /lb). Unlike updateRegion it doesn't redirect, so
+ * the caller can refresh the current page.
+ */
+export async function syncCartRegion(countryCode: string) {
+  const cartId = await getCartId()
+  const region = await getRegion(countryCode)
+
+  if (!cartId || !region) {
+    return
+  }
+
+  await updateCart({ region_id: region.id })
+}
+
 export async function updateRegion(countryCode: string, currentPath: string) {
   const cartId = await getCartId()
   const region = await getRegion(countryCode)

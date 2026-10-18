@@ -35,8 +35,9 @@ function formatAddress(address: HttpTypes.StoreCartAddress) {
     ret += `, ${address.address_2}`
   }
 
-  if (address.postal_code) {
-    ret += `, ${address.postal_code} ${address.city}`
+  const cityLine = [address.postal_code, address.city].filter(Boolean).join(" ")
+  if (cityLine) {
+    ret += `, ${cityLine}`
   }
 
   if (address.country_code) {
