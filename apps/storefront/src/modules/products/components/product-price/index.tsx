@@ -1,14 +1,14 @@
-import { clx } from "@modules/common/components/ui"
-
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 
 export default function ProductPrice({
   product,
   variant,
+  soldOut = false,
 }: {
   product: HttpTypes.StoreProduct
   variant?: HttpTypes.StoreProductVariant
+  soldOut?: boolean
 }) {
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,
@@ -18,17 +18,25 @@ export default function ProductPrice({
   const selectedPrice = variant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
-    return <div className="block w-32 h-9 bg-ui-bg-component animate-pulse" />
+    return <div className="block h-8 w-28 animate-pulse rounded-soft bg-ui-bg-component" />
   }
 
+  // "From" only when no variant is picked and the variants' prices differ.
+  const prices = new Set(
+    (product.variants ?? []).map((v) => v.calculated_price?.calculated_amount)
+  )
+  const showFrom = !variant && prices.size > 1
+
   return (
-    <div className="flex flex-col text-ui-fg-base">
+    <div className="flex items-baseline gap-x-3">
       <span
-        className={clx("text-xl-semi", {
-          "text-ui-fg-interactive": selectedPrice.price_type === "sale",
-        })}
+        className={
+          soldOut
+            ? "text-2xl font-bold text-ui-fg-muted line-through"
+            : "text-2xl font-bold text-ember"
+        }
       >
-        {!variant && "From "}
+        {showFrom && <span className="mr-1 text-base font-medium">From</span>}
         <span
           data-testid="product-price"
           data-value={selectedPrice.calculated_price_number}
@@ -36,22 +44,14 @@ export default function ProductPrice({
           {selectedPrice.calculated_price}
         </span>
       </span>
-      {selectedPrice.price_type === "sale" && (
-        <>
-          <p>
-            <span className="text-ui-fg-subtle">Original: </span>
-            <span
-              className="line-through"
-              data-testid="original-product-price"
-              data-value={selectedPrice.original_price_number}
-            >
-              {selectedPrice.original_price}
-            </span>
-          </p>
-          <span className="text-ui-fg-interactive">
-            -{selectedPrice.percentage_diff}%
-          </span>
-        </>
+      {selectedPrice.price_type === "sale" && !soldOut && (
+        <span
+          className="text-sm text-ui-fg-muted line-through"
+          data-testid="original-product-price"
+          data-value={selectedPrice.original_price_number}
+        >
+          {selectedPrice.original_price}
+        </span>
       )}
     </div>
   )

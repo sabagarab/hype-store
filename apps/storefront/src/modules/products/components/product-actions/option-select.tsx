@@ -8,6 +8,8 @@ type OptionSelectProps = {
   updateOption: (title: string, value: string) => void
   title: string
   disabled: boolean
+  /** Values with no variant left in stock: shown crossed out, not selectable. */
+  soldOutValues?: string[]
   "data-testid"?: string
 }
 
@@ -18,30 +20,36 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
   title,
   "data-testid": dataTestId,
   disabled,
+  soldOutValues = [],
 }) => {
-  const filteredOptions = (option.values ?? []).map((v) => v.value)
+  const values = (option.values ?? []).map((v) => v.value)
 
   return (
-    <div className="flex flex-col gap-y-3">
-      <span className="text-sm">Select {title}</span>
-      <div
-        className="flex flex-wrap justify-between gap-2"
-        data-testid={dataTestId}
-      >
-        {filteredOptions.map((v) => {
+    <fieldset className="flex flex-col gap-y-3">
+      <legend className="mb-3 text-xs font-medium uppercase tracking-widest text-bone/55">
+        {title}
+      </legend>
+      <div className="flex flex-wrap gap-2" data-testid={dataTestId}>
+        {values.map((v) => {
+          const soldOut = soldOutValues.includes(v)
+          const selected = v === current
+
           return (
             <button
+              type="button"
               onClick={() => updateOption(option.id, v)}
               key={v}
+              aria-pressed={selected}
+              aria-label={soldOut ? `${v} (sold out)` : v}
+              disabled={disabled || soldOut}
               className={clx(
-                "border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 flex-1 ",
-                {
-                  "border-ui-border-interactive": v === current,
-                  "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
-                    v !== current,
-                }
+                "h-11 min-w-[56px] rounded-full border px-4 text-sm font-medium transition-colors duration-200",
+                soldOut
+                  ? "cursor-not-allowed border-ui-border-base text-bone/35 line-through"
+                  : selected
+                  ? "border-bone bg-bone/10 text-bone"
+                  : "border-ui-border-strong text-bone/80 hover:border-bone/60 hover:text-bone"
               )}
-              disabled={disabled}
               data-testid="option-button"
             >
               {v}
@@ -49,7 +57,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
           )
         })}
       </div>
-    </div>
+    </fieldset>
   )
 }
 

@@ -1,38 +1,27 @@
 import { HttpTypes } from "@medusajs/types"
-import { Heading, Text } from "@modules/common/components/ui"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
 }
 
+// Brand (the product's Type, full name) and title. Price, size and Add to cart
+// follow in ProductActions.
 const ProductInfo = ({ product }: ProductInfoProps) => {
-  return (
-    <div id="product-info">
-      <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto">
-        {product.collection && (
-          <LocalizedClientLink
-            href={`/collections/${product.collection.handle}`}
-            className="text-medium text-ui-fg-muted hover:text-ui-fg-subtle"
-          >
-            {product.collection.title}
-          </LocalizedClientLink>
-        )}
-        <Heading
-          level="h2"
-          className="text-3xl leading-10 text-ui-fg-base"
-          data-testid="product-title"
-        >
-          {product.title}
-        </Heading>
+  const brand = product.type?.value
 
-        <Text
-          className="text-medium text-ui-fg-subtle whitespace-pre-line"
-          data-testid="product-description"
-        >
-          {product.description}
-        </Text>
-      </div>
+  return (
+    <div id="product-info" className="flex flex-col gap-y-2">
+      {brand && (
+        <p className="text-xs font-medium uppercase tracking-widest text-bone/55">
+          {brand}
+        </p>
+      )}
+      <h1
+        className="text-3xl font-black leading-tight tracking-tight text-bone small:text-4xl"
+        data-testid="product-title"
+      >
+        {product.title}
+      </h1>
     </div>
   )
 }

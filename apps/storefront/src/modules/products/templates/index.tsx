@@ -1,15 +1,12 @@
 import React, { Suspense } from "react"
-
 import ImageGallery from "@modules/products/components/image-gallery"
+import Measurements from "@modules/products/components/measurements"
 import ProductActions from "@modules/products/components/product-actions"
-import ProductOnboardingCta from "@modules/products/components/product-onboarding-cta"
-import ProductTabs from "@modules/products/components/product-tabs"
 import RelatedProducts from "@modules/products/components/related-products"
 import ProductInfo from "@modules/products/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
-
 import ProductActionsWrapper from "./product-actions-wrapper"
 
 type ProductTemplateProps = {
@@ -19,6 +16,8 @@ type ProductTemplateProps = {
   images: HttpTypes.StoreProductImage[]
 }
 
+// Gallery on the left, sticky info panel on the right (desktop); a single
+// column on phones with the glass sticky bar from ProductActions.
 const ProductTemplate: React.FC<ProductTemplateProps> = ({
   product,
   region,
@@ -32,18 +31,13 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   return (
     <>
       <div
-        className="content-container  flex flex-col small:flex-row small:items-start py-6 relative"
+        className="content-container grid grid-cols-1 gap-y-8 py-6 small:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] small:gap-x-12 small:py-10"
         data-testid="product-container"
       >
-        <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
+        <ImageGallery images={images} title={product.title} />
+
+        <div className="flex flex-col gap-y-8 small:sticky small:top-28 small:self-start">
           <ProductInfo product={product} />
-          <ProductTabs product={product} />
-        </div>
-        <div className="block w-full relative">
-          <ImageGallery images={images} />
-        </div>
-        <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12">
-          <ProductOnboardingCta />
           <Suspense
             fallback={
               <ProductActions
@@ -55,6 +49,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           >
             <ProductActionsWrapper id={product.id} region={region} />
           </Suspense>
+          <Measurements product={product} />
         </div>
       </div>
       <div

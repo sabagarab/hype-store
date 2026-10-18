@@ -2,9 +2,13 @@
 
 import { addToCart } from "@lib/data/cart"
 import { useIntersection } from "@lib/hooks/use-in-view"
+import {
+  isSoldOut,
+  isVariantAvailable,
+  singleSize,
+} from "@lib/util/product-availability"
 import { HttpTypes } from "@medusajs/types"
-import { Button } from "@modules/common/components/ui"
-import Divider from "@modules/common/components/divider"
+import { Button, clx } from "@modules/common/components/ui"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
@@ -92,6 +96,30 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
+  const soldOut = isSoldOut(product)
+  const size = singleSize(product)
+  const hasManyVariants = (product.variants?.length ?? 0) > 1
+
+  // Option values that no in-stock variant has (crossed out in the pills).
+  const soldOutValues = (optionId: string) =>
+    (product.options ?? [])
+      .find((o) => o.id === optionId)
+      ?.values?.map((v) => v.value)
+      .filter(
+        (value) =>
+          !(product.variants ?? []).some(
+            (variant) =>
+              isVariantAvailable(variant) &&
+              variant.options?.some(
+                (o) => o.option_id === optionId && o.value === value
+              )
+          )
+      ) ?? []
+
+  const selectLabel = `Select ${(
+    product.options?.find((o) => !options[o.id])?.title ?? "option"
+  ).toLowerCase()}`
+
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
     // If we don't manage inventory, we can always add to cart
@@ -137,34 +165,40 @@ export default function ProductActions({
 
   return (
     <>
-      <div className="flex flex-col gap-y-2" ref={actionsRef}>
-        <div>
-          {(product.variants?.length ?? 0) > 1 && (
-            <div className="flex flex-col gap-y-4">
-              {(product.options || []).map((option) => {
-                return (
-                  <div key={option.id}>
-                    <OptionSelect
-                      option={option}
-                      current={options[option.id]}
-                      updateOption={setOptionValue}
-                      title={option.title ?? ""}
-                      data-testid="product-options"
-                      disabled={!!disabled || isAdding}
-                    />
-                  </div>
-                )
-              })}
-              <Divider />
-            </div>
-          )}
-        </div>
+      <div className="flex flex-col gap-y-6" ref={actionsRef}>
+        <ProductPrice
+          product={product}
+          variant={selectedVariant}
+          soldOut={soldOut}
+        />
 
-        <ProductPrice product={product} variant={selectedVariant} />
+        {size && !hasManyVariants && (
+          <p className="text-sm font-medium text-bone/80" data-testid="product-size">
+            Size {size}
+          </p>
+        )}
+
+        {hasManyVariants && (
+          <div className="flex flex-col gap-y-5">
+            {(product.options || []).map((option) => (
+              <OptionSelect
+                key={option.id}
+                option={option}
+                current={options[option.id]}
+                updateOption={setOptionValue}
+                title={option.title ?? ""}
+                soldOutValues={soldOutValues(option.id)}
+                data-testid="product-options"
+                disabled={!!disabled || isAdding || soldOut}
+              />
+            ))}
+          </div>
+        )}
 
         <Button
           onClick={handleAddToCart}
           disabled={
+            soldOut ||
             !inStock ||
             !selectedVariant ||
             !!disabled ||
@@ -172,12 +206,18 @@ export default function ProductActions({
             !isValidVariant
           }
           variant="primary"
-          className="w-full h-10"
+          className={clx(
+            "h-[52px] w-full rounded-full text-base font-bold uppercase tracking-wide",
+            soldOut &&
+              "!bg-ink !text-bone/60 border border-ui-border-base !opacity-100"
+          )}
           isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!selectedVariant
-            ? "Select variant"
+          {soldOut
+            ? "Sold"
+            : !selectedVariant
+            ? selectLabel
             : !inStock || !isValidVariant
             ? "Out of stock"
             : "Add to cart"}
@@ -188,6 +228,9 @@ export default function ProductActions({
           options={options}
           updateOptions={setOptionValue}
           inStock={inStock}
+          soldOut={soldOut}
+          soldOutValues={soldOutValues}
+          selectLabel={selectLabel}
           handleAddToCart={handleAddToCart}
           isAdding={isAdding}
           show={!inView}

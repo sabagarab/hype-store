@@ -3,13 +3,11 @@ import { Button, clx } from "@modules/common/components/ui"
 import React, { Fragment, useMemo } from "react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
-import ChevronDown from "@modules/common/icons/chevron-down"
 import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
-import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
-import { isSimpleProduct } from "@lib/util/product"
+import OptionSelect from "./option-select"
 
 type MobileActionsProps = {
   product: HttpTypes.StoreProduct
@@ -17,18 +15,27 @@ type MobileActionsProps = {
   options: Record<string, string | undefined>
   updateOptions: (title: string, value: string) => void
   inStock?: boolean
+  soldOut: boolean
+  soldOutValues: (optionId: string) => string[]
+  selectLabel: string
   handleAddToCart: () => void
   isAdding?: boolean
   show: boolean
   optionsDisabled: boolean
 }
 
+// Sticky glass bar on phones/tablets, shown once the main Add to cart button
+// scrolls out of view. Products with several variants open a sheet with the
+// same size pills.
 const MobileActions: React.FC<MobileActionsProps> = ({
   product,
   variant,
   options,
   updateOptions,
   inStock,
+  soldOut,
+  soldOutValues,
+  selectLabel,
   handleAddToCart,
   isAdding,
   show,
@@ -50,86 +57,71 @@ const MobileActions: React.FC<MobileActionsProps> = ({
     return variantPrice || cheapestPrice || null
   }, [price])
 
-  const isSimple = isSimpleProduct(product)
+  const hasManyVariants = (product.variants?.length ?? 0) > 1
+  // Without a variant picked, the main button opens the size sheet.
+  const needsSelection = hasManyVariants && !variant && !soldOut
 
   return (
     <>
       <div
-        className={clx("lg:hidden inset-x-0 bottom-0 fixed z-50", {
+        className={clx("small:hidden inset-x-0 bottom-0 fixed z-50", {
           "pointer-events-none": !show,
         })}
       >
         <Transition
           as={Fragment}
           show={show}
-          enter="ease-in-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-300"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter="ease-out duration-200"
+          enterFrom="opacity-0 translate-y-2"
+          enterTo="opacity-100 translate-y-0"
+          leave="ease-in duration-150"
+          leaveFrom="opacity-100 translate-y-0"
+          leaveTo="opacity-0 translate-y-2"
         >
           <div
-            className="glass flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t border-ui-border-base"
+            className="glass flex items-center gap-x-3 border-t border-bone/10 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
             data-testid="mobile-actions"
           >
-            <div className="flex items-center gap-x-2">
-              <span data-testid="mobile-title">{product.title}</span>
-              <span>—</span>
-              {selectedPrice ? (
-                <div className="flex items-end gap-x-2 text-ui-fg-base">
-                  {selectedPrice.price_type === "sale" && (
-                    <p>
-                      <span className="line-through text-small-regular">
-                        {selectedPrice.original_price}
-                      </span>
-                    </p>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span
+                className="truncate text-xs text-bone/70"
+                data-testid="mobile-title"
+              >
+                {product.title}
+                {variant && hasManyVariants && (
+                  <> · {Object.values(options).join(" / ")}</>
+                )}
+              </span>
+              {selectedPrice && (
+                <span
+                  className={clx(
+                    "text-base font-bold",
+                    soldOut ? "text-ui-fg-muted line-through" : "text-ember"
                   )}
-                  <span
-                    className={clx({
-                      "text-ui-fg-interactive":
-                        selectedPrice.price_type === "sale",
-                    })}
-                  >
-                    {selectedPrice.calculated_price}
-                  </span>
-                </div>
-              ) : (
-                <div></div>
+                >
+                  {selectedPrice.calculated_price}
+                </span>
               )}
             </div>
-            <div className={clx("grid grid-cols-2 w-full gap-x-4", {
-              "!grid-cols-1": isSimple
-            })}>
-              {!isSimple && <Button
-                onClick={open}
-                variant="secondary"
-                className="w-full"
-                data-testid="mobile-actions-button"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span>
-                    {variant
-                      ? Object.values(options).join(" / ")
-                      : "Select Options"}
-                  </span>
-                  <ChevronDown />
-                </div>
-              </Button>}
-              <Button
-                onClick={handleAddToCart}
-                disabled={!inStock || !variant}
-                className="w-full"
-                isLoading={isAdding}
-                data-testid="mobile-cart-button"
-              >
-                {!variant
-                  ? "Select variant"
-                  : !inStock
-                  ? "Out of stock"
-                  : "Add to cart"}
-              </Button>
-            </div>
+            <Button
+              onClick={needsSelection ? open : handleAddToCart}
+              disabled={soldOut || (!needsSelection && (!inStock || !variant))}
+              className={clx(
+                "h-11 shrink-0 rounded-full px-6 text-sm font-bold uppercase tracking-wide",
+                soldOut &&
+                  "!bg-ink !text-bone/60 border border-ui-border-base !opacity-100"
+              )}
+              isLoading={isAdding}
+              data-testid="mobile-cart-button"
+            >
+              {soldOut
+                ? "Sold"
+                : needsSelection
+                ? selectLabel
+                : !inStock
+                ? "Out of stock"
+                : "Add to cart"}
+            </Button>
           </div>
         </Transition>
       </div>
@@ -137,62 +129,69 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         <Dialog as="div" className="relative z-[75]" onClose={close}>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
+            enter="ease-out duration-200"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-200"
+            leave="ease-in duration-150"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
           </Transition.Child>
 
-          <div className="fixed bottom-0 inset-x-0">
-            <div className="flex min-h-full h-full items-center justify-center text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
+          <div className="fixed inset-x-0 bottom-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-200"
+              enterFrom="opacity-0 translate-y-4"
+              enterTo="opacity-100 translate-y-0"
+              leave="ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-4"
+            >
+              <Dialog.Panel
+                className="glass rounded-t-large border-t border-bone/10 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)]"
+                data-testid="mobile-actions-modal"
               >
-                <Dialog.Panel
-                  className="w-full h-full transform overflow-hidden text-left flex flex-col gap-y-3"
-                  data-testid="mobile-actions-modal"
+                <div className="mb-4 flex items-center justify-between">
+                  <Dialog.Title className="text-sm font-bold text-bone">
+                    {product.title}
+                  </Dialog.Title>
+                  <button
+                    onClick={close}
+                    aria-label="Close"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-bone"
+                    data-testid="close-modal-button"
+                  >
+                    <X />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-y-5">
+                  {(product.options || []).map((option) => (
+                    <OptionSelect
+                      key={option.id}
+                      option={option}
+                      current={options[option.id]}
+                      updateOption={updateOptions}
+                      title={option.title ?? ""}
+                      soldOutValues={soldOutValues(option.id)}
+                      disabled={optionsDisabled}
+                    />
+                  ))}
+                </div>
+                <Button
+                  onClick={() => {
+                    handleAddToCart()
+                    close()
+                  }}
+                  disabled={!variant || !inStock}
+                  className="mt-6 h-[52px] w-full rounded-full text-base font-bold uppercase tracking-wide"
+                  isLoading={isAdding}
                 >
-                  <div className="w-full flex justify-end pr-6">
-                    <button
-                      onClick={close}
-                      className="bg-ink w-12 h-12 rounded-full text-ui-fg-base flex justify-center items-center"
-                      data-testid="close-modal-button"
-                    >
-                      <X />
-                    </button>
-                  </div>
-                  <div className="bg-ink px-6 py-12">
-                    {(product.variants?.length ?? 0) > 1 && (
-                      <div className="flex flex-col gap-y-6">
-                        {(product.options || []).map((option) => {
-                          return (
-                            <div key={option.id}>
-                              <OptionSelect
-                                option={option}
-                                current={options[option.id]}
-                                updateOption={updateOptions}
-                                title={option.title ?? ""}
-                                disabled={optionsDisabled}
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                  {!variant ? selectLabel : "Add to cart"}
+                </Button>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition>
