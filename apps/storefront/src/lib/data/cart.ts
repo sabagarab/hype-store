@@ -114,15 +114,17 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
     .catch(medusaError)
 }
 
+// Items are one-of-one, so a line always has quantity 1: adding a variant that
+// is already in the cart changes nothing and reports "already_in_cart".
 export async function addToCart({
   variantId,
-  quantity,
   countryCode,
 }: {
   variantId: string
-  quantity: number
+  /** Ignored: quantity is always 1. Kept for the starter's call sites. */
+  quantity?: number
   countryCode: string
-}) {
+}): Promise<"added" | "already_in_cart"> {
   if (!variantId) {
     throw new Error("Missing variant ID when adding to cart")
   }
@@ -131,6 +133,11 @@ export async function addToCart({
 
   if (!cart) {
     throw new Error("Error retrieving or creating cart")
+  }
+
+  const current = await retrieveCart(cart.id, "id,*items")
+  if (current?.items?.some((item) => item.variant_id === variantId)) {
+    return "already_in_cart"
   }
 
   const headers = {
@@ -142,7 +149,7 @@ export async function addToCart({
       cart.id,
       {
         variant_id: variantId,
-        quantity,
+        quantity: 1,
       },
       {},
       headers
@@ -155,6 +162,8 @@ export async function addToCart({
       revalidateTag(fulfillmentCacheTag)
     })
     .catch(medusaError)
+
+  return "added"
 }
 
 export async function updateLineItem({

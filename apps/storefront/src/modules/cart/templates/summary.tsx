@@ -10,6 +10,8 @@ import { HttpTypes } from "@medusajs/types"
 
 type SummaryProps = {
   cart: HttpTypes.StoreCart
+  /** Some item sold out since it was added: checkout is blocked. */
+  blocked?: boolean
 }
 
 function getCheckoutStep(cart: HttpTypes.StoreCart) {
@@ -22,7 +24,7 @@ function getCheckoutStep(cart: HttpTypes.StoreCart) {
   }
 }
 
-const Summary = ({ cart }: SummaryProps) => {
+const Summary = ({ cart, blocked = false }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
@@ -33,12 +35,23 @@ const Summary = ({ cart }: SummaryProps) => {
       <DiscountCode cart={cart} />
       <Divider />
       <CartTotals totals={cart} />
-      <LocalizedClientLink
-        href={"/checkout?step=" + step}
-        data-testid="checkout-button"
-      >
-        <Button className="w-full h-10">Go to checkout</Button>
-      </LocalizedClientLink>
+      {blocked ? (
+        <>
+          <p role="alert" className="text-sm font-medium text-ember">
+            Remove unavailable items to continue.
+          </p>
+          <Button className="w-full h-10" disabled data-testid="checkout-button">
+            Go to checkout
+          </Button>
+        </>
+      ) : (
+        <LocalizedClientLink
+          href={"/checkout?step=" + step}
+          data-testid="checkout-button"
+        >
+          <Button className="w-full h-10">Go to checkout</Button>
+        </LocalizedClientLink>
+      )}
     </div>
   )
 }

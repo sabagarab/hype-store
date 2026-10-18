@@ -18,7 +18,19 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* The admin runs on React 18, but the repo root also holds React 19 types
+       (from the storefront). Point every import of react/react-dom types,
+       including those inside @medusajs/ui, at the backend's 18.x copy so the
+       admin type-checks against one version. Type-checking only. */
+    "baseUrl": ".",
+    "paths": {
+      "react": ["../../node_modules/@types/react"],
+      "react/*": ["../../node_modules/@types/react/*"],
+      "react-dom": ["../../node_modules/@types/react-dom"],
+      "react-dom/*": ["../../node_modules/@types/react-dom/*"]
+    }
   },
   "include": [
     ".",

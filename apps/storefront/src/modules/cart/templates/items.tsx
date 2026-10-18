@@ -7,9 +7,10 @@ import SkeletonLineItem from "@modules/skeletons/components/skeleton-line-item"
 
 type ItemsTemplateProps = {
   cart?: HttpTypes.StoreCart
+  isUnavailable?: (item: HttpTypes.StoreCartLineItem) => boolean
 }
 
-const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
+const ItemsTemplate = ({ cart, isUnavailable }: ItemsTemplateProps) => {
   const items = cart?.items
   return (
     <div>
@@ -21,7 +22,9 @@ const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
           <Table.Row className="text-ui-fg-subtle txt-medium-plus">
             <Table.HeaderCell className="!pl-0">Item</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
-            <Table.HeaderCell>Quantity</Table.HeaderCell>
+            <Table.HeaderCell>
+              <span className="sr-only">Remove</span>
+            </Table.HeaderCell>
             <Table.HeaderCell className="hidden small:table-cell">
               Price
             </Table.HeaderCell>
@@ -42,6 +45,7 @@ const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
                       key={item.id}
                       item={item}
                       currencyCode={cart?.currency_code}
+                      unavailable={isUnavailable?.(item) ?? false}
                     />
                   )
                 })

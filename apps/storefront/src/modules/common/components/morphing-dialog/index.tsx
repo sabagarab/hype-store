@@ -97,7 +97,11 @@ export function MorphingDialogTrigger({
       onClick={() => setIsOpen(true)}
       aria-haspopup="dialog"
       aria-expanded={isOpen}
-      aria-controls={`morphing-dialog-content-${uniqueId}`}
+      // Only set while open: the content exists only then, and leaving it off
+      // the server render avoids a useId hydration mismatch.
+      aria-controls={
+        isOpen ? `morphing-dialog-content-${uniqueId}` : undefined
+      }
       aria-label={ariaLabel}
     >
       {children}

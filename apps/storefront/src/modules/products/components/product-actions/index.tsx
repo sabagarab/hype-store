@@ -8,11 +8,13 @@ import {
   singleSize,
 } from "@lib/util/product-availability"
 import { HttpTypes } from "@medusajs/types"
+import { useCartDrawer } from "@modules/cart/components/cart-drawer/context"
 import { Button, clx } from "@modules/common/components/ui"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { toast } from "sonner"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
@@ -42,6 +44,7 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
+  const { openCart } = useCartDrawer()
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -154,13 +157,22 @@ export default function ProductActions({
 
     setIsAdding(true)
 
-    await addToCart({
-      variantId: selectedVariant.id,
-      quantity: 1,
-      countryCode,
-    })
-
-    setIsAdding(false)
+    try {
+      const result = await addToCart({
+        variantId: selectedVariant.id,
+        countryCode,
+      })
+      openCart()
+      if (result === "already_in_cart") {
+        toast("Already in your cart")
+      } else {
+        toast.success("Added to cart")
+      }
+    } catch {
+      toast.error("Couldn't add to cart. Please try again.")
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   return (

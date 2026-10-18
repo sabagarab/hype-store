@@ -3,6 +3,8 @@ import { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 import "styles/globals.css"
 
+import Toaster from "@modules/common/components/toaster"
+
 const satoshi = localFont({
   src: [
     {
@@ -34,6 +36,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en" data-mode="dark" className={satoshi.variable}>
       <body>
         <main className="relative">{props.children}</main>
+        <Toaster />
       </body>
     </html>
   )

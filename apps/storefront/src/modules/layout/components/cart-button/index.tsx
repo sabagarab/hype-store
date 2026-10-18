@@ -1,8 +1,9 @@
 import { retrieveCart } from "@lib/data/cart"
-import CartDropdown from "../cart-dropdown"
+import CartTrigger from "@modules/cart/components/cart-drawer/cart-trigger"
 
 export default async function CartButton() {
   const cart = await retrieveCart().catch(() => null)
+  const count = cart?.items?.length ?? 0
 
-  return <CartDropdown cart={cart} />
+  return <CartTrigger count={count} />
 }

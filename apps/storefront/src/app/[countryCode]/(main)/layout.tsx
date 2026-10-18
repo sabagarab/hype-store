@@ -4,6 +4,8 @@ import { listCartOptions, retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { getBaseURL } from "@lib/util/env"
 import { StoreCartShippingOption } from "@medusajs/types"
+import CartDrawer from "@modules/cart/components/cart-drawer"
+import { CartDrawerProvider } from "@modules/cart/components/cart-drawer/context"
 import AnnouncementBar from "@modules/layout/components/announcement-bar"
 import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
 import Footer from "@modules/layout/templates/footer"
@@ -20,13 +22,21 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
   let shippingOptions: StoreCartShippingOption[] = []
 
   if (cart) {
-    const { shipping_options } = await listCartOptions()
+    const { shipping_options } = await listCartOptions().catch(() => ({
+      shipping_options: [] as StoreCartShippingOption[],
+    }))
 
     shippingOptions = shipping_options
   }
 
+  // The drawer's delivery note reads the price of the region's "Delivery"
+  // option (set in Admin); null shows "Delivery added at checkout".
+  const deliveryAmount =
+    shippingOptions.find((option) => option.name === "Delivery")?.amount ??
+    null
+
   return (
-    <>
+    <CartDrawerProvider>
       <AnnouncementBar />
       <Nav />
       {customer && cart && (
@@ -42,6 +52,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
       )}
       {props.children}
       <Footer />
-    </>
+      <CartDrawer cart={cart} deliveryAmount={deliveryAmount} />
+    </CartDrawerProvider>
   )
 }
