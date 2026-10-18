@@ -7,9 +7,9 @@ import {
   useSpring,
   useTransform,
 } from "motion/react"
-import Image from "next/image"
 import { useRef } from "react"
 
+import FadeInImage from "@modules/common/components/fade-in-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { clx } from "@modules/common/components/ui"
 
@@ -139,7 +139,7 @@ const ProductCard = ({
         href={`/products/${product.handle}`}
         className="block h-full w-full"
       >
-        <Image
+        <FadeInImage
           src={product.thumbnail}
           alt={product.title}
           fill

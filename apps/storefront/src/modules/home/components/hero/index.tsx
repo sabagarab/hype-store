@@ -1,6 +1,5 @@
-import Image from "next/image"
-
 import BlurInText from "@modules/common/components/blur-in-text"
+import FadeInImage from "@modules/common/components/fade-in-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Marquee from "@modules/common/components/marquee"
 import ShimmerLink from "@modules/common/components/shimmer-link"
@@ -76,7 +75,7 @@ const Hero = ({ products }: { products: HeroProduct[] }) => {
                   href={`/products/${product.handle}`}
                   className="relative block aspect-[3/4] w-36 overflow-hidden rounded-large bg-ink small:w-48"
                 >
-                  <Image
+                  <FadeInImage
                     src={product.thumbnail}
                     alt={product.title}
                     fill

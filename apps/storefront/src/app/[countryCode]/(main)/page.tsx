@@ -16,10 +16,14 @@ export const metadata: Metadata = {
 
 // Products from the Admin "hero" collection that have a photo. Any failure
 // returns none so the hero falls back to text instead of breaking the page.
+// Cached for HERO_REVALIDATE_SECONDS so Admin changes show up without a deploy.
+const HERO_REVALIDATE_SECONDS = 60
+
 async function getHeroProducts(countryCode: string): Promise<HeroProduct[]> {
   try {
     const collection = await getCollectionByHandle(
-      HERO_CONTENT.collectionHandle
+      HERO_CONTENT.collectionHandle,
+      { revalidate: HERO_REVALIDATE_SECONDS }
     )
     if (!collection) {
       return []
@@ -30,6 +34,7 @@ async function getHeroProducts(countryCode: string): Promise<HeroProduct[]> {
     } = await listProducts({
       countryCode,
       queryParams: { collection_id: [collection.id], limit: 15 },
+      revalidate: HERO_REVALIDATE_SECONDS,
     })
 
     return products.flatMap((p) =>
