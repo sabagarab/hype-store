@@ -33,20 +33,39 @@ export const getCacheTag = async (tag: string): Promise<string> => {
   }
 }
 
+// Catalog data shared by all visitors. The backend clears these tags through
+// /api/revalidate when products, stock or collections change in Admin.
+export const CATALOG_CACHE_TAGS = [
+  "products",
+  "variants",
+  "collections",
+  "categories",
+] as const
+
+// Fallback in case an on-demand revalidation call is missed.
+const CATALOG_REVALIDATE_SECONDS = 300
+
+const isCatalogTag = (tag: string) =>
+  (CATALOG_CACHE_TAGS as readonly string[]).includes(tag)
+
 export const getCacheOptions = async (
   tag: string
-): Promise<{ tags: string[] } | Record<string, never>> => {
+): Promise<
+  { tags: string[]; revalidate?: number } | Record<string, never>
+> => {
   if (typeof window !== "undefined") {
     return {}
   }
 
   const cacheTag = await getCacheTag(tag)
 
-  if (!cacheTag) {
-    return {}
-  }
+  // The global tag lets one revalidateTag() call clear a cached response for
+  // every visitor; the per-visitor tag keeps the existing cart/order flows.
+  const tags = cacheTag ? [cacheTag, tag] : [tag]
 
-  return { tags: [`${cacheTag}`] }
+  return isCatalogTag(tag)
+    ? { tags, revalidate: CATALOG_REVALIDATE_SECONDS }
+    : { tags }
 }
 
 // `sameSite: "lax"` rather than `"strict"`: the customer returns from a

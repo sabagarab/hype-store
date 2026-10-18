@@ -19,14 +19,11 @@ export const listProducts = async ({
   queryParams,
   countryCode,
   regionId,
-  revalidate,
 }: {
   pageParam?: number
   queryParams?: ProductListQueryParams
   countryCode?: string
   regionId?: string
-  // Seconds to cache the response. Omit to cache until revalidated by tag.
-  revalidate?: number
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -61,7 +58,6 @@ export const listProducts = async ({
 
   const next = {
     ...(await getCacheOptions("products")),
-    ...(revalidate !== undefined && { revalidate }),
   }
 
   return sdk.client

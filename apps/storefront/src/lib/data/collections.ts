@@ -43,13 +43,10 @@ export const listCollections = async (
 }
 
 export const getCollectionByHandle = async (
-  handle: string,
-  // Seconds to cache the response. Omit to cache until revalidated by tag.
-  { revalidate }: { revalidate?: number } = {}
+  handle: string
 ): Promise<HttpTypes.StoreCollection | null> => {
   const next = {
     ...(await getCacheOptions("collections")),
-    ...(revalidate !== undefined && { revalidate }),
   }
 
   return await sdk.client

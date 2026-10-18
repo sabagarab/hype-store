@@ -9,6 +9,29 @@ const S3_HOSTNAME = process.env.MEDUSA_CLOUD_S3_HOSTNAME
 const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
 
 /**
+ * Production product image host (e.g. public Cloudflare R2 URL), as a full URL
+ * like https://pub-xxxx.r2.dev or https://cdn.example.com/products.
+ * Images under that URL are allowed through the image optimizer.
+ */
+const imageHostPattern = (value) => {
+  if (!value) {
+    return []
+  }
+
+  const url = new URL(value)
+  const path = url.pathname.replace(/\/$/, "")
+
+  return [
+    {
+      protocol: url.protocol.replace(":", ""),
+      hostname: url.hostname,
+      ...(url.port && { port: url.port }),
+      pathname: `${path}/**`,
+    },
+  ]
+}
+
+/**
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
@@ -25,11 +48,13 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
     remotePatterns: [
+      // Admin uploads served by the local Medusa backend (dev only).
       {
         protocol: "http",
         hostname: "localhost",
+        port: "9000",
+        pathname: "/static/**",
       },
       {
         protocol: "https",
@@ -48,6 +73,7 @@ const nextConfig = {
             },
           ]
         : []),
+      ...imageHostPattern(process.env.IMAGE_HOST_URL),
     ],
   },
 }
