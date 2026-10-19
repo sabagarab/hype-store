@@ -1,4 +1,6 @@
 import FadeInImage from "@modules/common/components/fade-in-image"
+import ImagePlaceholder from "@modules/common/components/image-placeholder"
+import MagicCard from "@modules/common/components/magic-card"
 import * as React from "react"
 
 import { clx } from "@modules/common/components/ui"
@@ -7,8 +9,11 @@ import { clx } from "@modules/common/components/ui"
 // image well, then a title/subtitle/metric row below. Adapted to the shared
 // tokens: card radius, text stacked under the photo (title up to two lines,
 // price below, as on StockX), 4:5 well filled edge to edge (our photos carry their
-// own studio background), FadeInImage (load retry), a quiet zoom on hover / press instead
-// of the lift, brand colors. The wishlist badge is dropped.
+// own studio background), FadeInImage (load retry + Skeleton Swap), a quiet
+// zoom on hover instead of the lift, a tactile press (scale .98, 120ms),
+// brand colors. The wishlist badge is dropped. Desktop only (real hover): an
+// optional second photo crossfades in and the Magic Card glow follows the
+// cursor; neither is rendered or loaded on touch.
 
 type ProductCardProps = React.ComponentProps<"div">
 
@@ -16,7 +21,10 @@ export function ProductCard({ className, ...props }: ProductCardProps) {
   return (
     <div
       data-slot="product-card"
-      className={clx("group/card w-full text-sm", className)}
+      className={clx(
+        "group/card w-full text-sm transition-transform duration-press ease-premium active:scale-[0.98] motion-reduce:active:scale-100",
+        className
+      )}
       {...props}
     />
   )
@@ -24,6 +32,10 @@ export function ProductCard({ className, ...props }: ProductCardProps) {
 
 type ProductCardImageProps = {
   src: string | null | undefined
+  /** Second photo shown on hover (desktop only). */
+  hoverSrc?: string | null
+  /** Magic Card cursor glow around the well (desktop only). */
+  glow?: boolean
   alt: string
   sizes: string
   priority?: boolean
@@ -35,6 +47,8 @@ type ProductCardImageProps = {
 
 export function ProductCardImage({
   src,
+  hoverSrc,
+  glow = false,
   alt,
   sizes,
   priority = false,
@@ -42,24 +56,18 @@ export function ProductCardImage({
   className,
   children,
 }: ProductCardImageProps) {
-  return (
-    <div
-      data-slot="product-card-image"
-      className={clx(
-        "relative aspect-[4/5] w-full overflow-hidden rounded-card bg-ink",
-        className
-      )}
-    >
-      {src && (
-        // Zoom and dimming live on this wrapper; the image itself only fades
-        // in (FadeInImage owns its opacity transition).
-        <div
-          className={clx(
-            "absolute inset-0 transition-transform duration-slow ease-premium",
-            "[@media(hover:hover)]:group-hover/card:scale-[1.03] group-active/card:scale-[1.02] motion-reduce:transform-none",
-            muted && "opacity-50 grayscale"
-          )}
-        >
+  const well = (
+    <>
+      {/* Zoom and dimming live on this wrapper; the images themselves only
+          fade in (FadeInImage owns their opacity transition). */}
+      <div
+        className={clx(
+          "absolute inset-0 transition-transform duration-slow ease-premium",
+          "[@media(hover:hover)]:group-hover/card:scale-[1.03] motion-reduce:transform-none",
+          muted && "opacity-50 grayscale"
+        )}
+      >
+        {src ? (
           <FadeInImage
             src={src}
             alt={alt}
@@ -67,11 +75,55 @@ export function ProductCardImage({
             sizes={sizes}
             priority={priority}
             className="object-cover"
+            fallback={<ImagePlaceholder />}
           />
-        </div>
-      )}
+        ) : (
+          <ImagePlaceholder />
+        )}
+        {hoverSrc && (
+          <div className="absolute inset-0 hidden opacity-0 transition-opacity duration-base ease-premium [@media(hover:hover)]:block [@media(hover:hover)]:group-hover/card:opacity-100 motion-reduce:transition-none">
+            <FadeInImage
+              src={hoverSrc}
+              alt=""
+              fill
+              sizes={sizes}
+              className="object-cover"
+            />
+          </div>
+        )}
+      </div>
       {children}
+    </>
+  )
+
+  const wellClass = clx(
+    "relative aspect-[4/5] w-full overflow-hidden rounded-card bg-ink",
+    className
+  )
+
+  return glow ? (
+    <MagicCard className={wellClass}>{well}</MagicCard>
+  ) : (
+    <div data-slot="product-card-image" className={wellClass}>
+      {well}
     </div>
+  )
+}
+
+/** Small label on the photo, e.g. "Sold". */
+export function ProductCardBadge({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="product-card-badge"
+      className={clx(
+        "absolute left-3 top-3 z-30 rounded-control bg-ember-deep px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-bone",
+        className
+      )}
+      {...props}
+    />
   )
 }
 
@@ -95,7 +147,7 @@ export function ProductCardHeader({
   return (
     <div
       data-slot="product-card-header"
-      className={clx("min-w-0 flex-1", className)}
+      className={clx("flex min-w-0 flex-1 flex-col gap-y-0.5", className)}
       {...props}
     />
   )

@@ -75,6 +75,7 @@ module.exports = {
       },
       transitionDuration: {
         // Motion timing tokens; mirrored for motion/react in src/lib/motion.ts.
+        press: "120ms",
         fast: "150ms",
         base: "200ms",
         slow: "300ms",

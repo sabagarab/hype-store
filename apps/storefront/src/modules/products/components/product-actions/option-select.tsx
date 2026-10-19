@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import { clx } from "@modules/common/components/ui"
+import ToggleGroup from "@modules/common/components/toggle-group"
 import React from "react"
 
 type OptionSelectProps = {
@@ -29,34 +29,25 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
       <legend className="mb-3 text-xs font-medium uppercase tracking-widest text-bone/55">
         {title}
       </legend>
-      <div className="flex flex-wrap gap-2" data-testid={dataTestId}>
-        {values.map((v) => {
+      <ToggleGroup
+        type="single"
+        value={current ? [current] : []}
+        // Pressing the selected size again only re-selects it.
+        onValueChange={(next) => next[0] && updateOption(option.id, next[0])}
+        disabled={disabled}
+        items={values.map((v) => {
           const soldOut = soldOutValues.includes(v)
-          const selected = v === current
-
-          return (
-            <button
-              type="button"
-              onClick={() => updateOption(option.id, v)}
-              key={v}
-              aria-pressed={selected}
-              aria-label={soldOut ? `${v} (sold out)` : v}
-              disabled={disabled || soldOut}
-              className={clx(
-                "h-11 min-w-[56px] rounded-full border px-4 text-sm font-medium transition-colors duration-200",
-                soldOut
-                  ? "cursor-not-allowed border-ui-border-base text-bone/35 line-through"
-                  : selected
-                  ? "border-bone bg-bone/10 text-bone"
-                  : "border-ui-border-strong text-bone/80 hover:border-bone/60 hover:text-bone"
-              )}
-              data-testid="option-button"
-            >
-              {v}
-            </button>
-          )
+          return {
+            value: v,
+            label: v,
+            ariaLabel: soldOut ? `${v} (sold out)` : undefined,
+            unavailable: soldOut,
+          }
         })}
-      </div>
+        className="self-start"
+        data-testid={dataTestId}
+        itemTestId="option-button"
+      />
     </fieldset>
   )
 }

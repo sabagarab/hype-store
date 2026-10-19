@@ -14,7 +14,7 @@ import {
 
 // Wiring only: maps a Medusa product onto the 21st Product Card. Brand is the
 // product's Type (with its optional short_name); a sold piece shows "Sold" in
-// place of the price.
+// place of the price. Same hover photo and glow as the listing card.
 const ProductTile = ({
   product,
   sizes,
@@ -32,6 +32,10 @@ const ProductTile = ({
     typeof shortName === "string" && shortName.trim()
       ? shortName
       : product.type?.value
+  const primaryImage = product.thumbnail || product.images?.[0]?.url
+  const hoverImage = product.images?.find(
+    (image) => image.url && image.url !== primaryImage
+  )?.url
 
   return (
     <LocalizedClientLink
@@ -41,7 +45,9 @@ const ProductTile = ({
     >
       <ProductCard>
         <ProductCardImage
-          src={product.thumbnail || product.images?.[0]?.url}
+          src={primaryImage}
+          hoverSrc={hoverImage}
+          glow
           alt={product.title}
           sizes={sizes}
           priority={priority}

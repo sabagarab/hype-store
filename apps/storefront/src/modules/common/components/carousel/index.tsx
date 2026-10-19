@@ -1,6 +1,7 @@
 "use client"
 
 import useEmblaCarousel from "embla-carousel-react"
+import { useReducedMotion } from "motion/react"
 import * as React from "react"
 
 import { clx } from "@modules/common/components/ui"
@@ -10,7 +11,9 @@ import { clx } from "@modules/common/components/ui"
 // Adapted: Embla 8 (stable) instead of the v9 release candidate, no
 // autoplay/fade/wheel plugins or arrow buttons (swipe and dots only), brand
 // colors and the shared timing on the dots. A single slide renders without
-// dots and can't be dragged.
+// dots and can't be dragged. The dots render from the first (server) paint so
+// nothing shifts once Embla starts, and dot taps jump instantly for reduced
+// motion.
 
 type CarouselApi = ReturnType<typeof useEmblaCarousel>[1]
 
@@ -19,6 +22,7 @@ type CarouselContextValue = {
   viewportRef: ReturnType<typeof useEmblaCarousel>[0]
   selectedIndex: number
   snapCount: number
+  slideNoun: string
   scrollTo: (index: number) => void
 }
 
@@ -38,6 +42,8 @@ type CarouselProps = React.ComponentPropsWithoutRef<"div"> & {
   align?: "start" | "center" | "end"
   loop?: boolean
   slideCount: number
+  /** Word used in the dot labels, e.g. "Go to image 2 of 4". */
+  slideNoun?: string
 }
 
 export function Carousel({
@@ -45,6 +51,7 @@ export function Carousel({
   align = "start",
   loop = false,
   slideCount,
+  slideNoun = "slide",
   className,
   children,
   ...rest
@@ -56,7 +63,9 @@ export function Carousel({
     active: slideCount > 1,
   })
   const [selectedIndex, setSelectedIndex] = React.useState(0)
-  const [snapCount, setSnapCount] = React.useState(0)
+  // Before Embla measures, one snap per slide (true for full-width slides).
+  const [snapCount, setSnapCount] = React.useState(slideCount)
+  const reduceMotion = useReducedMotion()
 
   React.useEffect(() => {
     if (!api) {
@@ -75,11 +84,14 @@ export function Carousel({
     }
   }, [api])
 
-  const scrollTo = React.useCallback((index: number) => api?.scrollTo(index), [api])
+  const scrollTo = React.useCallback(
+    (index: number) => api?.scrollTo(index, !!reduceMotion),
+    [api, reduceMotion]
+  )
 
   const value = React.useMemo(
-    () => ({ api, viewportRef, selectedIndex, snapCount, scrollTo }),
-    [api, viewportRef, selectedIndex, snapCount, scrollTo]
+    () => ({ api, viewportRef, selectedIndex, snapCount, slideNoun, scrollTo }),
+    [api, viewportRef, selectedIndex, snapCount, slideNoun, scrollTo]
   )
 
   return (
@@ -132,7 +144,7 @@ export function CarouselSlide({
 }
 
 export function CarouselPagination({ className }: { className?: string }) {
-  const { snapCount, selectedIndex, scrollTo } = useCarousel()
+  const { snapCount, selectedIndex, slideNoun, scrollTo } = useCarousel()
 
   if (snapCount <= 1) {
     return null
@@ -150,7 +162,7 @@ export function CarouselPagination({ className }: { className?: string }) {
           <button
             key={index}
             type="button"
-            aria-label={`Go to slide ${index + 1}`}
+            aria-label={`Go to ${slideNoun} ${index + 1} of ${snapCount}`}
             aria-current={active ? "true" : undefined}
             onClick={() => scrollTo(index)}
             // 44px tall tap target around a small dot.

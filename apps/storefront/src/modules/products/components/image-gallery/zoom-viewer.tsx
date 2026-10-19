@@ -75,7 +75,7 @@ const ZoomViewer = ({
         }}
       >
         <div
-          className="absolute inset-0 transition-transform duration-300 ease-out motion-reduce:transition-none"
+          className="absolute inset-0 transition-transform duration-slow ease-premium motion-reduce:transition-none"
           style={{
             transform: `scale(${zoomed ? ZOOM : 1})`,
             transformOrigin: origin,
@@ -101,7 +101,7 @@ const ZoomViewer = ({
             type="button"
             aria-label="Previous image"
             onClick={() => go(-1)}
-            className="glass absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-bone transition-colors duration-200 hover:text-ember"
+            className="glass absolute left-4 top-1/2 z-10 flex h-control-sm w-11 -translate-y-1/2 items-center justify-center rounded-control text-bone transition-colors duration-base ease-premium hover:text-ember"
           >
             <ChevronLeftMini />
           </button>
@@ -109,13 +109,13 @@ const ZoomViewer = ({
             type="button"
             aria-label="Next image"
             onClick={() => go(1)}
-            className="glass absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-bone transition-colors duration-200 hover:text-ember"
+            className="glass absolute right-4 top-1/2 z-10 flex h-control-sm w-11 -translate-y-1/2 items-center justify-center rounded-control text-bone transition-colors duration-base ease-premium hover:text-ember"
           >
             <ChevronRightMini />
           </button>
           <p
             aria-live="polite"
-            className="glass absolute bottom-[calc(env(safe-area-inset-bottom)+1rem)] left-1/2 z-10 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-medium text-bone"
+            className="glass absolute bottom-[calc(env(safe-area-inset-bottom)+1rem)] left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1 text-xs font-medium text-bone"
           >
             {index + 1} / {count}
           </p>

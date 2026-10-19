@@ -37,7 +37,7 @@ export const buttonClass = ({
 } = {}) =>
   clx(
     "inline-flex select-none items-center justify-center whitespace-nowrap rounded-control font-bold uppercase tracking-wide",
-    "transition-[color,background-color,border-color,transform] duration-base ease-premium active:scale-[0.98] motion-reduce:active:scale-100",
+    "transition-[color,background-color,border-color,transform] duration-press ease-premium active:scale-[0.98] motion-reduce:active:scale-100",
     "disabled:pointer-events-none disabled:opacity-50",
     VARIANTS[variant],
     SIZES[size],

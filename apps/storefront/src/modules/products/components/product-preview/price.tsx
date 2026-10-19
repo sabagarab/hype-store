@@ -16,7 +16,7 @@ export default function PreviewPrice({
     <>
       {price.price_type === "sale" && !soldOut && (
         <Text
-          className="line-through text-ui-fg-muted"
+          className="line-through text-bone/55"
           data-testid="original-price"
         >
           {price.original_price}
@@ -25,7 +25,7 @@ export default function PreviewPrice({
       <Text
         className={clx(
           "font-medium",
-          soldOut ? "text-ui-fg-muted line-through" : "text-ember"
+          soldOut ? "text-bone/55 line-through" : "text-ember"
         )}
         data-testid="price"
       >

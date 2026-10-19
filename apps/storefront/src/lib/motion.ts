@@ -3,6 +3,8 @@
 // Every 21st component is adapted to use these instead of its own springs.
 
 export const DURATION = {
+  /** Tactile press on tap (active:scale-[0.98]). */
+  press: 0.12,
   fast: 0.15,
   base: 0.2,
   slow: 0.3,

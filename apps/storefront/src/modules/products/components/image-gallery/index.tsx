@@ -1,8 +1,14 @@
 "use client"
 
 import { HttpTypes } from "@medusajs/types"
-import { useRef, useState } from "react"
+import { useState } from "react"
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselPagination,
+  CarouselSlide,
+} from "@modules/common/components/carousel"
 import FadeInImage from "@modules/common/components/fade-in-image"
 import ImagePlaceholder from "@modules/common/components/image-placeholder"
 import {
@@ -40,7 +46,7 @@ const ZoomableImage = ({
     <MorphingDialog>
       <MorphingDialogTrigger
         aria-label={`Open image ${index + 1} of ${images.length} fullscreen`}
-        className="block aspect-[4/5] w-full overflow-hidden rounded-large bg-ink"
+        className="block aspect-[4/5] w-full overflow-hidden rounded-card bg-ink"
       >
         <FadeInImage
           src={image.url}
@@ -66,20 +72,13 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
     image.url ? [{ kind: "image" as const, id: image.id, url: image.url }] : []
   )
   const [active, setActive] = useState(0)
-  const [slide, setSlide] = useState(0)
-  const trackRef = useRef<HTMLDivElement>(null)
 
   if (!items.length) {
     return (
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-large">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-card">
         <ImagePlaceholder />
       </div>
     )
-  }
-
-  const goToSlide = (index: number) => {
-    const track = trackRef.current
-    track?.scrollTo({ left: index * track.clientWidth, behavior: "smooth" })
   }
 
   return (
@@ -95,7 +94,7 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
               aria-label={`Show image ${i + 1} of ${items.length}`}
               aria-current={i === active}
               className={clx(
-                "relative aspect-[4/5] w-full shrink-0 overflow-hidden rounded-rounded bg-ink transition-opacity duration-200",
+                "relative aspect-[4/5] w-full shrink-0 overflow-hidden rounded-rounded bg-ink transition-opacity duration-base ease-premium",
                 i === active
                   ? "ring-2 ring-ember ring-offset-2 ring-offset-black"
                   : "opacity-60 hover:opacity-100"
@@ -121,49 +120,29 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
         />
       </div>
 
-      {/* Mobile: full-width swipeable images with dot indicators. */}
-      <div className="-mx-6 small:hidden">
-        <div
-          ref={trackRef}
-          className="flex snap-x snap-mandatory overflow-x-auto no-scrollbar motion-reduce:scroll-auto"
-          onScroll={(e) => {
-            const track = e.currentTarget
-            setSlide(Math.round(track.scrollLeft / track.clientWidth))
-          }}
-        >
+      {/* Mobile: the 21st Carousel, full-width swipeable images with dots. */}
+      <Carousel
+        label={`${title} images`}
+        slideCount={items.length}
+        slideNoun="image"
+        className="-mx-6 small:hidden"
+      >
+        <CarouselContent>
           {items.map((item, i) => (
-            <div key={item.id} className="w-full shrink-0 snap-center px-6">
-              <ZoomableImage
-                images={items}
-                index={i}
-                title={title}
-                priority={i === 0}
-              />
-            </div>
-          ))}
-        </div>
-        {items.length > 1 && (
-          <div className="mt-3 flex justify-center gap-1">
-            {items.map((item, i) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => goToSlide(i)}
-                aria-label={`Go to image ${i + 1} of ${items.length}`}
-                aria-current={i === slide}
-                className="flex h-11 w-6 items-center justify-center"
-              >
-                <span
-                  className={clx(
-                    "block h-1.5 rounded-full transition-all duration-200 motion-reduce:transition-none",
-                    i === slide ? "w-4 bg-ember" : "w-1.5 bg-bone/30"
-                  )}
+            <CarouselSlide key={item.id} index={i} total={items.length}>
+              <div className="px-6">
+                <ZoomableImage
+                  images={items}
+                  index={i}
+                  title={title}
+                  priority={i === 0}
                 />
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+              </div>
+            </CarouselSlide>
+          ))}
+        </CarouselContent>
+        <CarouselPagination className="mt-1 justify-center" />
+      </Carousel>
     </div>
   )
 }

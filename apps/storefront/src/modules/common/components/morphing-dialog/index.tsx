@@ -18,6 +18,7 @@ import React, {
 } from "react"
 import { createPortal } from "react-dom"
 
+import { DURATION, EASE_PREMIUM } from "@lib/motion"
 import { clx } from "@modules/common/components/ui"
 
 // Adapted from Motion Primitives' MorphingDialog
@@ -26,7 +27,8 @@ import { clx } from "@modules/common/components/ui"
 // shadcn colors, @medusajs/icons instead of lucide, focus returns to the
 // trigger on close (the original never set the trigger ref), triggers take a
 // real aria-label, and MotionConfig uses reducedMotion="user" so the morph is
-// skipped for people who prefer reduced motion.
+// skipped for people who prefer reduced motion. The morph and backdrop run on
+// the shared slow duration and premium ease instead of the original spring.
 
 type MorphingDialogContextType = {
   isOpen: boolean
@@ -47,9 +49,8 @@ export function useMorphingDialog() {
 }
 
 const DEFAULT_TRANSITION: Transition = {
-  type: "spring",
-  bounce: 0,
-  duration: 0.3,
+  duration: DURATION.slow,
+  ease: EASE_PREMIUM,
 }
 
 export function MorphingDialog({
@@ -232,7 +233,7 @@ export function MorphingDialogClose({ className }: { className?: string }) {
       onClick={close}
       aria-label="Close"
       className={clx(
-        "flex h-11 w-11 items-center justify-center rounded-full glass text-bone transition-colors duration-200 hover:text-ember",
+        "flex h-control-sm w-11 items-center justify-center rounded-control glass text-bone transition-colors duration-base ease-premium hover:text-ember",
         className
       )}
     >

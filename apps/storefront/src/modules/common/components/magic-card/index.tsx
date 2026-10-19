@@ -33,6 +33,8 @@ const MagicCard = ({
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
+      // Mouse only, so a tap or scroll on a phone never lights the border.
+      if (e.pointerType !== "mouse") return
       const rect = e.currentTarget.getBoundingClientRect()
       mouseX.set(e.clientX - rect.left)
       mouseY.set(e.clientY - rect.top)
@@ -89,7 +91,7 @@ const MagicCard = ({
       <motion.div
         aria-hidden="true"
         suppressHydrationWarning
-        className="pointer-events-none absolute inset-0 z-20 hidden rounded-[inherit] opacity-0 transition-opacity duration-300 [@media(hover:hover)]:block [@media(hover:hover)]:group-hover/magic:opacity-100 motion-reduce:!hidden"
+        className="pointer-events-none absolute inset-0 z-20 hidden rounded-[inherit] opacity-0 transition-opacity duration-slow ease-premium [@media(hover:hover)]:block [@media(hover:hover)]:group-hover/magic:opacity-100 motion-reduce:!hidden"
         style={{ background: glowBackground }}
       />
     </motion.div>
