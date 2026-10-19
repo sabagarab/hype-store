@@ -42,7 +42,7 @@ export default async function PageLayout(props: {
   return (
     <CartDrawerProvider>
       <AnnouncementBar />
-      <Nav />
+      <Nav countryCode={countryCode} />
       {customer && cart && (
         <CartMismatchBanner customer={customer} cart={cart} />
       )}

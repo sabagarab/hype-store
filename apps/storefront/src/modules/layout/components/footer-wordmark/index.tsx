@@ -1,11 +1,11 @@
 "use client"
 
 import { motion, useInView } from "motion/react"
-import { useId, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 // Adapted from Aceternity UI's Text Hover Effect (https://ui.aceternity.com,
 // MIT). Changes: ember gradient instead of the rainbow, Satoshi Black, the
-// text stretches to the full width (fits any STORE_NAME), unique SVG ids, and
+// text stretches to the full width (fits any STORE_NAME), and
 // the outline draws in once (~1.5s, the footer's "wow" exception to the 300ms
 // rule) when the footer scrolls into view instead of on page load. With
 // reduced motion the outline is shown complete (CSS override, so server and
@@ -14,7 +14,9 @@ const VIEW_W = 1000
 const VIEW_H = 200
 
 const FooterWordmark = ({ text }: { text: string }) => {
-  const id = useId().replace(/:/g, "")
+  // Fixed SVG ids: the wordmark renders once per page (in the footer), and
+  // useId-based ids didn't match between server and client here.
+  const id = "footer-wordmark"
   const svgRef = useRef<SVGSVGElement>(null)
   const inView = useInView(svgRef, { once: true, margin: "-80px" })
   const [hovered, setHovered] = useState(false)

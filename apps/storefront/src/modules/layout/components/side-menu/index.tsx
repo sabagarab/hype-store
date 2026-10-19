@@ -1,149 +1,157 @@
 "use client"
 
-import { Popover, PopoverPanel, Transition } from "@headlessui/react"
-import useToggleState from "@lib/hooks/use-toggle-state"
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react"
 import { ArrowRightMini, XMark } from "@medusajs/icons"
-import { HttpTypes } from "@medusajs/types"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { Text, clx } from "@modules/common/components/ui"
+import { motion } from "motion/react"
+import { usePathname } from "next/navigation"
 import { Fragment } from "react"
-import CountrySelect from "../country-select"
-import LanguageSelect from "../language-select"
-import { Locale } from "@lib/data/locales"
+
 import { STORE_NAME } from "@lib/constants"
+import { Brand } from "@lib/data/brands"
+import { Locale } from "@lib/data/locales"
+import useToggleState from "@lib/hooks/use-toggle-state"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { clx } from "@modules/common/components/ui"
+import LanguageSelect from "../language-select"
 
-
-const SideMenuItems = {
-  Home: "/",
-  Store: "/store",
-  Account: "/account",
-  Cart: "/cart",
-}
-
-type SideMenuProps = {
-  regions: HttpTypes.StoreRegion[] | null
+type MenuSheetProps = {
+  open: boolean
+  onClose: () => void
+  brands: Brand[]
   locales: Locale[] | null
   currentLocale: string | null
 }
 
-const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
-  const countryToggleState = useToggleState()
+// Full-screen glass menu (phones/tablets via "Menu", desktop via "Brands").
+// Headless UI's Dialog provides the focus trap, Esc to close, scroll lock and
+// focus return. Links stagger in (≤300ms in total); with reduced motion they
+// appear at once (CSS overrides, so server and client markup match).
+const MenuSheet = ({
+  open,
+  onClose,
+  brands,
+  locales,
+  currentLocale,
+}: MenuSheetProps) => {
+  const pathname = usePathname()
   const languageToggleState = useToggleState()
-  // Only offer a country switch when the storefront serves more than one.
-  const countryCount =
-    regions?.reduce((n, region) => n + (region.countries?.length ?? 0), 0) ?? 0
+
+  const links = [
+    { label: "Store", href: "/store" },
+    ...brands.map((brand) => ({
+      label: brand.name,
+      href: `/brands/${brand.handle}`,
+    })),
+    { label: "Delivery & returns", href: "/delivery-returns" },
+    { label: "Contact", href: "/contact" },
+    { label: "Account", href: "/account" },
+  ]
+
+  // pathname includes the country prefix, e.g. /lb/store.
+  const isCurrent = (href: string) =>
+    pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") === href
 
   return (
-    <div className="h-full">
-      <div className="flex items-center h-full">
-        <Popover className="h-full flex">
-          {({ open, close }) => (
-            <>
-              <div className="relative flex h-full">
-                <Popover.Button
-                  data-testid="nav-menu-button"
-                  className="relative h-11 min-w-[44px] flex items-center transition-colors ease-out duration-200 hover:text-ember"
-                >
-                  Menu
-                </Popover.Button>
-              </div>
-
-              {open && (
-                <div
-                  className="fixed inset-0 z-[50] bg-black/0 pointer-events-auto"
-                  onClick={close}
-                  data-testid="side-menu-backdrop"
-                />
-              )}
-
-              <Transition
-                show={open}
-                as={Fragment}
-                enter="transition ease-out duration-150"
-                enterFrom="opacity-0"
-                enterTo="opacity-100 backdrop-blur-2xl"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 backdrop-blur-2xl"
-                leaveTo="opacity-0"
+    <Transition show={open} as={Fragment}>
+      <Dialog onClose={onClose} className="relative z-[85]">
+        <TransitionChild
+          as={Fragment}
+          enter="ease-out duration-200 motion-reduce:duration-0"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-150 motion-reduce:duration-0"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <DialogPanel
+            className="glass fixed inset-0 flex flex-col overflow-y-auto px-6 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-[calc(env(safe-area-inset-bottom)+1.5rem)]"
+            data-testid="nav-menu-popup"
+          >
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-xl font-black uppercase tracking-tight text-bone">
+                {STORE_NAME}
+              </DialogTitle>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close menu"
+                className="-mr-3 flex h-11 w-11 items-center justify-center rounded-full text-bone transition-colors duration-200 hover:text-ember"
+                data-testid="close-menu-button"
               >
-                <PopoverPanel className="flex flex-col absolute w-full pr-4 sm:pr-0 sm:w-1/3 2xl:w-1/4 sm:min-w-min h-[calc(100vh-1rem)] z-[51] inset-x-0 text-sm text-ui-fg-on-color m-2 backdrop-blur-2xl">
-                  <div
-                    data-testid="nav-menu-popup"
-                    className="flex flex-col h-full bg-[rgba(3,7,18,0.5)] rounded-rounded justify-between p-6"
+                <XMark />
+              </button>
+            </div>
+
+            <nav
+              aria-label="Menu"
+              className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center py-10"
+            >
+              <ul className="flex flex-col gap-y-1">
+                {links.map((link, index) => (
+                  <motion.li
+                    key={link.href}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    // Last link starts by 80ms and finishes by 300ms, however
+                    // many brands there are.
+                    transition={{
+                      duration: 0.22,
+                      delay: Math.min(index * 0.02, 0.08),
+                      ease: "easeOut",
+                    }}
+                    className="motion-reduce:!transform-none motion-reduce:!opacity-100"
                   >
-                    <div className="flex justify-end" id="xmark">
-                      <button data-testid="close-menu-button" onClick={close}>
-                        <XMark />
-                      </button>
-                    </div>
-                    <ul className="flex flex-col gap-6 items-start justify-start">
-                      {Object.entries(SideMenuItems).map(([name, href]) => {
-                        return (
-                          <li key={name}>
-                            <LocalizedClientLink
-                              href={href}
-                              className="text-3xl leading-10 hover:text-ui-fg-disabled"
-                              onClick={close}
-                              data-testid={`${name.toLowerCase()}-link`}
-                            >
-                              {name}
-                            </LocalizedClientLink>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                    <div className="flex flex-col gap-y-6">
-                      {!!locales?.length && (
-                        <div
-                          className="flex justify-between"
-                          onMouseEnter={languageToggleState.open}
-                          onMouseLeave={languageToggleState.close}
-                        >
-                          <LanguageSelect
-                            toggleState={languageToggleState}
-                            locales={locales}
-                            currentLocale={currentLocale}
-                          />
-                          <ArrowRightMini
-                            className={clx(
-                              "transition-transform duration-150",
-                              languageToggleState.state ? "-rotate-90" : ""
-                            )}
-                          />
-                        </div>
+                    <LocalizedClientLink
+                      href={link.href}
+                      onClick={onClose}
+                      aria-current={isCurrent(link.href) ? "page" : undefined}
+                      className={clx(
+                        "flex min-h-[44px] items-center py-1 text-4xl font-black uppercase leading-tight tracking-tight transition-colors duration-200 hover:text-ember small:text-6xl",
+                        isCurrent(link.href) ? "text-ember" : "text-bone"
                       )}
-                      {regions && countryCount > 1 && (
-                        <div
-                          className="flex justify-between"
-                          onMouseEnter={countryToggleState.open}
-                          onMouseLeave={countryToggleState.close}
-                        >
-                          <CountrySelect
-                            toggleState={countryToggleState}
-                            regions={regions}
-                          />
-                          <ArrowRightMini
-                            className={clx(
-                              "transition-transform duration-150",
-                              countryToggleState.state ? "-rotate-90" : ""
-                            )}
-                          />
-                        </div>
-                      )}
-                      <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} {STORE_NAME}. All rights
-                        reserved.
-                      </Text>
-                    </div>
-                  </div>
-                </PopoverPanel>
-              </Transition>
-            </>
-          )}
-        </Popover>
-      </div>
-    </div>
+                    >
+                      {link.label}
+                    </LocalizedClientLink>
+                  </motion.li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="mx-auto flex w-full max-w-3xl flex-col gap-y-4 text-sm text-bone/55">
+              {locales && locales.length > 1 && (
+                <div
+                  className="flex justify-between"
+                  onMouseEnter={languageToggleState.open}
+                  onMouseLeave={languageToggleState.close}
+                >
+                  <LanguageSelect
+                    toggleState={languageToggleState}
+                    locales={locales}
+                    currentLocale={currentLocale}
+                  />
+                  <ArrowRightMini
+                    className={clx(
+                      "transition-transform duration-150",
+                      languageToggleState.state ? "-rotate-90" : ""
+                    )}
+                  />
+                </div>
+              )}
+              <p>
+                © {new Date().getFullYear()} {STORE_NAME}. All rights reserved.
+              </p>
+            </div>
+          </DialogPanel>
+        </TransitionChild>
+      </Dialog>
+    </Transition>
   )
 }
 
-export default SideMenu
+export default MenuSheet
