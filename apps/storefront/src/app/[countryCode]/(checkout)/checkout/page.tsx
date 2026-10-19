@@ -40,7 +40,8 @@ export default async function Checkout(props: {
         <TrustStrip
           deliveryAmount={deliveryAmount}
           currencyCode={cart.currency_code}
-          className="content-container py-3 text-xs"
+          size="sm"
+          className="content-container py-3"
         />
       </div>
       <div className="grid grid-cols-1 small:grid-cols-[1fr_416px] content-container gap-x-40 py-12">

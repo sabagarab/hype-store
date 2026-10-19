@@ -2,6 +2,7 @@ import { Cash, ChatBubbleLeftRight, MapPin, TruckFast } from "@medusajs/icons"
 
 import { whatsappUrl } from "@lib/social"
 import { convertToLocale } from "@lib/util/money"
+import Badge from "@modules/common/components/badge"
 import { clx } from "@modules/common/components/ui"
 import { TRUST_STRIP_CONTENT, TrustIcon } from "./content"
 
@@ -12,18 +13,22 @@ const ICONS: Record<TrustIcon, typeof Cash> = {
 }
 
 type TrustStripProps = {
-  /** Price of the "Delivery" shipping option; null hides price-based items. */
-  deliveryAmount: number | null
+  /**
+   * Price of the "Delivery" shipping option. Pass it only at the end of the
+   * flow (cart drawer, checkout); without it, price-based items are hidden.
+   */
+  deliveryAmount?: number | null
   currencyCode?: string
+  size?: "md" | "sm"
   className?: string
 }
 
-// Static row of reassurances (payment, delivery area, delivery price). No
-// animation on purpose: it has to read instantly. Wraps onto two lines on
-// narrow phones.
+// Row of reassurance badges (payment, delivery area, delivery price). Static
+// on purpose so it reads instantly; wraps on narrow phones.
 const TrustStrip = ({
-  deliveryAmount,
+  deliveryAmount = null,
   currencyCode = "usd",
+  size = "md",
   className,
 }: TrustStripProps) => {
   const deliveryPrice =
@@ -47,18 +52,17 @@ const TrustStrip = ({
 
   return (
     <ul
-      className={clx(
-        "flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-bone/70",
-        className
-      )}
+      className={clx("flex flex-wrap items-center gap-2", className)}
       data-testid="trust-strip"
     >
       {items.map((item) => {
         const Icon = ICONS[item.icon]
         return (
-          <li key={item.id} className="flex items-center gap-x-1.5">
-            <Icon className="shrink-0 text-ember" aria-hidden="true" />
-            {item.text}
+          <li key={item.id}>
+            <Badge size={size}>
+              <Icon aria-hidden="true" />
+              {item.text}
+            </Badge>
           </li>
         )
       })}
@@ -68,10 +72,15 @@ const TrustStrip = ({
             href={whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-[44px] items-center gap-x-1.5 underline-offset-4 transition-colors duration-200 hover:text-bone hover:underline"
+            className="flex min-h-[44px] items-center rounded-control"
           >
-            <ChatBubbleLeftRight className="shrink-0 text-ember" aria-hidden="true" />
-            {TRUST_STRIP_CONTENT.whatsappLabel}
+            <Badge
+              size={size}
+              className="transition-colors duration-base ease-premium hover:text-bone"
+            >
+              <ChatBubbleLeftRight aria-hidden="true" />
+              {TRUST_STRIP_CONTENT.whatsappLabel}
+            </Badge>
           </a>
         </li>
       )}

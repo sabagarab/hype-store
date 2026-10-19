@@ -3,7 +3,7 @@
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react"
 import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
-import { Fragment } from "react"
+import { Fragment, useEffect } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import NumberTicker from "@modules/common/components/number-ticker"
@@ -19,6 +19,8 @@ type CartDrawerProps = {
   deliveryAmount: number | null
 }
 
+const PENDING_OPEN_FALLBACK_MS = 2500
+
 const BUTTON_CLASS =
   "flex h-[52px] w-full items-center justify-center rounded-full text-base font-bold uppercase tracking-wide transition-colors duration-200"
 
@@ -26,8 +28,26 @@ const BUTTON_CLASS =
 // Dialog provides the focus trap, Esc/click-outside to close, scroll lock and
 // focus return.
 const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
-  const { isOpen, closeCart } = useCartDrawer()
+  const { isOpen, openCart, closeCart, pendingVariantId } = useCartDrawer()
   const items = cart?.items ?? []
+
+  // Opened via openCartFor(): wait until the refreshed cart contains the
+  // variant. The fallback opens it anyway if the refresh is slow.
+  const hasPendingVariant =
+    !!pendingVariantId &&
+    items.some((item) => item.variant_id === pendingVariantId)
+
+  useEffect(() => {
+    if (!pendingVariantId) {
+      return
+    }
+    if (hasPendingVariant) {
+      openCart()
+      return
+    }
+    const fallback = setTimeout(openCart, PENDING_OPEN_FALLBACK_MS)
+    return () => clearTimeout(fallback)
+  }, [pendingVariantId, hasPendingVariant, openCart])
   const currencyCode = cart?.currency_code ?? "usd"
   const { lineInfo, hasUnavailable } = useCartProducts(cart)
 
@@ -121,7 +141,7 @@ const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
                     <TrustStrip
                       deliveryAmount={deliveryAmount}
                       currencyCode={currencyCode}
-                      className="gap-x-4 text-xs"
+                      size="sm"
                     />
 
                     {hasUnavailable && (

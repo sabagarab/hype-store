@@ -86,6 +86,12 @@ Exact hex values live in `tailwind.config.js`. Don't introduce new colors withou
 - Accessibility: WCAG AA contrast, real `alt` text, keyboard focus states visible (use `ember` for focus rings).
 - Remove Medusa/Next.js starter branding (e.g. "Medusa Store", "Powered by Medusa", GitHub CTAs) as we reskin.
 
+**UI components (standing rule)**
+- **Every visible UI component comes from 21st.dev.** Don't design components yourself: find the best 21st component, install it, and adapt it to our tokens (black, ink, bone, ember, ember-deep, Satoshi). Custom code is only for wiring and data (Medusa calls, state, config), never for how things look.
+- Keep installed components in `src/modules/common/components/<name>/` (starter folder structure) with a header comment naming the 21st source and author.
+- **Consistency:** all components must look like one family: same corner radius, border, glass treatment, shadow, spacing scale and motion timing. These are defined once as shared tokens (`tailwind.config.js`, `src/styles/globals.css`, `src/lib/motion.ts`); every 21st component is adapted to them, replacing its own colors, radii, shadows and springs. If two candidates are equally good, pick the one closest to what we already have.
+- **Choosing:** for each need, compare a few 21st options and pick the single best one for a dark, premium, StockX-like streetwear store on phones. Report the pick and why in one line; don't offer a menu.
+
 ## 6. Business rules (must hold everywhere)
 
 1. **One-of-one items**: a product normally has 1 variant with inventory = 1. When sold it must show **"Sold"** (or drop off listings, configurable), never allow overselling. Rely on Medusa inventory + reservations; don't build a parallel stock system.

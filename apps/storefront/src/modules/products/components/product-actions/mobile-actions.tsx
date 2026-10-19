@@ -1,5 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react"
-import { Button, clx } from "@modules/common/components/ui"
+import LoadingButton from "@modules/common/components/loading-button"
+import StickyBar from "@modules/common/components/sticky-bar"
+import { clx } from "@modules/common/components/ui"
 import React, { Fragment, useMemo } from "react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
@@ -18,8 +20,9 @@ type MobileActionsProps = {
   soldOut: boolean
   soldOutValues: (optionId: string) => string[]
   selectLabel: string
-  handleAddToCart: () => void
-  isAdding?: boolean
+  handleAddToCart: () => Promise<void>
+  /** Label the add buttons show after a successful add. */
+  successLabel: string
   show: boolean
   optionsDisabled: boolean
 }
@@ -37,7 +40,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   soldOutValues,
   selectLabel,
   handleAddToCart,
-  isAdding,
+  successLabel,
   show,
   optionsDisabled,
 }) => {
@@ -63,68 +66,58 @@ const MobileActions: React.FC<MobileActionsProps> = ({
 
   return (
     <>
-      <div
-        className={clx("small:hidden inset-x-0 bottom-0 fixed z-50", {
-          "pointer-events-none": !show,
-        })}
+      <StickyBar
+        show={show}
+        className="small:hidden"
+        data-testid="mobile-actions"
       >
-        <Transition
-          as={Fragment}
-          show={show}
-          enter="ease-out duration-200"
-          enterFrom="opacity-0 translate-y-2"
-          enterTo="opacity-100 translate-y-0"
-          leave="ease-in duration-150"
-          leaveFrom="opacity-100 translate-y-0"
-          leaveTo="opacity-0 translate-y-2"
-        >
-          <div
-            className="glass flex items-center gap-x-3 border-t border-bone/10 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
-            data-testid="mobile-actions"
+        <div className="flex min-w-0 flex-1 flex-col">
+          <span
+            className="truncate text-xs text-bone/70"
+            data-testid="mobile-title"
           >
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span
-                className="truncate text-xs text-bone/70"
-                data-testid="mobile-title"
-              >
-                {product.title}
-                {variant && hasManyVariants && (
-                  <> · {Object.values(options).join(" / ")}</>
-                )}
-              </span>
-              {selectedPrice && (
-                <span
-                  className={clx(
-                    "text-base font-bold",
-                    soldOut ? "text-ui-fg-muted line-through" : "text-ember"
-                  )}
-                >
-                  {selectedPrice.calculated_price}
-                </span>
-              )}
-            </div>
-            <Button
-              onClick={needsSelection ? open : handleAddToCart}
-              disabled={soldOut || (!needsSelection && (!inStock || !variant))}
+            {product.title}
+            {variant && hasManyVariants && (
+              <> · {Object.values(options).join(" / ")}</>
+            )}
+          </span>
+          {selectedPrice && (
+            <span
               className={clx(
-                "h-11 shrink-0 rounded-full px-6 text-sm font-bold uppercase tracking-wide",
-                soldOut &&
-                  "!bg-ink !text-bone/60 border border-ui-border-base !opacity-100"
+                "text-base font-bold",
+                soldOut ? "text-bone/50 line-through" : "text-ember"
               )}
-              isLoading={isAdding}
-              data-testid="mobile-cart-button"
             >
-              {soldOut
-                ? "Sold"
-                : needsSelection
-                ? selectLabel
-                : !inStock
-                ? "Out of stock"
-                : "Add to cart"}
-            </Button>
-          </div>
-        </Transition>
-      </div>
+              {selectedPrice.calculated_price}
+            </span>
+          )}
+        </div>
+        {needsSelection ? (
+          // Opening the size sheet is instant, so this press resets at once;
+          // it uses the same button for one look across the bar.
+          <LoadingButton
+            onAction={open}
+            size="sm"
+            resetAfter={0}
+            className="shrink-0"
+            data-testid="mobile-cart-button"
+          >
+            {selectLabel}
+          </LoadingButton>
+        ) : (
+          <LoadingButton
+            onAction={handleAddToCart}
+            disabled={soldOut || !inStock || !variant}
+            size="sm"
+            pendingLabel="Adding"
+            successLabel={successLabel}
+            className="shrink-0"
+            data-testid="mobile-cart-button"
+          >
+            {soldOut ? "Sold" : !inStock ? "Out of stock" : "Add to cart"}
+          </LoadingButton>
+        )}
+      </StickyBar>
       <Transition appear show={state} as={Fragment}>
         <Dialog as="div" className="relative z-[75]" onClose={close}>
           <Transition.Child
@@ -179,17 +172,18 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                     />
                   ))}
                 </div>
-                <Button
-                  onClick={() => {
-                    handleAddToCart()
+                <LoadingButton
+                  onAction={async () => {
+                    await handleAddToCart()
                     close()
                   }}
                   disabled={!variant || !inStock}
-                  className="mt-6 h-[52px] w-full rounded-full text-base font-bold uppercase tracking-wide"
-                  isLoading={isAdding}
+                  pendingLabel="Adding"
+                  successLabel={successLabel}
+                  className="mt-6 w-full"
                 >
                   {!variant ? selectLabel : "Add to cart"}
-                </Button>
+                </LoadingButton>
               </Dialog.Panel>
             </Transition.Child>
           </div>

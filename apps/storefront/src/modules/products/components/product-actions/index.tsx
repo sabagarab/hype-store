@@ -9,7 +9,7 @@ import {
 } from "@lib/util/product-availability"
 import { HttpTypes } from "@medusajs/types"
 import { useCartDrawer } from "@modules/cart/components/cart-drawer/context"
-import { Button, clx } from "@modules/common/components/ui"
+import LoadingButton from "@modules/common/components/loading-button"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
@@ -44,7 +44,10 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
-  const { openCart } = useCartDrawer()
+  const [addResult, setAddResult] = useState<"added" | "already_in_cart">(
+    "added"
+  )
+  const { openCartFor } = useCartDrawer()
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -96,7 +99,8 @@ export default function ProductActions({
       params.delete("v_id")
     }
 
-    router.replace(pathname + "?" + params.toString())
+    // scroll: false keeps the page where it is when a size is picked.
+    router.replace(pathname + "?" + params.toString(), { scroll: false })
   }, [selectedVariant, isValidVariant])
 
   const soldOut = isSoldOut(product)
@@ -147,13 +151,15 @@ export default function ProductActions({
     return false
   }, [selectedVariant])
 
-  const actionsRef = useRef<HTMLDivElement>(null)
+  // The sticky bar appears once the main Add to cart button leaves the view.
+  const ctaRef = useRef<HTMLDivElement>(null)
 
-  const inView = useIntersection(actionsRef, "0px")
+  const inView = useIntersection(ctaRef, "0px")
 
-  // add the selected variant to the cart
+  // Add the selected variant to the cart. Rethrows on failure so the button
+  // shows its error state; the drawer opens once the cart shows the item.
   const handleAddToCart = async () => {
-    if (!selectedVariant?.id) return null
+    if (!selectedVariant?.id) return
 
     setIsAdding(true)
 
@@ -162,22 +168,27 @@ export default function ProductActions({
         variantId: selectedVariant.id,
         countryCode,
       })
-      openCart()
+      setAddResult(result)
+      openCartFor(selectedVariant.id)
       if (result === "already_in_cart") {
         toast("Already in your cart")
       } else {
         toast.success("Added to cart")
       }
-    } catch {
+    } catch (error) {
       toast.error("Couldn't add to cart. Please try again.")
+      throw error
     } finally {
       setIsAdding(false)
     }
   }
 
+  const successLabel =
+    addResult === "already_in_cart" ? "In your cart" : "Added"
+
   return (
     <>
-      <div className="flex flex-col gap-y-6" ref={actionsRef}>
+      <div className="flex flex-col gap-y-6">
         <ProductPrice
           product={product}
           variant={selectedVariant}
@@ -207,33 +218,30 @@ export default function ProductActions({
           </div>
         )}
 
-        <Button
-          onClick={handleAddToCart}
-          disabled={
-            soldOut ||
-            !inStock ||
-            !selectedVariant ||
-            !!disabled ||
-            isAdding ||
-            !isValidVariant
-          }
-          variant="primary"
-          className={clx(
-            "h-[52px] w-full rounded-full text-base font-bold uppercase tracking-wide",
-            soldOut &&
-              "!bg-ink !text-bone/60 border border-ui-border-base !opacity-100"
-          )}
-          isLoading={isAdding}
-          data-testid="add-product-button"
-        >
-          {soldOut
-            ? "Sold"
-            : !selectedVariant
-            ? selectLabel
-            : !inStock || !isValidVariant
-            ? "Out of stock"
-            : "Add to cart"}
-        </Button>
+        <div ref={ctaRef}>
+          <LoadingButton
+            onAction={handleAddToCart}
+            disabled={
+              soldOut ||
+              !inStock ||
+              !selectedVariant ||
+              !!disabled ||
+              !isValidVariant
+            }
+            pendingLabel="Adding"
+            successLabel={successLabel}
+            className="w-full"
+            data-testid="add-product-button"
+          >
+            {soldOut
+              ? "Sold"
+              : !selectedVariant
+              ? selectLabel
+              : !inStock || !isValidVariant
+              ? "Out of stock"
+              : "Add to cart"}
+          </LoadingButton>
+        </div>
         <MobileActions
           product={product}
           variant={selectedVariant}
@@ -244,7 +252,7 @@ export default function ProductActions({
           soldOutValues={soldOutValues}
           selectLabel={selectLabel}
           handleAddToCart={handleAddToCart}
-          isAdding={isAdding}
+          successLabel={successLabel}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
         />

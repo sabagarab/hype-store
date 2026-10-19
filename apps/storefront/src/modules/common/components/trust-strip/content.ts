@@ -2,8 +2,9 @@
 // drawer and at the top of checkout. Add, remove or reorder items here; the
 // component needs no changes.
 //
-// `label` is plain text, or a function of the formatted delivery price for
-// items that need it (those are hidden until the price is known).
+// `label` is plain text, or a function of the formatted delivery price. Price
+// items only appear where a price is passed in: the cart drawer and checkout
+// (the end of the flow), never on the hero or product page.
 
 export type TrustIcon = "cash" | "pin" | "truck"
 

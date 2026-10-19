@@ -6,6 +6,13 @@ type CartDrawerContextType = {
   isOpen: boolean
   openCart: () => void
   closeCart: () => void
+  /**
+   * Open the drawer once the cart shows this variant, so it never flashes the
+   * previous (empty) cart while the refreshed one is still on its way.
+   */
+  openCartFor: (variantId: string) => void
+  /** Variant waiting to appear before the drawer opens (read by the drawer). */
+  pendingVariantId: string | null
 }
 
 const CartDrawerContext = createContext<CartDrawerContextType | null>(null)
@@ -17,14 +24,20 @@ export const CartDrawerProvider = ({
   children: React.ReactNode
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [pendingVariantId, setPendingVariantId] = useState<string | null>(null)
 
   const value = useMemo(
     () => ({
       isOpen,
-      openCart: () => setIsOpen(true),
+      openCart: () => {
+        setPendingVariantId(null)
+        setIsOpen(true)
+      },
       closeCart: () => setIsOpen(false),
+      openCartFor: (variantId: string) => setPendingVariantId(variantId),
+      pendingVariantId,
     }),
-    [isOpen]
+    [isOpen, pendingVariantId]
   )
 
   return (

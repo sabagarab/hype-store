@@ -50,6 +50,37 @@ module.exports = {
         rounded: "8px",
         large: "16px",
         circle: "9999px",
+        // Shared component tokens (see "UI components" in CLAUDE.md): every
+        // surface (cards, sheets, images) uses `card`, every control (buttons,
+        // pills, badges, inputs) uses `control`.
+        card: "16px",
+        control: "9999px",
+      },
+      borderColor: {
+        // One hairline border for every component.
+        hairline: "rgb(var(--color-bone) / 0.1)",
+      },
+      boxShadow: {
+        // Floating glass surfaces (bars, sheets, drawers).
+        glass: "0 -8px 32px -12px rgb(var(--color-black) / 0.7)",
+      },
+      height: {
+        // Primary CTA and secondary control heights (both >= 44px tap target).
+        control: "52px",
+        "control-sm": "44px",
+      },
+      minHeight: {
+        control: "52px",
+        "control-sm": "44px",
+      },
+      transitionDuration: {
+        // Motion timing tokens; mirrored for motion/react in src/lib/motion.ts.
+        fast: "150ms",
+        base: "200ms",
+        slow: "300ms",
+      },
+      transitionTimingFunction: {
+        premium: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
       maxWidth: {
         "8xl": "100rem",

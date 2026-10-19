@@ -23,14 +23,7 @@ const fillSlots = (products: HeroProduct[]) =>
     (_, i) => products[i % products.length]
   )
 
-type HeroProps = {
-  products: HeroProduct[]
-  /** Price of the "Delivery" shipping option for the trust strip. */
-  deliveryAmount: number | null
-  currencyCode: string
-}
-
-const Hero = ({ products, deliveryAmount, currencyCode }: HeroProps) => {
+const Hero = ({ products }: { products: HeroProduct[] }) => {
   const hasParallax = products.length >= PARALLAX_MIN_PRODUCTS
   const hasRow = products.length >= ROW_MIN_PRODUCTS
 
@@ -59,11 +52,7 @@ const Hero = ({ products, deliveryAmount, currencyCode }: HeroProps) => {
           <ShimmerLink href={HERO_CONTENT.cta.href} data-testid="hero-cta">
             {HERO_CONTENT.cta.label}
           </ShimmerLink>
-          <TrustStrip
-            deliveryAmount={deliveryAmount}
-            currencyCode={currencyCode}
-            className="pt-2"
-          />
+          <TrustStrip className="pt-2" />
         </div>
 
         {hasRow && (
