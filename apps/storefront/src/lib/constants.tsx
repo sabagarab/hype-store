@@ -53,5 +53,5 @@ export const noDivisionCurrencies = [
   "xau",
 ]
 
-// Store brand name. Not final yet: change it here only.
-export const STORE_NAME = "STORE"
+// Store brand name (1OF1). Change it here only; never hard-code it.
+export const STORE_NAME = "1OF1"

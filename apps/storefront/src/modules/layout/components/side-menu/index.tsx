@@ -16,6 +16,7 @@ import { Brand } from "@lib/data/brands"
 import { Locale } from "@lib/data/locales"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { instagramUrl, whatsappUrl } from "@lib/social"
+import BrandMark from "@modules/common/components/brand-mark"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import MenuToggleIcon from "@modules/common/components/menu-toggle-icon"
 import { clx } from "@modules/common/components/ui"
@@ -83,7 +84,8 @@ const MenuSheet = ({
             data-testid="nav-menu-popup"
           >
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-xl font-black uppercase tracking-tight text-bone">
+              <DialogTitle className="flex items-center gap-x-2 text-xl font-black uppercase tracking-tight text-bone">
+                <BrandMark className="h-6 w-auto text-ember" />
                 {STORE_NAME}
               </DialogTitle>
               <button

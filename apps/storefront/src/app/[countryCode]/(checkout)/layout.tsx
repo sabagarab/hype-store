@@ -1,3 +1,4 @@
+import BrandMark from "@modules/common/components/brand-mark"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import PageFade from "@modules/common/components/page-fade"
 import ChevronDown from "@modules/common/icons/chevron-down"
@@ -23,9 +24,10 @@ export default function CheckoutLayout({
           </LocalizedClientLink>
           <LocalizedClientLink
             href="/"
-            className="flex h-control-sm items-center px-2 text-xl font-black uppercase tracking-tight text-bone transition-colors duration-fast ease-premium hover:text-ember small:text-2xl"
+            className="flex h-control-sm items-center gap-x-2 px-2 text-xl font-black uppercase tracking-tight text-bone transition-colors duration-fast ease-premium hover:text-ember small:text-2xl"
             data-testid="store-link"
           >
+            <BrandMark className="h-6 w-auto shrink-0 text-ember small:h-7" />
             {STORE_NAME}
           </LocalizedClientLink>
           <div className="flex-1 basis-0" />

@@ -3,22 +3,20 @@
 import { motion } from "motion/react"
 
 import { DURATION, EASE_PREMIUM } from "@lib/motion"
+import BrandMark from "@modules/common/components/brand-mark"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 // Footer with Minimal Outline from 21st.dev (@scrollxui): link columns, the
-// copyright line and a large outlined watermark of the brand name. Adapted:
-// brand tokens, Satoshi Black, the watermark is an SVG text stretched to the
-// full width so any STORE_NAME fits, and it fades in whole (no stroke drawing)
-// on the shared slow duration. The link columns stay put (visible before
-// JavaScript loads); the original's column stagger is dropped. With reduced
+// copyright line and a large watermark. Adapted: brand tokens, the watermark
+// is the 1OF1 mark (faint bone) with the name small beneath it instead of the
+// outlined text, and it fades in whole on the shared slow duration. The link
+// columns stay put (visible before JavaScript loads); the original's column
+// stagger is dropped. With reduced
 // motion the watermark is simply shown. Links are 44px tap targets on
 // phones; external links open in a new tab.
 
 export type FooterLink = { label: string; href: string; external?: boolean }
 export type FooterColumn = { heading: string; links: FooterLink[] }
-
-const VIEW_W = 1000
-const VIEW_H = 200
 
 const LINK_CLASS =
   "inline-flex min-h-control-sm items-center text-sm text-bone/70 transition-colors duration-base ease-premium hover:text-ember small:min-h-0 small:py-1"
@@ -74,38 +72,21 @@ export default function FooterMinimalOutline({
           ))}
         </div>
 
-        {/* Watermark: outlined brand name, fades in whole. */}
-        <motion.svg
+        {/* Watermark: the brand mark, large, fading in whole, with the
+            name small beneath it. */}
+        <motion.div
           aria-hidden="true"
-          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-          className="w-full select-none motion-reduce:!opacity-100"
+          className="flex select-none flex-col items-center gap-y-4 py-6 motion-reduce:!opacity-100"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={transition}
         >
-          <text
-            x="50%"
-            y="54%"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            textLength={VIEW_W - 20}
-            lengthAdjust="spacingAndGlyphs"
-            fontSize={190}
-            fontWeight={900}
-            // Stroke first, then fill with the page background: Satoshi's
-            // variable glyphs have overlapping contours, and the fill hides
-            // those inner lines so only the letters' outer edge shows.
-            fill="rgb(var(--color-black))"
-            stroke="rgb(var(--color-bone) / 0.4)"
-            strokeWidth={2.4}
-            paintOrder="stroke"
-            className="uppercase"
-            style={{ fontFamily: "var(--font-satoshi), sans-serif" }}
-          >
+          <BrandMark className="h-auto w-[min(60vw,22rem)] text-bone/20" />
+          <span className="text-sm font-black uppercase tracking-[0.3em] text-bone/55">
             {brandName}
-          </text>
-        </motion.svg>
+          </span>
+        </motion.div>
 
         <p className="py-8 text-xs text-bone/55">{copyright}</p>
       </div>

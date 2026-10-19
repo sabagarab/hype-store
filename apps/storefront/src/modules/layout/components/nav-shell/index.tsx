@@ -6,6 +6,7 @@ import { useState } from "react"
 import { STORE_NAME } from "@lib/constants"
 import { Brand } from "@lib/data/brands"
 import { Locale } from "@lib/data/locales"
+import BrandMark from "@modules/common/components/brand-mark"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import MenuToggleIcon from "@modules/common/components/menu-toggle-icon"
 import {
@@ -60,10 +61,15 @@ const NavShell = ({
   const wordmark = (
     <LocalizedClientLink
       href="/"
-      className="flex h-control-sm items-center px-2 text-xl font-black uppercase tracking-tight text-bone transition-colors duration-base ease-premium hover:text-ember small:text-2xl"
+      aria-label={STORE_NAME}
+      className="group/logo flex h-control-sm items-center gap-x-2 px-2 text-xl font-black uppercase tracking-tight text-bone transition-colors duration-base ease-premium hover:text-ember small:text-2xl"
       data-testid="nav-store-link"
     >
-      {STORE_NAME}
+      <BrandMark className="h-6 w-auto shrink-0 text-ember small:h-7" />
+      {/* On the phone pill the mark alone carries the name. */}
+      <span className={clx(scrolled && "hidden small:inline")}>
+        {STORE_NAME}
+      </span>
     </LocalizedClientLink>
   )
 

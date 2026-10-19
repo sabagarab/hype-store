@@ -8,7 +8,9 @@ Read [AGENTS.md](./AGENTS.md) first. It holds Medusa's directory structure, comm
 
 An online store in **Lebanon** reselling hype streetwear: Supreme, Fear of God Essentials, and similar brands.
 
-- Brand name is **not decided yet**. Use `STORE_NAME` / a single config constant, never hard-code a name across files.
+- Brand name is **1OF1** (always written in caps, no spaces). It lives in `STORE_NAME` (`apps/storefront/src/lib/constants.tsx`); never hard-code it across files.
+- Logo: `apps/storefront/public/brand/1of1-mark.svg` (main mark, `currentColor`) and `1of1-mark-small.svg` (thicker, for favicons and tiny sizes). Use them through the inlined `BrandMark` / `BrandMarkSmall` components (`src/modules/common/components/brand-mark`); never redraw or alter the shapes, and no shadow or echo effects. The mark is ember in the nav, ember on black for icons and the share image.
+- Copy rule: "1OF1" is allowed as the brand name, but never use "one-of-one" or "1 of 1" as a product claim in copy, and never "authentic".
 - Customers mostly shop on **mobile**, coming from Instagram.
 - Owner: Seb (solo developer + store owner). He manages products himself through the Medusa Admin.
 
