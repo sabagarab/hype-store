@@ -102,7 +102,7 @@ const DrawerItem = ({
           <p className="text-xs text-bone/55">Size {item.variant_title}</p>
         )}
         {unavailable && (
-          <p className="mt-1 text-xs font-medium text-ember">
+          <p className="mt-1 text-xs font-medium text-error">
             No longer available
           </p>
         )}

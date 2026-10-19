@@ -100,7 +100,7 @@ const StoreHits = ({ hitsPerPage }: StoreHitsProps) => {
   if (status === "error" || failed) {
     return (
       <Text
-        className="py-16 text-center text-ember"
+        className="py-16 text-center text-error"
         data-testid="products-error"
       >
         Couldn&apos;t load products

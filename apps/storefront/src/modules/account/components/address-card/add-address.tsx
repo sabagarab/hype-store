@@ -122,7 +122,7 @@ const AddAddress = ({
             </div>
             {formState.error && (
               <div
-                className="py-2 text-sm text-ember"
+                className="py-2 text-sm text-error"
                 data-testid="address-error"
               >
                 {formState.error}

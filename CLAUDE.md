@@ -73,6 +73,7 @@ Look & feel: **StockX-style product presentation**, dark, premium, with subtle i
 | `bone` (bone white) | Primary text, light surfaces |
 | `ember` (burnt orange) | Primary accent: CTAs, prices, highlights |
 | `ember-deep` (deeper burnt orange) | Hover/pressed states, secondary accent |
+| `error` (muted red) | Form errors and error messages only. Never as an accent |
 
 Exact hex values live in `tailwind.config.js`. Don't introduce new colors without asking.
 

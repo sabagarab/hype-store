@@ -40,7 +40,7 @@ const Summary = ({ cart, blocked = false, deliveryAmount }: SummaryProps) => {
       <CartTotals totals={cart} deliveryAmount={deliveryAmount} />
       {blocked ? (
         <>
-          <p role="alert" className="text-sm font-medium text-ember">
+          <p role="alert" className="text-sm font-medium text-error">
             Remove unavailable items to continue.
           </p>
           <Button

@@ -51,7 +51,7 @@ export default function TransferRequestForm() {
         </form>
       </div>
       {!state.success && state.error && (
-        <Text className="text-sm text-ember text-right">
+        <Text className="text-sm text-error text-right">
           {state.error}
         </Text>
       )}

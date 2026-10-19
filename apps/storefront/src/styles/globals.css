@@ -12,6 +12,9 @@
   --color-bone: 237 232 223; /* #EDE8DF */
   --color-ember: 204 85 0; /* #CC5500 */
   --color-ember-deep: 163 68 0; /* #A34400 */
+  /* Muted red for form errors and error messages only (~5.4:1 on ink,
+     ~6:1 on black). Ember stays the accent. */
+  --color-error: 217 102 94; /* #D9665E */
 
   color-scheme: dark;
 

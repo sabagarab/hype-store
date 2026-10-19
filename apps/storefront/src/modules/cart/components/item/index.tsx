@@ -52,7 +52,7 @@ const Item = ({
         </Text>
         <LineItemOptions variant={item.variant} data-testid="product-variant" />
         {unavailable && (
-          <Text className="mt-1 text-xs font-medium text-ember">
+          <Text className="mt-1 text-xs font-medium text-error">
             No longer available
           </Text>
         )}

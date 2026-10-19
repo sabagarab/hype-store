@@ -12,7 +12,7 @@ const ErrorMessage = ({
   return (
     <p
       role="alert"
-      className="pt-3 text-sm font-medium text-ember"
+      className="pt-3 text-sm font-medium text-error"
       data-testid={dataTestid}
     >
       {error}

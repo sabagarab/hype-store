@@ -245,7 +245,7 @@ export function LoadingButton({
         className={clx(
           "relative inline-flex select-none items-center justify-center rounded-control border border-transparent font-bold uppercase tracking-wide",
           "bg-ember text-black transition-colors duration-base ease-premium hover:bg-ember-deep hover:text-bone",
-          "data-[status=error]:bg-ember-deep data-[status=error]:text-bone",
+          "data-[status=error]:bg-error data-[status=error]:text-black",
           "disabled:cursor-not-allowed disabled:border-hairline disabled:bg-ink disabled:text-bone/50",
           SIZES[size],
           className

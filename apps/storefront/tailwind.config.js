@@ -21,6 +21,8 @@ module.exports = {
           DEFAULT: "rgb(var(--color-ember) / <alpha-value>)",
           deep: "rgb(var(--color-ember-deep) / <alpha-value>)",
         },
+        // Form errors and error messages only. Ember stays the accent.
+        error: "rgb(var(--color-error) / <alpha-value>)",
       },
       borderRadius: {
         none: "0px",

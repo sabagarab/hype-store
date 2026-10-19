@@ -191,7 +191,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               />
             </div>
             {formState.error && (
-              <div className="py-2 text-sm text-ember">{formState.error}</div>
+              <div className="py-2 text-sm text-error">{formState.error}</div>
             )}
             <div className="flex gap-3 mt-6">
               <Button

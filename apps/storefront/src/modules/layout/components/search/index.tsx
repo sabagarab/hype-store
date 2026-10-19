@@ -58,7 +58,7 @@ const SearchPanel = ({
   const status = !hasInput ? (
     <p data-testid="search-empty">Start typing to search for products.</p>
   ) : status_ === "error" ? (
-    <p className="text-ember" data-testid="search-error">
+    <p className="text-error" data-testid="search-error">
       Couldn&apos;t search products
       {error?.message ? `: ${error.message}` : "."}
     </p>

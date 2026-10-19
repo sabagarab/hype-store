@@ -58,7 +58,7 @@ const VerifyAccount = () => {
 
       {state === "error" && (
         <>
-          <p className="text-sm text-bone">
+          <p className="text-sm text-error">
             This verification link is invalid or has expired. Sign in to receive
             a new verification email.
           </p>

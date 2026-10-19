@@ -104,7 +104,7 @@ const AccountInfo = ({
           )}
           data-testid="error-message"
         >
-          <p className="my-4 text-sm font-medium text-ember">
+          <p className="my-4 text-sm font-medium text-error">
             {errorMessage}
           </p>
         </Disclosure.Panel>

@@ -45,7 +45,7 @@ const TransferActions = ({ id, token }: { id: string; token: string }) => {
         </Text>
       )}
       {status?.decline === "success" && (
-        <Text className="text-ember">
+        <Text className="text-bone">
           Order transfer declined successfully!
         </Text>
       )}
@@ -70,7 +70,7 @@ const TransferActions = ({ id, token }: { id: string; token: string }) => {
           </Button>
         </div>
       )}
-      {errorMessage && <Text className="text-ember">{errorMessage}</Text>}
+      {errorMessage && <Text className="text-error">{errorMessage}</Text>}
     </div>
   )
 }

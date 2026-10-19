@@ -31,7 +31,7 @@ export default async function TransferPage({
               There was an error accepting the transfer. Please try again.
             </Text>
             {error && (
-              <Text className="text-ember">Error message: {error}</Text>
+              <Text className="text-error">Error message: {error}</Text>
             )}
           </>
         )}

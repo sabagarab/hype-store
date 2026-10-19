@@ -90,7 +90,7 @@ const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
       </dl>
 
       {hasUnavailable && (
-        <p role="alert" className="text-sm font-medium text-ember">
+        <p role="alert" className="text-sm font-medium text-error">
           Remove unavailable items to continue.
         </p>
       )}
