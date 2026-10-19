@@ -91,6 +91,7 @@ Exact hex values live in `tailwind.config.js`. Don't introduce new colors withou
 - Keep installed components in `src/modules/common/components/<name>/` (starter folder structure) with a header comment naming the 21st source and author.
 - **Consistency:** all components must look like one family: same corner radius, border, glass treatment, shadow, spacing scale and motion timing. These are defined once as shared tokens (`tailwind.config.js`, `src/styles/globals.css`, `src/lib/motion.ts`); every 21st component is adapted to them, replacing its own colors, radii, shadows and springs. If two candidates are equally good, pick the one closest to what we already have.
 - **Choosing:** for each need, compare a few 21st options and pick the single best one for a dark, premium, StockX-like streetwear store on phones. Report the pick and why in one line; don't offer a menu.
+- **Nothing AI-generated or template-like:** no icon pills or badge rows, no sparkle/shimmer or gradient glows, no generic "feature" sections with icons. Quiet and editorial, like Kith or StockX. When in doubt, plain text in good typography beats a component. When a 21st component carries such decoration, strip it while adapting.
 
 ## 6. Business rules (must hold everywhere)
 

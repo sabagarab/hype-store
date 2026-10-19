@@ -12,6 +12,8 @@ type SummaryProps = {
   cart: HttpTypes.StoreCart
   /** Some item sold out since it was added: checkout is blocked. */
   blocked?: boolean
+  /** Price of the "Delivery" option, shown until a method is chosen. */
+  deliveryAmount: number | null
 }
 
 function getCheckoutStep(cart: HttpTypes.StoreCart) {
@@ -24,7 +26,7 @@ function getCheckoutStep(cart: HttpTypes.StoreCart) {
   }
 }
 
-const Summary = ({ cart, blocked = false }: SummaryProps) => {
+const Summary = ({ cart, blocked = false, deliveryAmount }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
@@ -34,7 +36,7 @@ const Summary = ({ cart, blocked = false }: SummaryProps) => {
       </Heading>
       <DiscountCode cart={cart} />
       <Divider />
-      <CartTotals totals={cart} />
+      <CartTotals totals={cart} deliveryAmount={deliveryAmount} />
       {blocked ? (
         <>
           <p role="alert" className="text-sm font-medium text-ember">

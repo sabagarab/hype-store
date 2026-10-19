@@ -7,7 +7,7 @@ import ProductInfo from "@modules/products/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
-import TrustStrip from "@modules/common/components/trust-strip"
+import TrustLine from "@modules/common/components/trust-line"
 import ProductActionsWrapper from "./product-actions-wrapper"
 
 type ProductTemplateProps = {
@@ -50,7 +50,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           >
             <ProductActionsWrapper id={product.id} region={region} />
           </Suspense>
-          <TrustStrip />
+          <TrustLine className="-mt-5" />
           <ProductDetails product={product} />
         </div>
       </div>

@@ -3,7 +3,6 @@ import FadeInImage from "@modules/common/components/fade-in-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Marquee from "@modules/common/components/marquee"
 import ShimmerLink from "@modules/common/components/shimmer-link"
-import TrustStrip from "@modules/common/components/trust-strip"
 import { clx } from "@modules/common/components/ui"
 import HeroParallax, {
   HeroProduct,
@@ -52,7 +51,6 @@ const Hero = ({ products }: { products: HeroProduct[] }) => {
           <ShimmerLink href={HERO_CONTENT.cta.href} data-testid="hero-cta">
             {HERO_CONTENT.cta.label}
           </ShimmerLink>
-          <TrustStrip className="pt-2" />
         </div>
 
         {hasRow && (

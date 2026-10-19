@@ -13,9 +13,11 @@ import Summary from "./summary"
 const CartContents = ({
   cart,
   customer,
+  deliveryAmount,
 }: {
   cart: HttpTypes.StoreCart
   customer: HttpTypes.StoreCustomer | null
+  deliveryAmount: number | null
 }) => {
   const { lineInfo, hasUnavailable } = useCartProducts(cart)
 
@@ -37,7 +39,11 @@ const CartContents = ({
         <div className="flex flex-col gap-y-8 sticky top-12">
           {cart.region && (
             <div className="bg-ui-bg-base py-6">
-              <Summary cart={cart} blocked={hasUnavailable} />
+              <Summary
+                cart={cart}
+                blocked={hasUnavailable}
+                deliveryAmount={deliveryAmount}
+              />
             </div>
           )}
         </div>

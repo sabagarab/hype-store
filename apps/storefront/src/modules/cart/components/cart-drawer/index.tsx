@@ -6,8 +6,9 @@ import { HttpTypes } from "@medusajs/types"
 import { Fragment, useEffect } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { convertToLocale } from "@lib/util/money"
 import NumberTicker from "@modules/common/components/number-ticker"
-import TrustStrip from "@modules/common/components/trust-strip"
+import { TRUST_CONTENT } from "@modules/common/components/trust-line/content"
 import { clx } from "@modules/common/components/ui"
 import { useCartDrawer } from "./context"
 import DrawerItem from "./drawer-item"
@@ -50,6 +51,7 @@ const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
   }, [pendingVariantId, hasPendingVariant, openCart])
   const currencyCode = cart?.currency_code ?? "usd"
   const { lineInfo, hasUnavailable } = useCartProducts(cart)
+  const subtotal = cart?.item_subtotal ?? cart?.subtotal ?? 0
 
   const sortedItems = [...items].sort((a, b) =>
     (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1
@@ -130,19 +132,40 @@ const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
                   </ul>
 
                   <div className="flex flex-col gap-y-3 border-t border-bone/10 px-6 py-5">
-                    <div className="flex items-center justify-between text-base">
-                      <span className="text-bone/70">Subtotal</span>
-                      <NumberTicker
-                        value={cart?.item_subtotal ?? cart?.subtotal ?? 0}
-                        currencyCode={currencyCode}
-                        className="font-bold text-bone"
-                      />
-                    </div>
-                    <TrustStrip
-                      deliveryAmount={deliveryAmount}
-                      currencyCode={currencyCode}
-                      size="sm"
-                    />
+                    <dl className="flex flex-col gap-y-1.5 text-sm">
+                      <div className="flex items-center justify-between">
+                        <dt className="text-bone/70">Subtotal</dt>
+                        <dd className="text-bone">
+                          {convertToLocale({
+                            amount: subtotal,
+                            currency_code: currencyCode,
+                          })}
+                        </dd>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <dt className="text-bone/70">
+                          {TRUST_CONTENT.deliveryLabel}
+                        </dt>
+                        <dd className="text-bone">
+                          {deliveryAmount !== null
+                            ? convertToLocale({
+                                amount: deliveryAmount,
+                                currency_code: currencyCode,
+                              })
+                            : TRUST_CONTENT.deliveryPending}
+                        </dd>
+                      </div>
+                      <div className="mt-1.5 flex items-center justify-between border-t border-hairline pt-3 text-base">
+                        <dt className="font-bold text-bone">Total</dt>
+                        <dd>
+                          <NumberTicker
+                            value={subtotal + (deliveryAmount ?? 0)}
+                            currencyCode={currencyCode}
+                            className="font-bold text-bone"
+                          />
+                        </dd>
+                      </div>
+                    </dl>
 
                     {hasUnavailable && (
                       <p role="alert" className="text-sm font-medium text-ember">

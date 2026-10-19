@@ -184,6 +184,11 @@ module.exports = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(calc(-100% - var(--gap)))" },
         },
+        // Two identical halves slid by one half (closing CTA backdrop).
+        "marquee-half": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
         shimmer: {
           "0%": { transform: "translateX(-100%)" },
           "60%, 100%": { transform: "translateX(100%)" },
@@ -204,6 +209,7 @@ module.exports = {
         "slide-in": "slide-in 1.2s cubic-bezier(.41,.73,.51,1.02)",
         leave: "leave 150ms ease-in forwards",
         marquee: "marquee var(--duration) linear infinite",
+        "marquee-half": "marquee-half 60s linear infinite",
         shimmer: "shimmer 3s ease-in-out infinite",
       },
     },

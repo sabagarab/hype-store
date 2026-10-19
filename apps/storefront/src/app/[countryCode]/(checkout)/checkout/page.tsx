@@ -5,7 +5,6 @@ import CartRegionSync from "@modules/cart/components/cart-region-sync"
 import PaymentWrapper from "@modules/checkout/components/payment-wrapper"
 import CheckoutForm from "@modules/checkout/templates/checkout-form"
 import CheckoutSummary from "@modules/checkout/templates/checkout-summary"
-import TrustStrip from "@modules/common/components/trust-strip"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -36,19 +35,11 @@ export default async function Checkout(props: {
 
   return (
     <>
-      <div className="border-b border-bone/10">
-        <TrustStrip
-          deliveryAmount={deliveryAmount}
-          currencyCode={cart.currency_code}
-          size="sm"
-          className="content-container py-3"
-        />
-      </div>
       <div className="grid grid-cols-1 small:grid-cols-[1fr_416px] content-container gap-x-40 py-12">
         <PaymentWrapper cart={cart}>
           <CheckoutForm cart={cart} customer={customer} />
         </PaymentWrapper>
-        <CheckoutSummary cart={cart} />
+        <CheckoutSummary cart={cart} deliveryAmount={deliveryAmount} />
       </div>
     </>
   )

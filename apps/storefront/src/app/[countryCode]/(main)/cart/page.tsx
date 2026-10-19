@@ -1,4 +1,4 @@
-import { retrieveCart } from "@lib/data/cart"
+import { getDeliveryAmount, retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { getRegion } from "@lib/data/regions"
 import CartRegionSync from "@modules/cart/components/cart-region-sync"
@@ -20,9 +20,10 @@ export default async function Cart(props: {
     return notFound()
   })
 
-  const [customer, region] = await Promise.all([
+  const [customer, region, deliveryAmount] = await Promise.all([
     retrieveCustomer(),
     getRegion(countryCode),
+    getDeliveryAmount(),
   ])
 
   // A cart from another region (e.g. an old Europe cart) is moved first.
@@ -30,5 +31,11 @@ export default async function Cart(props: {
     return <CartRegionSync countryCode={countryCode} />
   }
 
-  return <CartTemplate cart={cart} customer={customer} />
+  return (
+    <CartTemplate
+      cart={cart}
+      customer={customer}
+      deliveryAmount={deliveryAmount}
+    />
+  )
 }
