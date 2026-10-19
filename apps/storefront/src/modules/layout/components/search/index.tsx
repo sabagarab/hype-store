@@ -14,14 +14,24 @@ import {
 import useSearchSettled from "@lib/hooks/use-search-settled"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { PRODUCT_INDEX_NAME, searchClient } from "@lib/search-client"
-import { Text } from "@modules/common/components/ui"
-import SearchDrawer from "./drawer"
-import SearchHit, { ProductHit } from "./hit"
+import {
+  CommandPaletteLayer,
+  CommandPaletteSurface,
+  PaletteItem,
+} from "@modules/common/components/command-palette"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { HitThumbnail, ProductHit } from "./hit"
 
 const HITS_PER_PAGE = 12
 const DEBOUNCE_MS = 250
 
-const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
+const SearchPanel = ({
+  onNavigate,
+  onClose,
+}: {
+  onNavigate: () => void
+  onClose: () => void
+}) => {
   const timer = useRef<number | undefined>(undefined)
 
   const queryHook = useCallback(
@@ -34,7 +44,7 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
 
   const { query, refine } = useSearchBox({ queryHook })
   const { items } = useHits<ProductHit>()
-  const { status, error } = useInstantSearch()
+  const { status: status_, error } = useInstantSearch()
   const { isSettled } = useSearchSettled()
 
   const [inputValue, setInputValue] = useState(query)
@@ -45,71 +55,59 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
   const isPending = inputValue.trim() !== query.trim()
   const hasResults = Boolean(query.trim()) && items.length > 0
 
-  return (
-    <>
-      <div className="flex items-center gap-x-3 border-b border-ui-border-base px-4">
-        <MagnifyingGlass className="shrink-0 text-ui-fg-muted" />
-        <input
-          type="search"
-          value={inputValue}
-          onChange={(event) => {
-            setInputValue(event.target.value)
-            refine(event.target.value)
-          }}
-          placeholder="Search products"
-          aria-label="Search products"
-          autoFocus
-          className="txt-medium w-full bg-transparent py-4 text-ui-fg-base outline-none placeholder:text-ui-fg-muted"
-          data-testid="search-input"
-        />
-      </div>
+  const status = !hasInput ? (
+    <p data-testid="search-empty">Start typing to search for products.</p>
+  ) : status_ === "error" ? (
+    <p className="text-ember" data-testid="search-error">
+      Couldn&apos;t search products
+      {error?.message ? `: ${error.message}` : "."}
+    </p>
+  ) : !isSettled ? (
+    <p data-testid="search-loading">Searching&hellip;</p>
+  ) : hasResults && items.some((hit) => hit.handle) ? null : hasResults ? (
+    <p data-testid="search-no-results">
+      No products found for &quot;{query}&quot;
+    </p>
+  ) : isPending || !query.trim() ? (
+    <p data-testid="search-loading">Searching&hellip;</p>
+  ) : (
+    <p data-testid="search-no-results">
+      No products found for &quot;{query}&quot;
+    </p>
+  )
 
-      <div className="flex-1 overflow-y-auto">
-        {!hasInput ? (
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-muted"
-            data-testid="search-empty"
-          >
-            Start typing to search for products.
-          </Text>
-        ) : status === "error" ? (
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-error"
-            data-testid="search-error"
-          >
-            Couldn&apos;t search products
-            {error?.message ? `: ${error.message}` : "."}
-          </Text>
-        ) : !isSettled ? (
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-muted"
-            data-testid="search-loading"
-          >
-            Searching&hellip;
-          </Text>
-        ) : hasResults ? (
-          <ul className="py-2" data-testid="search-results">
-            {items.map((hit) => (
-              <SearchHit key={hit.objectID} hit={hit} onNavigate={onNavigate} />
-            ))}
-          </ul>
-        ) : isPending || !query.trim() ? (
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-muted"
-            data-testid="search-loading"
-          >
-            Searching&hellip;
-          </Text>
-        ) : (
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-subtle"
-            data-testid="search-no-results"
-          >
-            No products found for &quot;{query}&quot;
-          </Text>
-        )}
-      </div>
-    </>
+  const paletteItems: PaletteItem[] = items.flatMap((hit) =>
+    hit.handle
+      ? [
+          {
+            id: hit.objectID,
+            label: hit.title ?? "",
+            href: `/products/${hit.handle}`,
+            media: <HitThumbnail src={hit.thumbnail} />,
+          },
+        ]
+      : []
+  )
+
+  return (
+    <CommandPaletteSurface
+      label="Search products"
+      placeholder="Search products"
+      query={inputValue}
+      onQueryChange={(value) => {
+        setInputValue(value)
+        refine(value)
+      }}
+      items={paletteItems}
+      status={status}
+      linkAs={LocalizedClientLink}
+      onNavigate={onNavigate}
+      onClose={onClose}
+      data-testid="search-drawer"
+      inputTestId="search-input"
+      listTestId="search-results"
+      itemTestId="search-hit-link"
+    />
   )
 }
 
@@ -122,22 +120,28 @@ const Search = () => {
         type="button"
         onClick={open}
         aria-label="Search products"
-        className="flex items-center justify-center h-11 w-11 -mx-3 transition-colors duration-200 hover:text-ember"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        className="-mx-3 flex h-control-sm w-11 items-center justify-center transition-colors duration-base ease-premium hover:text-ember"
         data-testid="nav-search-button"
       >
         <MagnifyingGlass />
       </button>
 
-      <SearchDrawer isOpen={isOpen} close={close}>
+      <CommandPaletteLayer
+        open={isOpen}
+        onDismiss={close}
+        label="Search products"
+      >
         <InstantSearch
           indexName={PRODUCT_INDEX_NAME}
           searchClient={searchClient as unknown as SearchClient}
           future={{ preserveSharedStateOnUnmount: true }}
         >
           <Configure hitsPerPage={HITS_PER_PAGE} />
-          <SearchPanel onNavigate={close} />
+          <SearchPanel onNavigate={close} onClose={close} />
         </InstantSearch>
-      </SearchDrawer>
+      </CommandPaletteLayer>
     </>
   )
 }

@@ -63,3 +63,40 @@ Storefront restyle, run as five sub-batches. One commit per sub-batch.
 **Unsure**
 - The filter sheet also gets the glass surface now, for consistency.
 - I couldn't open the address drawers in the browser (they need a signed-in customer). They're checked by type-check and review only.
+
+## B7.3 Navigation
+
+**What changed**
+- The nav pill (Aceternity Resizable Navbar) moved out of `nav-shell` into a shared component, `common/components/resizable-navbar`; `nav-shell` is now only wiring.
+  - Token pass: control radius, hairline border, new `float` shadow token, slow/premium timing instead of a raw 250ms, highlight on the shared transition.
+  - It looks the same as before.
+- Mobile menu:
+  - It's now the efferd Header 1 mobile menu: one frosted full-screen panel that fades and settles from 97% scale, with plain big links.
+  - On phones the word "Menu" is now efferd's menu toggle icon (labelled "Menu"); inside the sheet the same glyph shows as an X.
+  - Instagram and WhatsApp links appear only when `lib/social.ts` has values (both are empty now, so nothing shows).
+- Search is the ddoemonn Command Palette:
+  - It's a centred palette on desktop, and opens near the top on phones so the keyboard doesn't cover it.
+  - Results still come from InstantSearch, with small thumbnails.
+  - Arrow keys move through the results, and Enter opens the highlighted one (marked in ember). Esc, tapping outside or the X closes it.
+  - Headless UI's Dialog provides the focus trap, iOS-safe scroll lock and focus return, as the old drawer did.
+- Marquee: header comment and token check only. It already holds still for reduced motion.
+
+**21st components and why**
+- Resizable Navbar (Aceternity / manuarora700): already our pill.
+- Header 1 mobile menu and menu toggle (efferd), **instead of hyperiux Immersive Full Screen Navigation**. The hyperiux menu needs GSAP (a new dependency), runs 1.2s clip-path wipes and per-letter "roll" hovers, and comes with image tiles. That breaks the ≤300ms motion rule and reads flashy and template-like. efferd's version is a quiet frosted panel with plain links, closer to Kith/StockX.
+- Command Palette (ddoemonn): keyboard-first and quiet. Its built-in fuzzy ranking is bypassed so InstantSearch stays the source of results.
+
+**Review fixes** (from a separate reviewer)
+- Focus returns to the search button on close.
+- Real focus trap, with the page inert while the palette is open.
+- Scroll lock that holds on iOS.
+- Visible close button restored.
+- Active row marked in ember, panel border turns ember while focused.
+- Valid option markup.
+- "No results" shown when no hit has a link.
+- `aria-expanded` added on the search button.
+- Placeholder contrast raised.
+
+**Unsure**
+- On phones the menu button is now an icon instead of the word "Menu". Say if you prefer the word back.
+- Cmd/Ctrl+Enter in search opens the result in the same tab (clicking with Cmd/Ctrl works normally).

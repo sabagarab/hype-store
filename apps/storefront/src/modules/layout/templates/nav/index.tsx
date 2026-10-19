@@ -28,7 +28,7 @@ export default async function Nav({ countryCode }: { countryCode: string }) {
         <Suspense
           fallback={
             <LocalizedClientLink
-              className="flex h-11 items-center gap-2 transition-colors duration-200 hover:text-ember"
+              className="flex h-control-sm items-center gap-2 transition-colors duration-base ease-premium hover:text-ember"
               href="/cart"
               data-testid="nav-cart-link"
             >

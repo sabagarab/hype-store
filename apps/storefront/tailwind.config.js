@@ -63,6 +63,8 @@ module.exports = {
       boxShadow: {
         // Floating glass surfaces (bars, sheets, drawers).
         glass: "0 -8px 32px -12px rgb(var(--color-black) / 0.7)",
+        // Floating pills and overlays that hang below their anchor.
+        float: "0 8px 32px -12px rgb(var(--color-black) / 0.7)",
       },
       height: {
         // Primary CTA and secondary control heights (both >= 44px tap target).

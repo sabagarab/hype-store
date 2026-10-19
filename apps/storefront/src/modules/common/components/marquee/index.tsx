@@ -1,8 +1,10 @@
 import { clx } from "@modules/common/components/ui"
 import { CSSProperties, HTMLAttributes } from "react"
 
-// Ported from Magic UI's Marquee (21st.dev). CSS-only infinite scroll; the
-// `marquee` keyframes live in tailwind.config.js.
+// Marquee from 21st.dev (@magicui/marquee). CSS-only infinite scroll; the
+// `marquee` keyframes live in tailwind.config.js. Adapted: only the first
+// copy is exposed to assistive tech, pause on hover/focus, and it holds still
+// for reduced motion.
 type MarqueeProps = HTMLAttributes<HTMLDivElement> & {
   reverse?: boolean
   pauseOnHover?: boolean
