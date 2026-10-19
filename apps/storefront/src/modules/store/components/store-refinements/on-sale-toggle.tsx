@@ -3,6 +3,7 @@
 import { useToggleRefinement } from "react-instantsearch"
 
 import { priceAttribute } from "@lib/search-client"
+import CheckboxWithLabel from "@modules/common/components/checkbox"
 
 /**
  * Narrows to products whose calculated price is below their original in the
@@ -20,23 +21,14 @@ const OnSaleToggle = ({ currencyCode }: { currencyCode: string }) => {
   }
 
   return (
-    <label className="flex cursor-pointer items-center gap-x-2">
-      <input
-        type="checkbox"
+    <div>
+      <CheckboxWithLabel
+        label="On sale only"
         checked={value.isRefined}
         onChange={() => refine(value)}
-        className="shrink-0 accent-ui-fg-interactive"
         data-testid="on-sale-toggle"
       />
-      <span className="txt-compact-small-plus text-ui-fg-subtle">
-        On sale only
-      </span>
-      {typeof value.count === "number" && (
-        <span className="text-small-regular text-ui-fg-muted">
-          ({value.count})
-        </span>
-      )}
-    </label>
+    </div>
   )
 }
 

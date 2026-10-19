@@ -5,6 +5,7 @@ import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import LoadingButton from "@modules/common/components/loading-button"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
+import { isRedirectError } from "next/dist/client/components/redirect-error"
 import { useParams } from "next/navigation"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
@@ -64,6 +65,8 @@ const StripePaymentButton = ({
   const onPaymentCompleted = async () => {
     await placeOrder()
       .catch((err) => {
+        // placeOrder redirects to the confirmation page; that isn't a failure.
+        if (isRedirectError(err)) return
         setErrorMessage(err.message)
       })
       .finally(() => {
@@ -167,6 +170,8 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
   const onPaymentCompleted = async () => {
     await placeOrder()
       .catch((err) => {
+        // placeOrder redirects to the confirmation page; that isn't a failure.
+        if (isRedirectError(err)) return
         setErrorMessage(err.message)
       })
       .finally(() => {

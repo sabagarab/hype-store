@@ -77,14 +77,14 @@ const CurrentRefinements = ({ currencyCode }: { currencyCode: string }) => {
 
   return (
     <div className="flex flex-col gap-y-3" data-testid="current-refinements">
-      <div className="flex items-center justify-between gap-x-2 pr-6">
-        <span className="txt-compact-small-plus text-ui-fg-subtle">
-          Applied filters
+      <div className="flex items-center justify-between gap-x-2">
+        <span className="text-xs font-medium uppercase tracking-widest text-bone/55">
+          Applied
         </span>
         {canClearAll && (
           <button
             onClick={clearAll}
-            className="txt-compact-small-plus text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+            className="-mr-2 h-11 px-2 text-sm font-medium text-bone/70 underline underline-offset-4 transition-colors duration-fast hover:text-bone"
             data-testid="clear-refinements"
           >
             Clear all
@@ -92,7 +92,7 @@ const CurrentRefinements = ({ currencyCode }: { currencyCode: string }) => {
         )}
       </div>
 
-      <ul className="flex flex-wrap gap-2 pr-6">
+      <ul className="flex flex-wrap gap-2">
         {refinements.map((refinement) => {
           const label = refinementLabel(refinement, currencyCode)
 
@@ -105,11 +105,11 @@ const CurrentRefinements = ({ currencyCode }: { currencyCode: string }) => {
               <button
                 onClick={() => refine(refinement)}
                 aria-label={`Remove filter ${label}`}
-                className="border-ui-border-interactive text-ui-fg-base border text-small-regular h-8 rounded-rounded px-3 flex items-center gap-x-1.5 transition-colors duration-150 hover:bg-ui-bg-base-hover"
+                className="flex h-9 items-center gap-x-1.5 rounded-control border border-bone/25 px-3 text-sm text-bone transition-colors duration-fast hover:border-bone/60"
                 data-testid="remove-refinement"
               >
                 {label}
-                <XMarkMini className="text-ui-fg-muted" />
+                <XMarkMini className="text-bone/55" />
               </button>
             </li>
           )

@@ -25,9 +25,14 @@ export default function BrandTemplate({
 
   return (
     <div className="flex flex-col small:flex-row small:items-start py-6 content-container">
-      <RefinementList sortBy={sort} hideOptionsPicker />
-      <div className="w-full">
-        <h1 className="mb-8 text-3xl font-black uppercase tracking-tight text-bone small:text-5xl">
+      <aside
+        aria-label="Sort"
+        className="hidden small:mr-12 small:block small:w-[240px] small:shrink-0"
+      >
+        <RefinementList sortBy={sort} hideOptionsPicker />
+      </aside>
+      <div className="w-full min-w-0">
+        <h1 className="mb-4 text-3xl font-black uppercase tracking-tight text-bone small:mb-8 small:text-5xl">
           {brand.name}
         </h1>
         <Suspense fallback={<SkeletonProductGrid />}>
@@ -37,6 +42,7 @@ export default function BrandTemplate({
             typeId={brand.id}
             countryCode={countryCode}
             optionValueIds={optionValueIds}
+            filterSheet
           />
         </Suspense>
       </div>

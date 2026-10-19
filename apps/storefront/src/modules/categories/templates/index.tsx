@@ -44,12 +44,17 @@ export default function CategoryTemplate({
       className="flex flex-col small:flex-row small:items-start py-6 content-container"
       data-testid="category-container"
     >
-      <RefinementList
-        sortBy={sort}
-        data-testid="sort-by-container"
-        hideOptionsPicker
-      />
-      <div className="w-full">
+      <aside
+        aria-label="Sort"
+        className="hidden small:mr-12 small:block small:w-[240px] small:shrink-0"
+      >
+        <RefinementList
+          sortBy={sort}
+          data-testid="sort-by-container"
+          hideOptionsPicker
+        />
+      </aside>
+      <div className="w-full min-w-0">
         <div className="flex flex-row mb-8 text-2xl-semi gap-4">
           {parents &&
             parents.map((parent) => (
@@ -97,6 +102,7 @@ export default function CategoryTemplate({
             categoryId={category.id}
             countryCode={countryCode}
             optionValueIds={optionValueIds}
+            filterSheet
           />
         </Suspense>
       </div>

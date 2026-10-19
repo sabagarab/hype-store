@@ -25,8 +25,13 @@ export default function CollectionTemplate({
 
   return (
     <div className="flex flex-col small:flex-row small:items-start py-6 content-container">
-      <RefinementList sortBy={sort} hideOptionsPicker />
-      <div className="w-full">
+      <aside
+        aria-label="Sort"
+        className="hidden small:mr-12 small:block small:w-[240px] small:shrink-0"
+      >
+        <RefinementList sortBy={sort} hideOptionsPicker />
+      </aside>
+      <div className="w-full min-w-0">
         <div className="mb-8 text-2xl-semi">
           <h1>{collection.title}</h1>
         </div>
@@ -43,6 +48,7 @@ export default function CollectionTemplate({
             collectionId={collection.id}
             countryCode={countryCode}
             optionValueIds={optionValueIds}
+            filterSheet
           />
         </Suspense>
       </div>

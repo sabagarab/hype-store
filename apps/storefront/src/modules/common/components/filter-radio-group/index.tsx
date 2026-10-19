@@ -1,5 +1,8 @@
-import { EllipseMiniSolid } from "@medusajs/icons"
-import { Label, RadioGroup, Text, clx } from "@modules/common/components/ui"
+"use client"
+
+import Radio from "@modules/common/components/radio"
+import { clx } from "@modules/common/components/ui"
+
 type FilterRadioGroupProps = {
   title: string
   items: {
@@ -11,6 +14,7 @@ type FilterRadioGroupProps = {
   "data-testid"?: string
 }
 
+// Single-choice list (sort order) as quiet rows with the shared radio dot.
 const FilterRadioGroup = ({
   title,
   items,
@@ -19,40 +23,41 @@ const FilterRadioGroup = ({
   "data-testid": dataTestId,
 }: FilterRadioGroupProps) => {
   return (
-    <div className="flex gap-x-3 flex-col gap-y-3">
-      <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
-      <RadioGroup data-testid={dataTestId}>
-        {items?.map((i) => (
-          <div
-            key={i.value}
-            className={clx("flex items-center", {
-              "ml-[-23px]": i.value === value,
-            })}
-          >
-            {i.value === value && <EllipseMiniSolid className="mr-2" />}
-            <RadioGroup.Item
-              checked={i.value === value}
-              onChange={() => handleChange(i.value)}
-              className="hidden peer"
-              id={i.value}
-              value={i.value}
-            />
-            <Label
-              htmlFor={i.value}
+    <div className="flex flex-col gap-y-1">
+      <p
+        id={`${dataTestId ?? "filter"}-title`}
+        className="mb-1 text-xs font-medium uppercase tracking-widest text-bone/55"
+      >
+        {title}
+      </p>
+      <div
+        role="radiogroup"
+        aria-labelledby={`${dataTestId ?? "filter"}-title`}
+        data-testid={dataTestId}
+      >
+        {items?.map((item) => {
+          const checked = item.value === value
+
+          return (
+            <button
+              key={item.value}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              onClick={() => handleChange(item.value)}
               className={clx(
-                "!txt-compact-small !transform-none text-ui-fg-subtle hover:cursor-pointer",
-                {
-                  "text-ui-fg-base": i.value === value,
-                }
+                "flex min-h-control-sm w-full items-center gap-x-3 text-left text-sm transition-colors duration-fast",
+                checked ? "text-bone" : "text-bone/70 hover:text-bone"
               )}
               data-testid="radio-label"
-              data-active={i.value === value}
+              data-active={checked}
             >
-              {i.label}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
+              <Radio checked={checked} />
+              {item.label}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

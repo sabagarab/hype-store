@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useRange } from "react-instantsearch"
 
 import { indexedCurrency, priceAttribute } from "@lib/search-client"
+import { FilterSection } from "@modules/store/components/filter-sheet"
 
 function formatAmount(amount: number, currency: string) {
     try {
@@ -52,12 +53,10 @@ const PriceRange = ({ currencyCode }: { currencyCode: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <span className="txt-compact-small-plus text-ui-fg-subtle">Price</span>
-
-      <div className="flex flex-col gap-y-3 pr-6">
+    <FilterSection title="Price">
+      <div className="flex flex-col gap-y-2 px-2.5">
         <Slider.Root
-          className="relative flex h-5 w-full touch-none select-none items-center"
+          className="relative flex h-11 w-full touch-none select-none items-center"
           value={value}
           min={min}
           max={max}
@@ -70,28 +69,24 @@ const PriceRange = ({ currencyCode }: { currencyCode: string }) => {
           aria-label="Price range"
           data-testid="price-range"
         >
-          <Slider.Track className="relative h-0.5 w-full grow rounded-full bg-ui-border-base">
-            <Slider.Range className="absolute h-full rounded-full bg-ui-fg-interactive" />
+          <Slider.Track className="relative h-0.5 w-full grow rounded-full bg-bone/15">
+            <Slider.Range className="absolute h-full rounded-full bg-ember" />
           </Slider.Track>
           {value.map((_, index) => (
             <Slider.Thumb
               key={index}
-              className="block h-4 w-4 rounded-full border border-ui-border-interactive bg-ui-bg-base shadow-elevation-card-rest outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive"
+              className="relative block h-5 w-5 rounded-full border-2 border-ember bg-black outline-none transition-transform duration-fast ease-premium before:absolute before:-inset-3 before:content-[''] active:scale-110 motion-reduce:active:scale-100"
               aria-label={index === 0 ? "Minimum price" : "Maximum price"}
             />
           ))}
         </Slider.Root>
 
-        <div className="flex items-center justify-between">
-          <span className="text-small-regular text-ui-fg-subtle">
-            {format(value[0])}
-          </span>
-          <span className="text-small-regular text-ui-fg-subtle">
-            {format(value[1])}
-          </span>
+        <div className="-mx-2.5 flex items-center justify-between text-sm text-bone/70">
+          <span>{format(value[0])}</span>
+          <span>{format(value[1])}</span>
         </div>
       </div>
-    </div>
+    </FilterSection>
   )
 }
 

@@ -7,6 +7,7 @@ import {
 import { getRegion } from "@lib/data/regions"
 import { OptionValueIds } from "@lib/util/product-option-filters"
 import ProductPreview from "@modules/products/components/product-preview"
+import ListingFilterSheet from "@modules/store/components/listing-filter-sheet"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
@@ -30,6 +31,7 @@ export default async function PaginatedProducts({
   productsIds,
   countryCode,
   optionValueIds,
+  filterSheet = false,
 }: {
   sortBy?: SortOptions
   page: number
@@ -40,6 +42,8 @@ export default async function PaginatedProducts({
   productsIds?: string[]
   countryCode: string
   optionValueIds?: OptionValueIds
+  /** Show the phone "Filter & sort" bar (sort only) above the grid. */
+  filterSheet?: boolean
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: 12,
@@ -85,6 +89,13 @@ export default async function PaginatedProducts({
 
   return (
     <>
+      {filterSheet && (
+        <ListingFilterSheet
+          sortBy={sortBy ?? "created_at"}
+          count={count}
+          hideOptionsPicker
+        />
+      )}
       <ul
         className={`${PRODUCT_GRID_CLASS} w-full`}
         data-testid="products-list"
