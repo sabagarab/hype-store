@@ -39,7 +39,7 @@ export const SummaryItemList = ({
 
         return (
           <li key={item.id} className="flex gap-x-4" data-testid="product-row">
-            <div className="relative aspect-[4/5] w-16 shrink-0 overflow-hidden rounded-rounded bg-ink">
+            <div className="relative aspect-[4/5] w-16 shrink-0 overflow-hidden rounded-card bg-ink">
               {item.thumbnail ? (
                 <FadeInImage
                   src={item.thumbnail}

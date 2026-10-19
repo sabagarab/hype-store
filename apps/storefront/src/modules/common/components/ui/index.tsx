@@ -10,9 +10,9 @@ import {
   ThHTMLAttributes,
 } from "react"
 
-// TODO: Add Toaster component back when needed for notifications
-
-// Re-export clsx as clx for compatibility
+// Minimal stand-ins for the starter's @medusajs/ui parts that are still in
+// use (text, headings, container, icon button, input, table), styled with
+// the brand tokens. Re-export clsx as clx for compatibility.
 export { clsx as clx }
 
 // Text Component
@@ -23,7 +23,7 @@ type TextProps = HTMLAttributes<HTMLParagraphElement> & {
 export const Text = forwardRef<HTMLParagraphElement, TextProps>(
   ({ className, as: Component = "p", children, ...props }, ref) => {
     return (
-      <Component ref={ref} className={clsx("txt-medium", className)} {...props}>
+      <Component ref={ref} className={clsx("text-sm", className)} {...props}>
         {children}
       </Component>
     )
@@ -57,50 +57,6 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
 )
 Heading.displayName = "Heading"
 
-// Button Component
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "transparent"
-  size?: "small" | "medium" | "large"
-  isLoading?: boolean
-}
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant = "primary",
-      size = "medium",
-      isLoading,
-      disabled,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <button
-        ref={ref}
-        disabled={disabled || isLoading}
-        className={clsx(
-          "inline-flex gap-2 items-center justify-center rounded-md font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-50",
-          variant === "primary" && "bg-ember text-black hover:bg-ember-deep hover:text-bone",
-          variant === "secondary" &&
-            "bg-transparent text-bone border border-ui-border-strong hover:bg-ui-bg-subtle-hover",
-          variant === "transparent" && "bg-transparent hover:bg-ui-bg-subtle-hover",
-          size === "small" && "h-8 px-3 text-sm",
-          size === "medium" && "h-10 px-4",
-          size === "large" && "h-12 px-6 text-lg",
-          className
-        )}
-        {...props}
-      >
-        {isLoading ? "Loading..." : children}
-      </button>
-    )
-  }
-)
-Button.displayName = "Button"
-
 // Container Component
 type ContainerProps = HTMLAttributes<HTMLDivElement>
 
@@ -119,56 +75,6 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
 )
 Container.displayName = "Container"
 
-// Badge Component
-type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
-  color?: "green" | "red" | "blue" | "orange" | "grey" | "purple"
-}
-
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, color = "grey", children, ...props }, ref) => {
-    return (
-      <span
-        ref={ref}
-        className={clsx(
-          "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
-          color === "green" && "bg-green-100 text-green-700",
-          color === "red" && "bg-red-100 text-red-700",
-          color === "blue" && "bg-blue-100 text-blue-700",
-          color === "orange" && "bg-orange-100 text-orange-700",
-          color === "grey" && "bg-ui-bg-component text-ui-fg-subtle",
-          color === "purple" && "bg-purple-100 text-purple-700",
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </span>
-    )
-  }
-)
-Badge.displayName = "Badge"
-
-// IconBadge Component
-type IconBadgeProps = HTMLAttributes<HTMLSpanElement>
-
-export const IconBadge = forwardRef<HTMLSpanElement, IconBadgeProps>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <span
-        ref={ref}
-        className={clsx(
-          "inline-flex items-center justify-center rounded-full bg-ui-bg-component p-1",
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </span>
-    )
-  }
-)
-IconBadge.displayName = "IconBadge"
-
 // IconButton Component
 type IconButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
 
@@ -178,7 +84,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       <button
         ref={ref}
         className={clsx(
-          "inline-flex items-center justify-center rounded-md p-2 hover:bg-ui-bg-subtle-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember",
+          "inline-flex min-h-control-sm min-w-[44px] items-center justify-center rounded-control p-2 hover:bg-bone/5 transition-colors duration-base ease-premium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember",
           className
         )}
         {...props}
@@ -221,7 +127,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={clsx(
-            "flex h-10 w-full rounded-md border border-ui-border-base bg-ui-bg-field px-3 py-2 text-sm text-ui-fg-base placeholder:text-ui-fg-muted focus:outline-none focus:ring-2 focus:ring-ember focus:ring-offset-2 focus:ring-offset-black disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-control-sm w-full rounded-control border border-hairline bg-ink px-4 py-2 text-sm text-bone placeholder:text-bone/55 focus:outline-none focus:ring-2 focus:ring-ember focus:ring-offset-2 focus:ring-offset-black disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
           {...props}
@@ -292,7 +198,7 @@ const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
       <tr
         ref={ref}
         className={clsx(
-          "border-b border-ui-border-base transition-colors hover:bg-ui-bg-subtle-hover",
+          "border-b border-hairline transition-colors hover:bg-bone/5",
           className
         )}
         {...props}
@@ -312,7 +218,7 @@ const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
       <th
         ref={ref}
         className={clsx(
-          "h-12 px-4 text-left align-middle font-medium text-ui-fg-muted [&:has([role=checkbox])]:pr-0",
+          "h-12 px-4 text-left align-middle font-medium text-bone/55 [&:has([role=checkbox])]:pr-0",
           className
         )}
         {...props}
@@ -352,76 +258,3 @@ export const Table = Object.assign(TableRoot, {
   HeaderCell: TableHead,
   Cell: TableCell,
 })
-
-// RadioGroup Components
-type RadioGroupProps = HTMLAttributes<HTMLDivElement>
-
-const RadioGroupRoot = forwardRef<HTMLDivElement, RadioGroupProps>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={clsx("flex flex-col gap-2", className)}
-        {...props}
-      >
-        {children}
-      </div>
-    )
-  }
-)
-RadioGroupRoot.displayName = "RadioGroup"
-
-type RadioGroupItemProps = InputHTMLAttributes<HTMLInputElement> & {
-  label?: string
-}
-
-const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
-  ({ className, label, id, ...props }, ref) => {
-    return (
-      <div className="flex items-center gap-2">
-        <input
-          ref={ref}
-          type="radio"
-          id={id}
-          className={clsx(
-            "h-4 w-4 border-ui-border-strong accent-ember focus:ring-ember",
-            className
-          )}
-          {...props}
-        />
-        {label && <Label htmlFor={id}>{label}</Label>}
-      </div>
-    )
-  }
-)
-RadioGroupItem.displayName = "RadioGroupItem"
-
-export const RadioGroup = Object.assign(RadioGroupRoot, {
-  Item: RadioGroupItem,
-})
-
-// Checkbox Component
-type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
-  label?: string
-}
-
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, label, id, ...props }, ref) => {
-    return (
-      <div className="flex items-center gap-2">
-        <input
-          ref={ref}
-          type="checkbox"
-          id={id}
-          className={clsx(
-            "h-4 w-4 rounded border-ui-border-strong accent-ember focus:ring-ember",
-            className
-          )}
-          {...props}
-        />
-        {label && <Label htmlFor={id}>{label}</Label>}
-      </div>
-    )
-  }
-)
-Checkbox.displayName = "Checkbox"

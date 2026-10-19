@@ -32,7 +32,7 @@ export default function CollectionTemplate({
         <RefinementList sortBy={sort} hideOptionsPicker />
       </aside>
       <div className="w-full min-w-0">
-        <div className="mb-8 text-2xl-semi">
+        <div className="mb-8 text-3xl font-bold tracking-tight">
           <h1>{collection.title}</h1>
         </div>
         <Suspense

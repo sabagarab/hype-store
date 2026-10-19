@@ -17,11 +17,11 @@ const Radio = ({
       data-state={checked ? "checked" : "unchecked"}
       data-testid={dataTestId || "radio-button"}
       className={clx(
-        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors duration-fast ease-premium",
+        "flex h-5 w-5 shrink-0 items-center justify-center rounded-control border transition-colors duration-fast ease-premium",
         checked ? "border-ember" : "border-bone/40"
       )}
     >
-      {checked && <span className="h-2.5 w-2.5 rounded-full bg-ember" />}
+      {checked && <span className="h-2.5 w-2.5 rounded-control bg-ember" />}
     </span>
   )
 }

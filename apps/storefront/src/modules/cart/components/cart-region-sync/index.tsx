@@ -24,7 +24,7 @@ const CartRegionSync = ({ countryCode }: { countryCode: string }) => {
     <div
       role="status"
       aria-live="polite"
-      className="content-container flex min-h-[50vh] items-center justify-center gap-x-3 text-ui-fg-subtle"
+      className="content-container flex min-h-[50vh] items-center justify-center gap-x-3 text-bone/70"
     >
       <Spinner size={20} />
       <span>Updating your cart…</span>

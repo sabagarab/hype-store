@@ -18,7 +18,7 @@ export default function ProductPrice({
   const selectedPrice = variant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
-    return <div className="block h-8 w-28 animate-pulse rounded-soft bg-ui-bg-component" />
+    return <div className="block h-8 w-28 animate-pulse rounded-control bg-ink" />
   }
 
   // "From" only when no variant is picked and the variants' prices differ.
@@ -32,7 +32,7 @@ export default function ProductPrice({
       <span
         className={
           soldOut
-            ? "text-2xl font-bold text-ui-fg-muted line-through"
+            ? "text-2xl font-bold text-bone/55 line-through"
             : "text-2xl font-bold text-ember"
         }
       >
@@ -46,7 +46,7 @@ export default function ProductPrice({
       </span>
       {selectedPrice.price_type === "sale" && !soldOut && (
         <span
-          className="text-sm text-ui-fg-muted line-through"
+          className="text-sm text-bone/55 line-through"
           data-testid="original-product-price"
           data-value={selectedPrice.original_price_number}
         >

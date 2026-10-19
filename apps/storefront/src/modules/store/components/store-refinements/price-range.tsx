@@ -69,13 +69,13 @@ const PriceRange = ({ currencyCode }: { currencyCode: string }) => {
           aria-label="Price range"
           data-testid="price-range"
         >
-          <Slider.Track className="relative h-0.5 w-full grow rounded-full bg-bone/15">
-            <Slider.Range className="absolute h-full rounded-full bg-ember" />
+          <Slider.Track className="relative h-0.5 w-full grow rounded-control bg-bone/15">
+            <Slider.Range className="absolute h-full rounded-control bg-ember" />
           </Slider.Track>
           {value.map((_, index) => (
             <Slider.Thumb
               key={index}
-              className="relative block h-5 w-5 rounded-full border-2 border-ember bg-black outline-none transition-transform duration-fast ease-premium before:absolute before:-inset-3 before:content-[''] active:scale-110 motion-reduce:active:scale-100"
+              className="relative block h-5 w-5 rounded-control border-2 border-ember bg-black outline-none transition-transform duration-fast ease-premium before:absolute before:-inset-3 before:content-[''] active:scale-110 motion-reduce:active:scale-100"
               aria-label={index === 0 ? "Minimum price" : "Maximum price"}
             />
           ))}

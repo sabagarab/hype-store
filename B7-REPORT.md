@@ -140,3 +140,36 @@ Storefront restyle, run as five sub-batches. One commit per sub-batch.
 **Unsure**
 - Product thumbnails in cart and order lists are now 4:5 (was 9:16) to match the product photos. That's a small layout change in the cart page and order lists.
 - I didn't check pages behind sign-in (account overview, profile, addresses, order details) in the browser. They're covered by type-check and review only.
+
+## B7.5 Token sweep
+
+**What changed**
+- A scripted sweep across the whole storefront moved every leftover starter class to our tokens. That covers `ui-*` colours/borders, `*-semi`/`*-regular`/`txt-*` text classes, raw durations (100–500ms), `ease-in`/`ease-out`, `shadow-xl/md/elevation-*`, mixed radii and `h-[52px]`.
+  - Radii: md/lg/large/2xl → `card`, full → `control`.
+  - Heights: `h-[52px]` → `h-control`.
+  - Most of it was in the skeletons, line-item prices, store pagination, not-found pages and the free-shipping nudge.
+- Free-shipping nudge:
+  - Its green/gradient progress bar is now plain ember, and the "unlocked" check icon ember too.
+  - Its buttons use the shared Button styles, and the popup fits phone width.
+  - It still fades out with the same 1s delay.
+- Removed:
+  - **Unused files:** the old Modal + its context, profile-password, the cart preview template, order payment-details, nine unused icons.
+  - **Unused `ui` shim exports:** Button, Badge, IconBadge, RadioGroup, Checkbox.
+  - **Legacy CSS in `globals.css`:** the text-*-semi/regular classes, `.contrast-btn` and the `txt-*` font rule.
+  - **Unused Tailwind config:** radius tokens (soft/rounded/large/circle), keyframes/animations, transition names, the grey palette and the `tailwindcss-radix` plugin.
+- Packages uninstalled: `@radix-ui/react-accordion`, `pg`, `qs`, `@types/pg`, `tailwindcss-radix`, `@types/react-instantsearch-dom`.
+
+**Review fixes** (from a separate reviewer)
+- The language dropdown's shadow (a mapping slip had produced a non-existent class).
+- The nudge's delayed fade-out.
+- The shim Input and IconButton on the control radius and 44px.
+- Page titles that were 30px keep that size (3xl token) instead of shrinking to 24px.
+- One skeleton colour, and skeleton bars on the control radius.
+- The address-select chevron transition (it was a no-op before).
+
+**Unsure / left as is**
+- The checkbox keeps a 4px radius (`rounded-base`): a pill or 16px radius looks wrong on a 20px box. It's the one exception to card/control.
+- `lib/data/variants.ts` and `lib/util/product.ts` are unused but they're data helpers, not UI, so I left them.
+- Stripe packages stay installed: checkout code still imports them (hidden in the UI). Removing them would be a logic change.
+- The Magic Card ember glow on product cards (desktop hover) technically brushes the "no gradient glows" rule. It stays because you asked for it in B7.1.
+- Error text and the accent are both ember, so errors don't stand out by colour alone.

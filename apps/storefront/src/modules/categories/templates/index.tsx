@@ -55,10 +55,10 @@ export default function CategoryTemplate({
         />
       </aside>
       <div className="w-full min-w-0">
-        <div className="flex flex-row mb-8 text-2xl-semi gap-4">
+        <div className="flex flex-row mb-8 text-3xl font-bold tracking-tight gap-4">
           {parents &&
             parents.map((parent) => (
-              <span key={parent.id} className="text-ui-fg-subtle">
+              <span key={parent.id} className="text-bone/70">
                 <LocalizedClientLink
                   className="mr-4 hover:text-ember"
                   href={`/categories/${parent.handle}`}
@@ -72,7 +72,7 @@ export default function CategoryTemplate({
           <h1 data-testid="category-page-title">{category.name}</h1>
         </div>
         {category.description && (
-          <div className="mb-8 text-base-regular">
+          <div className="mb-8 text-sm">
             <p>{category.description}</p>
           </div>
         )}

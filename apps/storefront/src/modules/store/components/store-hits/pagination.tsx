@@ -16,8 +16,8 @@ const SearchPagination = () => {
   const renderPage = (page: number) => (
     <button
       key={page}
-      className={clx("txt-xlarge-plus text-ui-fg-muted", {
-        "text-ui-fg-base hover:text-ui-fg-subtle": page === currentRefinement,
+      className={clx("text-xl font-bold text-bone/55", {
+        "text-bone hover:text-bone/70": page === currentRefinement,
       })}
       disabled={page === currentRefinement}
       onClick={() => refine(page)}
@@ -29,7 +29,7 @@ const SearchPagination = () => {
   const renderEllipsis = (key: string) => (
     <span
       key={key}
-      className="txt-xlarge-plus text-ui-fg-muted items-center cursor-default"
+      className="text-xl font-bold text-bone/55 items-center cursor-default"
     >
       ...
     </span>

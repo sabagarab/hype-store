@@ -94,7 +94,7 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
               aria-label={`Show image ${i + 1} of ${items.length}`}
               aria-current={i === active}
               className={clx(
-                "relative aspect-[4/5] w-full shrink-0 overflow-hidden rounded-rounded bg-ink transition-opacity duration-base ease-premium",
+                "relative aspect-[4/5] w-full shrink-0 overflow-hidden rounded-card bg-ink transition-opacity duration-base ease-premium",
                 i === active
                   ? "ring-2 ring-ember ring-offset-2 ring-offset-black"
                   : "opacity-60 hover:opacity-100"

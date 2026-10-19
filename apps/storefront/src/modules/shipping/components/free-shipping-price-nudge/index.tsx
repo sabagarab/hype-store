@@ -9,7 +9,7 @@ import {
   StorePrice,
 } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Button from "@modules/common/components/button"
+import Button, { buttonClass } from "@modules/common/components/button"
 import { clx } from "@modules/common/components/ui"
 import { useState } from "react"
 import { StoreFreeShippingPrice } from "types/global"
@@ -143,14 +143,14 @@ function FreeShippingInline({
   }
 }) {
   return (
-    <div className="bg-ui-bg-subtle p-2 rounded-lg border border-ui-border-base">
+    <div className="rounded-card border border-hairline bg-ink p-2">
       <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-ui-fg-subtle">
+        <div className="flex justify-between text-xs text-bone/70">
           <div>
             {price.target_reached ? (
               <div className="flex items-center gap-1.5">
                 {" "}
-                <CheckCircleSolid className="text-green-500 inline-block" />{" "}
+                <CheckCircleSolid className="inline-block text-ember" />{" "}
                 Free Shipping unlocked!
               </div>
             ) : (
@@ -164,7 +164,7 @@ function FreeShippingInline({
             })}
           >
             Only{" "}
-            <span className="text-ui-fg-base">
+            <span className="text-bone">
               {convertToLocale({
                 amount: price.target_remaining,
                 currency_code: cart.currency_code,
@@ -176,14 +176,11 @@ function FreeShippingInline({
         <div className="flex justify-between gap-1">
           <div
             className={clx(
-              "bg-gradient-to-r from-ember to-ember-deep h-1 rounded-full max-w-full duration-500 ease-in-out",
-              {
-                "from-green-400 to-green-500": price.target_reached,
-              }
+              "h-1 max-w-full rounded-control bg-ember transition-[width] duration-slow ease-premium"
             )}
             style={{ width: `${price.remaining_percentage}%` }}
           ></div>
-          <div className="bg-bone/15 h-1 rounded-full w-fit flex-grow"></div>
+          <div className="h-1 w-fit flex-grow rounded-control bg-bone/15"></div>
         </div>
       </div>
     </div>
@@ -202,7 +199,7 @@ function FreeShippingPopup({
   return (
     <div
       className={clx(
-        "fixed bottom-5 right-5 flex flex-col items-end gap-2 transition-all duration-500 ease-in-out z-10",
+        "fixed bottom-5 right-5 z-10 flex flex-col items-end gap-2 transition-[opacity,visibility] duration-slow ease-premium",
         {
           "opacity-0 invisible delay-1000": price.target_reached,
           "opacity-0 invisible": isClosed,
@@ -221,14 +218,14 @@ function FreeShippingPopup({
         </Button>
       </div>
 
-      <div className="w-[400px] bg-ink text-bone border border-ui-border-base p-6 rounded-lg">
+      <div className="w-[min(400px,calc(100vw-2.5rem))] rounded-card border border-hairline bg-ink p-6 text-bone shadow-float">
         <div className="pb-4">
           <div className="space-y-3">
-            <div className="flex justify-between text-[15px] text-ui-fg-muted">
+            <div className="flex justify-between text-sm text-bone/55">
               <div>
                 {price.target_reached ? (
                   <div className="flex items-center gap-1.5">
-                    <CheckCircleSolid className="text-green-500 inline-block" />{" "}
+                    <CheckCircleSolid className="inline-block text-ember" />{" "}
                     Free Shipping unlocked!
                   </div>
                 ) : (
@@ -254,28 +251,25 @@ function FreeShippingPopup({
             <div className="flex justify-between gap-1">
               <div
                 className={clx(
-                  "bg-gradient-to-r from-ember to-ember-deep h-1.5 rounded-full max-w-full duration-500 ease-in-out",
-                  {
-                    "from-green-400 to-green-500": price.target_reached,
-                  }
+                  "h-1.5 max-w-full rounded-control bg-ember transition-[width] duration-slow ease-premium"
                 )}
                 style={{ width: `${price.remaining_percentage}%` }}
               ></div>
-              <div className="bg-bone/15 h-1.5 rounded-full w-fit flex-grow"></div>
+              <div className="h-1.5 w-fit flex-grow rounded-control bg-bone/15"></div>
             </div>
           </div>
         </div>
 
         <div className="flex gap-3">
           <LocalizedClientLink
-            className="rounded-2xl bg-transparent shadow-none outline-none border-[1px] border-bone text-[15px] py-2.5 px-4 transition-colors duration-200 hover:bg-bone/10"
+            className={buttonClass({ variant: "secondary", size: "sm" })}
             href="/cart"
           >
             View cart
           </LocalizedClientLink>
 
           <LocalizedClientLink
-            className="flex-grow rounded-2xl bg-ember text-black shadow-none outline-none border-[1px] border-ember transition-colors duration-200 hover:bg-ember-deep hover:border-ember-deep hover:text-bone text-[15px] py-2.5 px-4 text-center"
+            className={buttonClass({ size: "sm", className: "flex-grow" })}
             href="/store"
           >
             View products

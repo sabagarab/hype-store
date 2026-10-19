@@ -36,7 +36,7 @@ export default function ContactPage() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-[44px] items-center gap-x-3 text-bone transition-colors duration-200 hover:text-ember"
+                className="inline-flex min-h-[44px] items-center gap-x-3 text-bone transition-colors duration-base hover:text-ember"
               >
                 <span className="font-bold">{link.label}</span>
                 <span className="text-bone/60">{link.detail}</span>

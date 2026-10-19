@@ -23,7 +23,7 @@ const CartContents = ({
 
   return (
     <div className="grid grid-cols-1 small:grid-cols-[1fr_360px] gap-x-40">
-      <div className="flex flex-col bg-ui-bg-base py-6 gap-y-6">
+      <div className="flex flex-col bg-black py-6 gap-y-6">
         {!customer && (
           <>
             <SignInPrompt />
@@ -38,7 +38,7 @@ const CartContents = ({
       <div className="relative">
         <div className="flex flex-col gap-y-8 sticky top-12">
           {cart.region && (
-            <div className="bg-ui-bg-base py-6">
+            <div className="bg-black py-6">
               <Summary
                 cart={cart}
                 blocked={hasUnavailable}

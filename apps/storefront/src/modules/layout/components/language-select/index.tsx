@@ -127,10 +127,10 @@ const LanguageSelect = ({
         disabled={isPending}
       >
         <ListboxButton className="py-1 w-full">
-          <div className="txt-compact-small flex items-start gap-x-2">
+          <div className="text-xs flex items-start gap-x-2">
             <span>Language:</span>
             {current && (
-              <span className="txt-compact-small flex items-center gap-x-2">
+              <span className="text-xs flex items-center gap-x-2">
                 {current.countryCode && (
                   /* @ts-ignore */
                   <ReactCountryFlag
@@ -151,19 +151,19 @@ const LanguageSelect = ({
           <Transition
             show={state}
             as={Fragment}
-            leave="transition ease-in duration-150"
+            leave="transition ease-premium duration-fast"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
             <ListboxOptions
-              className="absolute -bottom-[calc(100%-36px)] left-0 xsmall:left-auto xsmall:right-0 max-h-[442px] overflow-y-scroll z-[900] bg-ink border border-ui-border-base drop-shadow-md text-small-regular uppercase text-ui-fg-base no-scrollbar rounded-rounded w-full"
+              className="absolute -bottom-[calc(100%-36px)] left-0 xsmall:left-auto xsmall:right-0 max-h-[442px] overflow-y-scroll z-[900] bg-ink border border-hairline shadow-float text-xs uppercase text-bone no-scrollbar rounded-card w-full"
               static
             >
               {options.map((o) => (
                 <ListboxOption
                   key={o.code || "default"}
                   value={o}
-                  className="py-2 hover:bg-ui-bg-subtle-hover px-3 cursor-pointer flex items-center gap-x-2"
+                  className="py-2 hover:bg-bone/5 px-3 cursor-pointer flex items-center gap-x-2"
                 >
                   {o.countryCode ? (
                     /* @ts-ignore */

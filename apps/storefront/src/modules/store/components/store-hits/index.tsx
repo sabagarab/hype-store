@@ -100,7 +100,7 @@ const StoreHits = ({ hitsPerPage }: StoreHitsProps) => {
   if (status === "error" || failed) {
     return (
       <Text
-        className="py-16 text-center text-ui-fg-error"
+        className="py-16 text-center text-ember"
         data-testid="products-error"
       >
         Couldn&apos;t load products
@@ -115,7 +115,7 @@ const StoreHits = ({ hitsPerPage }: StoreHitsProps) => {
         <SkeletonProductGrid numberOfProducts={hitsPerPage} />
       ) : !items.length ? (
         <Text
-          className="py-16 text-center text-ui-fg-subtle"
+          className="py-16 text-center text-bone/70"
           data-testid="no-products"
         >
           No products matched these filters.
