@@ -120,6 +120,7 @@ function useLineGroups(
 export type TextRevealProps = {
   text: string
   as?: ElementType
+  id?: string
   className?: string
   /** Seconds before the first line starts. */
   delay?: number
@@ -128,6 +129,7 @@ export type TextRevealProps = {
 const TextReveal = ({
   text,
   as: Tag = "p",
+  id,
   className,
   delay = 0,
 }: TextRevealProps) => {
@@ -138,7 +140,11 @@ const TextReveal = ({
   const { lineGroups, measureLayer } = useLineGroups(words, className, rootRef)
 
   if (reduced) {
-    return <Tag className={className}>{text}</Tag>
+    return (
+      <Tag id={id} className={className}>
+        {text}
+      </Tag>
+    )
   }
 
   const ready = lineGroups !== null && lineGroups.length > 0
@@ -147,7 +153,7 @@ const TextReveal = ({
   return (
     <div className="relative w-full" ref={rootRef}>
       {measureLayer}
-      <Tag aria-label={text} className={clx("block", className)}>
+      <Tag id={id} aria-label={text} className={clx("block", className)}>
         {ready ? (
           lineGroups.map((group, lineIndex) => (
             <span key={lineIndex} className="block overflow-hidden" aria-hidden>

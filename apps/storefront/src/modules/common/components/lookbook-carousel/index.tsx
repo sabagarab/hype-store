@@ -1,12 +1,19 @@
 "use client"
 
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react"
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "motion/react"
 import FadeInImage from "@modules/common/components/fade-in-image"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { INSTANT, TRANSITION } from "@lib/motion"
 import { buttonClass } from "@modules/common/components/button"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ScrollParallax from "@modules/common/components/scroll-parallax"
+import { ScrollReveal } from "@modules/common/components/scroll-reveal"
 import { clx } from "@modules/common/components/ui"
 
 // Elegant Carousel from 21st.dev (@dev.yadhakim/elegant-carousel): an
@@ -15,7 +22,8 @@ import { clx } from "@modules/common/components/ui"
 // instead of its stylesheet, brand colors (no per-slide accent washes, frame
 // corners or image overlays), no Ken Burns zoom, a 300ms crossfade, autoplay
 // only while on screen and never with reduced motion, and a single slide
-// renders as a static panel.
+// renders as a static panel. On scroll the image eases from a slight zoom to
+// rest (scroll-linked) and the text rises in once just after it.
 
 export type LookbookSlide = {
   id: string
@@ -70,7 +78,10 @@ const LookbookCarousel = ({
       role="region"
       aria-roledescription="carousel"
       aria-label="Lookbook"
-      className={clx("grid gap-6 small:grid-cols-[2fr_3fr] small:items-center small:gap-12", className)}
+      className={clx(
+        "grid gap-6 small:grid-cols-[2fr_3fr] small:items-center small:gap-12",
+        className
+      )}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={(event) => {
@@ -83,10 +94,14 @@ const LookbookCarousel = ({
         }
       }}
     >
-      <div className="order-2 flex flex-col items-start gap-6 small:order-1">
+      <ScrollReveal
+        delay={0.1}
+        className="order-2 flex flex-col items-start gap-6 small:order-1"
+      >
         {count > 1 && (
           <p className="text-xs font-medium tabular-nums tracking-widest text-bone/55">
-            {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+            {String(index + 1).padStart(2, "0")} /{" "}
+            {String(count).padStart(2, "0")}
           </p>
         )}
         <AnimatePresence mode="wait" initial={false}>
@@ -101,32 +116,41 @@ const LookbookCarousel = ({
             {slide.title}
           </motion.h2>
         </AnimatePresence>
-        <LocalizedClientLink href={slide.cta.href} className={buttonClass({ variant: "secondary" })}>
+        <LocalizedClientLink
+          href={slide.cta.href}
+          className={buttonClass({ variant: "secondary" })}
+        >
           {slide.cta.label}
         </LocalizedClientLink>
-      </div>
+      </ScrollReveal>
 
       <div className="relative order-1 aspect-[4/5] overflow-hidden rounded-card bg-ink small:order-2 small:aspect-[5/4]">
-        <AnimatePresence initial={false}>
-          <motion.div
-            key={slide.id}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={fade}
-          >
-            {slide.image && (
-              <FadeInImage
-                src={slide.image}
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 60vw, 100vw"
-                className="object-cover"
-              />
-            )}
-          </motion.div>
-        </AnimatePresence>
+        <ScrollParallax
+          phase="pass"
+          scale={[1.08, 1]}
+          className="absolute inset-0"
+        >
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={slide.id}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={fade}
+            >
+              {slide.image && (
+                <FadeInImage
+                  src={slide.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  className="object-cover"
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </ScrollParallax>
       </div>
 
       {count > 1 && (
@@ -148,7 +172,9 @@ const LookbookCarousel = ({
                     i < index && "w-full",
                     i > index && "w-0",
                     i === index &&
-                      (autoplay ? "w-0 animate-[lookbook-progress_6s_linear_forwards]" : "w-full")
+                      (autoplay
+                        ? "w-0 animate-[lookbook-progress_6s_linear_forwards]"
+                        : "w-full")
                   )}
                 />
               </span>

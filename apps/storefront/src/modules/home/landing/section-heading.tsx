@@ -1,6 +1,8 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import TextReveal from "@modules/common/components/text-reveal"
 
-// Plain section title with an optional text link on the right.
+// Section title (unmasks line by line once as it enters the screen) with an
+// optional text link on the right.
 const SectionHeading = ({
   id,
   title,
@@ -11,12 +13,14 @@ const SectionHeading = ({
   link?: { label: string; href: string }
 }) => (
   <div className="mb-6 flex items-end justify-between gap-4 small:mb-8">
-    <h2
-      id={id}
-      className="text-2xl font-black uppercase leading-none tracking-tight text-bone small:text-4xl"
-    >
-      {title}
-    </h2>
+    <div className="min-w-0 flex-1">
+      <TextReveal
+        as="h2"
+        id={id}
+        text={title}
+        className="text-2xl font-black uppercase leading-none tracking-tight text-bone small:text-4xl"
+      />
+    </div>
     {link && (
       <LocalizedClientLink
         href={link.href}
