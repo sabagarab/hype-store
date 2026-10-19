@@ -53,7 +53,6 @@ export default function ProductPreview({
         <ProductCardImage
           src={primaryImage}
           hoverSrc={hoverImage}
-          glow
           alt={product.title}
           sizes={IMAGE_SIZES}
           muted={soldOut}

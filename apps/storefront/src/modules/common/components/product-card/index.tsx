@@ -1,6 +1,5 @@
 import FadeInImage from "@modules/common/components/fade-in-image"
 import ImagePlaceholder from "@modules/common/components/image-placeholder"
-import MagicCard from "@modules/common/components/magic-card"
 import * as React from "react"
 
 import { clx } from "@modules/common/components/ui"
@@ -12,8 +11,8 @@ import { clx } from "@modules/common/components/ui"
 // own studio background), FadeInImage (load retry + Skeleton Swap), a quiet
 // zoom on hover instead of the lift, a tactile press (scale .98, 120ms),
 // brand colors. The wishlist badge is dropped. Desktop only (real hover): an
-// optional second photo crossfades in and the Magic Card glow follows the
-// cursor; neither is rendered or loaded on touch.
+// optional second photo crossfades in; it is never rendered or loaded on
+// touch. No cursor glow (quiet, per the no-AI-look rule).
 
 type ProductCardProps = React.ComponentProps<"div">
 
@@ -34,8 +33,6 @@ type ProductCardImageProps = {
   src: string | null | undefined
   /** Second photo shown on hover (desktop only). */
   hoverSrc?: string | null
-  /** Magic Card cursor glow around the well (desktop only). */
-  glow?: boolean
   alt: string
   sizes: string
   priority?: boolean
@@ -48,7 +45,6 @@ type ProductCardImageProps = {
 export function ProductCardImage({
   src,
   hoverSrc,
-  glow = false,
   alt,
   sizes,
   priority = false,
@@ -101,9 +97,7 @@ export function ProductCardImage({
     className
   )
 
-  return glow ? (
-    <MagicCard className={wellClass}>{well}</MagicCard>
-  ) : (
+  return (
     <div data-slot="product-card-image" className={wellClass}>
       {well}
     </div>
