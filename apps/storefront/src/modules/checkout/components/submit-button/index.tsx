@@ -1,9 +1,13 @@
 "use client"
 
-import { Button } from "@modules/common/components/ui"
+import Button from "@modules/common/components/button"
+import LoadingButton from "@modules/common/components/loading-button"
+import { clx } from "@modules/common/components/ui"
 import React from "react"
 import { useFormStatus } from "react-dom"
 
+// Form submit button. Primary uses the 21st Loading Button (pending while the
+// form's server action runs), secondary the originui Button.
 export function SubmitButton({
   children,
   variant = "primary",
@@ -11,7 +15,7 @@ export function SubmitButton({
   className,
   "data-testid": dataTestId,
 }: {
-  children: React.ReactNode
+  children: string
   variant?: "primary" | "secondary" | "transparent" | null
   size?: "small" | "medium" | "large"
   className?: string
@@ -19,16 +23,31 @@ export function SubmitButton({
 }) {
   const { pending } = useFormStatus()
 
+  if (variant === "secondary" || variant === "transparent") {
+    return (
+      <Button
+        type="submit"
+        variant={variant === "secondary" ? "secondary" : "ghost"}
+        size={size === "small" ? "sm" : "md"}
+        disabled={pending}
+        aria-busy={pending || undefined}
+        className={className}
+        data-testid={dataTestId}
+      >
+        {children}
+      </Button>
+    )
+  }
+
   return (
-    <Button
-      size={size}
-      className={className}
+    <LoadingButton
       type="submit"
-      isLoading={pending}
-      variant={variant || "primary"}
+      pending={pending}
+      size={size === "small" ? "sm" : "md"}
+      className={clx(className)}
       data-testid={dataTestId}
     >
       {children}
-    </Button>
+    </LoadingButton>
   )
 }

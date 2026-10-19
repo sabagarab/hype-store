@@ -1,5 +1,4 @@
 import { HttpTypes } from "@medusajs/types"
-import { Container } from "@modules/common/components/ui"
 import Checkbox from "@modules/common/components/checkbox"
 import Input from "@modules/common/components/input"
 import Textarea from "@modules/common/components/textarea"
@@ -102,8 +101,8 @@ const ShippingAddress = ({
   return (
     <>
       {customer && (addressesInRegion?.length || 0) > 0 && (
-        <Container className="mb-6 flex flex-col gap-y-4 p-5">
-          <p className="text-small-regular">
+        <div className="mb-4 flex flex-col gap-y-3 rounded-card border border-hairline bg-ink p-4">
+          <p className="text-sm text-bone/70">
             {`Hi ${customer.first_name}, do you want to use one of your saved addresses?`}
           </p>
           <AddressSelect
@@ -115,9 +114,9 @@ const ShippingAddress = ({
             }
             onSelect={setFormAddress}
           />
-        </Container>
+        </div>
       )}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2">
         <Input
           label="First name"
           name="shipping_address.first_name"
@@ -137,6 +136,7 @@ const ShippingAddress = ({
           data-testid="shipping-last-name-input"
         />
         <Input
+          className="col-span-2"
           label="Address"
           name="shipping_address.address_1"
           autoComplete="address-line1"
@@ -154,14 +154,6 @@ const ShippingAddress = ({
           data-testid="shipping-address-2-input"
         />
         <Input
-          label="Company"
-          name="shipping_address.company"
-          value={formData["shipping_address.company"]}
-          onChange={handleChange}
-          autoComplete="organization"
-          data-testid="shipping-company-input"
-        />
-        <Input
           label="City / Area"
           name="shipping_address.city"
           autoComplete="address-level2"
@@ -171,6 +163,8 @@ const ShippingAddress = ({
           data-testid="shipping-city-input"
         />
         <CountrySelect
+          className="col-span-2"
+          label="Country"
           name="shipping_address.country_code"
           autoComplete="country"
           region={cart?.region}
@@ -179,16 +173,20 @@ const ShippingAddress = ({
           required
           data-testid="shipping-country-select"
         />
-        <Input
-          label="State / Province"
+        {/* Not asked for in Lebanon; kept as hidden fields so saved values
+            and the submitted form data stay the same. */}
+        <input
+          type="hidden"
+          name="shipping_address.company"
+          value={formData["shipping_address.company"]}
+        />
+        <input
+          type="hidden"
           name="shipping_address.province"
-          autoComplete="address-level1"
           value={formData["shipping_address.province"]}
-          onChange={handleChange}
-          data-testid="shipping-province-input"
         />
       </div>
-      <div className="my-8">
+      <div className="my-4">
         <Checkbox
           label="Billing address same as shipping address"
           name="same_as_billing"
@@ -197,7 +195,7 @@ const ShippingAddress = ({
           data-testid="billing-address-checkbox"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 gap-x-3 gap-y-2 xsmall:grid-cols-2">
         <Input
           label="Email"
           name="email"
@@ -219,17 +217,17 @@ const ShippingAddress = ({
           required
           data-testid="shipping-phone-input"
         />
-      </div>
-      <div className="mb-4">
-        {/* Saved on the cart's metadata; Medusa copies it to the order. */}
-        <Textarea
-          label="Delivery notes (landmarks)"
-          name="delivery_notes"
-          rows={3}
-          value={formData.delivery_notes}
-          onChange={handleChange}
-          data-testid="shipping-delivery-notes-input"
-        />
+        <div className="xsmall:col-span-2">
+          {/* Saved on the cart's metadata; Medusa copies it to the order. */}
+          <Textarea
+            label="Delivery notes (landmarks)"
+            name="delivery_notes"
+            rows={3}
+            value={formData.delivery_notes}
+            onChange={handleChange}
+            data-testid="shipping-delivery-notes-input"
+          />
+        </div>
       </div>
     </>
   )

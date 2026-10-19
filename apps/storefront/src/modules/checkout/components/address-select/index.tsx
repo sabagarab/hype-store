@@ -36,7 +36,7 @@ const AddressSelect = ({
     <Listbox onChange={handleSelect} value={selectedAddress?.id}>
       <div className="relative">
         <Listbox.Button
-          className="relative w-full flex justify-between items-center px-4 py-[10px] text-left bg-ui-bg-base cursor-default focus:outline-none border rounded-rounded focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-gray-300 focus-visible:ring-offset-2 focus-visible:border-ui-border-strong text-base-regular"
+          className="relative flex h-control-sm w-full cursor-pointer items-center justify-between rounded-control border border-hairline bg-black px-4 text-left text-sm text-bone transition-colors duration-fast hover:border-bone/25"
           data-testid="shipping-address-select"
         >
           {({ open }) => (
@@ -61,7 +61,7 @@ const AddressSelect = ({
           leaveTo="opacity-0"
         >
           <Listbox.Options
-            className="absolute z-20 w-full overflow-auto text-small-regular bg-ink border border-ui-border-base border-top-0 max-h-60 focus:outline-none sm:text-sm"
+            className="absolute z-20 mt-2 max-h-60 w-full overflow-auto rounded-card border border-hairline bg-ink text-sm focus:outline-none"
             data-testid="shipping-address-options"
           >
             {addresses.map((address) => {
@@ -69,7 +69,7 @@ const AddressSelect = ({
                 <Listbox.Option
                   key={address.id}
                   value={address.id}
-                  className="cursor-default select-none relative pl-6 pr-10 hover:bg-ui-bg-subtle-hover py-4"
+                  className="relative cursor-pointer select-none px-4 py-3 text-bone hover:bg-bone/[0.04] data-[focus]:bg-bone/[0.04]"
                   data-testid="shipping-address-option"
                 >
                   <div className="flex gap-x-4 items-start">
@@ -78,15 +78,10 @@ const AddressSelect = ({
                       data-testid="shipping-address-radio"
                     />
                     <div className="flex flex-col">
-                      <span className="text-left text-base-semi">
+                      <span className="text-left font-medium">
                         {address.first_name} {address.last_name}
                       </span>
-                      {address.company && (
-                        <span className="text-small-regular text-ui-fg-base">
-                          {address.company}
-                        </span>
-                      )}
-                      <div className="flex flex-col text-left text-base-regular mt-2">
+                      <div className="mt-1 flex flex-col text-left text-bone/70">
                         <span>
                           {address.address_1}
                           {address.address_2 && (
@@ -99,7 +94,6 @@ const AddressSelect = ({
                             .join(", ")}
                         </span>
                         <span>
-                          {address.province && `${address.province}, `}
                           {address.country_code?.toUpperCase()}
                         </span>
                       </div>

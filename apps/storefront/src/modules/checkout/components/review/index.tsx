@@ -1,8 +1,7 @@
 "use client"
 
-import { Heading, Text, clx } from "@modules/common/components/ui"
-
 import PaymentButton from "../payment-button"
+import { StepFade } from "../step-header"
 import { useSearchParams } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 
@@ -24,33 +23,21 @@ const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
     (cart.shipping_methods?.length ?? 0) > 0 &&
     (cart.payment_collection || paidByGiftcard)
 
+  // Review is the end of the Payment step: just the button and the note.
+  if (!isOpen || !previousStepsCompleted) {
+    return null
+  }
+
   return (
-    <div className="bg-ui-bg-base">
-      <div className="flex flex-row items-center justify-between mb-6">
-        <Heading
-          level="h2"
-          className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
-            {
-              "opacity-50 pointer-events-none select-none": !isOpen,
-            }
-          )}
-        >
-          Review
-        </Heading>
-      </div>
-      {isOpen && previousStepsCompleted && (
-        <>
-          <PaymentButton cart={cart} data-testid="submit-order-button" />
-          <Text
-            className="mt-3 text-sm text-bone/70"
-            data-testid="final-sale-note"
-          >
-            {CHECKOUT_FINAL_SALE_NOTE}
-          </Text>
-        </>
-      )}
-    </div>
+    <StepFade className="py-6">
+      <PaymentButton cart={cart} data-testid="submit-order-button" />
+      <p
+        className="mt-3 text-center text-sm text-bone/70"
+        data-testid="final-sale-note"
+      >
+        {CHECKOUT_FINAL_SALE_NOTE}
+      </p>
+    </StepFade>
   )
 }
 

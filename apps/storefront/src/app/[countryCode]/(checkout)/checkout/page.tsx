@@ -3,8 +3,11 @@ import { retrieveCustomer } from "@lib/data/customer"
 import { getRegion } from "@lib/data/regions"
 import CartRegionSync from "@modules/cart/components/cart-region-sync"
 import PaymentWrapper from "@modules/checkout/components/payment-wrapper"
+import CheckoutSteps from "@modules/checkout/components/checkout-steps"
 import CheckoutForm from "@modules/checkout/templates/checkout-form"
-import CheckoutSummary from "@modules/checkout/templates/checkout-summary"
+import CheckoutSummary, {
+  CheckoutSummaryMobile,
+} from "@modules/checkout/templates/checkout-summary"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -34,13 +37,17 @@ export default async function Checkout(props: {
   }
 
   return (
-    <>
-      <div className="grid grid-cols-1 small:grid-cols-[1fr_416px] content-container gap-x-40 py-12">
+    <div className="content-container grid grid-cols-1 gap-x-16 pb-16 small:grid-cols-[minmax(0,1fr)_400px] small:py-12 large:gap-x-24">
+      <div className="flex min-w-0 flex-col">
+        <CheckoutSummaryMobile cart={cart} deliveryAmount={deliveryAmount} />
+        <div className="py-6 small:pt-0">
+          <CheckoutSteps />
+        </div>
         <PaymentWrapper cart={cart}>
           <CheckoutForm cart={cart} customer={customer} />
         </PaymentWrapper>
-        <CheckoutSummary cart={cart} deliveryAmount={deliveryAmount} />
       </div>
-    </>
+      <CheckoutSummary cart={cart} deliveryAmount={deliveryAmount} />
+    </div>
   )
 }

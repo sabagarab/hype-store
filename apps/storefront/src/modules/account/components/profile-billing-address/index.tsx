@@ -76,7 +76,6 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
         <span>
           {billingAddress.first_name} {billingAddress.last_name}
         </span>
-        <span>{billingAddress.company}</span>
         <span>
           {billingAddress.address_1}
           {billingAddress.address_2 ? `, ${billingAddress.address_2}` : ""}
@@ -119,12 +118,8 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
               data-testid="billing-last-name-input"
             />
           </div>
-          <Input
-            label="Company"
-            name="company"
-            defaultValue={billingAddress?.company || undefined}
-            data-testid="billing-company-input"
-          />
+          {/* Not asked for in Lebanon; kept so saved values stay. */}
+          <input type="hidden" name="company" defaultValue={billingAddress?.company ?? ""} />
           <Input
             label="Phone"
             name="phone"
@@ -154,13 +149,10 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             required
             data-testid="billing-city-input"
           />
-          <Input
-            label="Province"
-            name="province"
-            defaultValue={billingAddress?.province || undefined}
-            data-testid="billing-province-input"
-          />
+          {/* Not asked for in Lebanon; kept so saved values stay. */}
+          <input type="hidden" name="province" defaultValue={billingAddress?.province ?? ""} />
           <NativeSelect
+            label="Country"
             name="country_code"
             defaultValue={billingAddress?.country_code || undefined}
             required

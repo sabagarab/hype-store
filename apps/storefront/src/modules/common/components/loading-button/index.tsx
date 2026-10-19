@@ -10,7 +10,9 @@ import { clx } from "@modules/common/components/ui"
 // in one grid cell and crossfade, so idle / pending / success / error never
 // change the button's size (no layout shift). Adapted to the shared tokens:
 // control radius and heights, ember fill, brand colors for every state,
-// shared motion timing, no blur filter.
+// shared motion timing, no blur filter. Pass `pending` to drive the state
+// from the caller (form submits, steps that track their own loading), which
+// shows idle / pending only; `type="submit"` lets it submit a form.
 
 export type AsyncActionStatus = "idle" | "pending" | "success" | "error"
 
@@ -148,7 +150,10 @@ const SIZES = {
 } as const
 
 export type LoadingButtonProps = {
-  onAction: () => unknown
+  onAction?: () => unknown
+  /** Controlled pending state; when set, the button never shows success/error. */
+  pending?: boolean
+  type?: "button" | "submit"
   children: string
   pendingLabel?: string
   successLabel?: string
@@ -163,6 +168,8 @@ export type LoadingButtonProps = {
 
 export function LoadingButton({
   onAction,
+  pending: pendingProp,
+  type = "button",
   children,
   pendingLabel = children,
   successLabel = "Done",
@@ -176,11 +183,19 @@ export function LoadingButton({
 }: LoadingButtonProps) {
   const reduced = useReducedMotion()
 
-  const { status, run, pending } = useAsyncAction({
-    action: onAction,
+  const internal = useAsyncAction({
+    action: () => onAction?.(),
     resetAfter,
     onError,
   })
+
+  const controlled = pendingProp !== undefined
+  const status: AsyncActionStatus = controlled
+    ? pendingProp
+      ? "pending"
+      : "idle"
+    : internal.status
+  const pending = status === "pending"
 
   const fade = reduced ? INSTANT : TRANSITION
 
@@ -207,7 +222,7 @@ export function LoadingButton({
   return (
     <>
       <motion.button
-        type="button"
+        type={type}
         disabled={disabled}
         aria-label={label}
         aria-busy={pending || undefined}
@@ -219,7 +234,11 @@ export function LoadingButton({
             event.preventDefault()
             return
           }
-          run()
+          if (controlled) {
+            onAction?.()
+            return
+          }
+          internal.run()
         }}
         data-testid={testId}
         data-status={status}

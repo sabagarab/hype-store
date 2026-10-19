@@ -78,12 +78,8 @@ const AddAddress = ({
                   data-testid="last-name-input"
                 />
               </div>
-              <Input
-                label="Company"
-                name="company"
-                autoComplete="organization"
-                data-testid="company-input"
-              />
+              {/* Not asked for in Lebanon; kept so saved values stay. */}
+              <input type="hidden" name="company" />
               <Input
                 label="Address"
                 name="address_1"
@@ -104,13 +100,10 @@ const AddAddress = ({
                 autoComplete="locality"
                 data-testid="city-input"
               />
-              <Input
-                label="Province / State"
-                name="province"
-                autoComplete="address-level1"
-                data-testid="state-input"
-              />
+              {/* Not asked for in Lebanon; kept so saved values stay. */}
+              <input type="hidden" name="province" />
               <CountrySelect
+                label="Country"
                 region={region}
                 name="country_code"
                 required

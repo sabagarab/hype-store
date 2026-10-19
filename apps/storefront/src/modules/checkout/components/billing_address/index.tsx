@@ -29,7 +29,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2">
         <Input
           label="First name"
           name="billing_address.first_name"
@@ -49,6 +49,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-last-name-input"
         />
         <Input
+          className="col-span-2"
           label="Address"
           name="billing_address.address_1"
           autoComplete="address-line1"
@@ -66,14 +67,6 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-address-2-input"
         />
         <Input
-          label="Company"
-          name="billing_address.company"
-          value={formData["billing_address.company"]}
-          onChange={handleChange}
-          autoComplete="organization"
-          data-testid="billing-company-input"
-        />
-        <Input
           label="City / Area"
           name="billing_address.city"
           autoComplete="address-level2"
@@ -81,6 +74,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           onChange={handleChange}
         />
         <CountrySelect
+          label="Country"
           name="billing_address.country_code"
           autoComplete="country"
           region={cart?.region}
@@ -90,20 +84,24 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-country-select"
         />
         <Input
-          label="State / Province"
-          name="billing_address.province"
-          autoComplete="address-level1"
-          value={formData["billing_address.province"]}
-          onChange={handleChange}
-          data-testid="billing-province-input"
-        />
-        <Input
           label="Phone"
           name="billing_address.phone"
           autoComplete="tel"
           value={formData["billing_address.phone"]}
           onChange={handleChange}
           data-testid="billing-phone-input"
+        />
+        {/* Not asked for in Lebanon; kept as hidden fields so saved values
+            and the submitted form data stay the same. */}
+        <input
+          type="hidden"
+          name="billing_address.company"
+          value={formData["billing_address.company"]}
+        />
+        <input
+          type="hidden"
+          name="billing_address.province"
+          value={formData["billing_address.province"]}
         />
       </div>
     </>

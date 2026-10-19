@@ -8,33 +8,31 @@ export default function CheckoutLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="w-full bg-ui-bg-base relative small:min-h-screen">
-      <div className="h-16 bg-ui-bg-base border-b border-ui-border-base">
-        <nav className="flex h-full items-center content-container justify-between">
+    <div className="relative w-full bg-black small:min-h-screen">
+      <header className="h-16 border-b border-hairline">
+        <nav className="content-container flex h-full items-center justify-between">
           <LocalizedClientLink
             href="/cart"
-            className="text-small-semi text-ui-fg-base flex items-center h-11 gap-x-2 uppercase flex-1 basis-0"
+            className="-ml-2 flex h-11 flex-1 basis-0 items-center gap-x-2 px-2 text-sm font-medium text-bone/70 transition-colors duration-fast hover:text-bone"
             data-testid="back-to-cart-link"
           >
             <ChevronDown className="rotate-90" size={16} />
-            <span className="mt-px hidden small:block txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base ">
-              Back to shopping cart
-            </span>
-            <span className="mt-px block small:hidden txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base">
-              Back
-            </span>
+            <span className="hidden small:block">Back to cart</span>
+            <span className="block small:hidden">Back</span>
           </LocalizedClientLink>
           <LocalizedClientLink
             href="/"
-            className="flex items-center h-11 px-2 text-xl small:text-2xl font-black uppercase tracking-tight text-bone transition-colors duration-200 hover:text-ember"
+            className="flex h-11 items-center px-2 text-xl font-black uppercase tracking-tight text-bone transition-colors duration-fast hover:text-ember small:text-2xl"
             data-testid="store-link"
           >
             {STORE_NAME}
           </LocalizedClientLink>
           <div className="flex-1 basis-0" />
         </nav>
+      </header>
+      <div className="relative" data-testid="checkout-container">
+        {children}
       </div>
-      <div className="relative" data-testid="checkout-container">{children}</div>
     </div>
   )
 }

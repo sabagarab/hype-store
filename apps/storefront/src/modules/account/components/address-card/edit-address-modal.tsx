@@ -77,14 +77,6 @@ const EditAddress: React.FC<EditAddressProps> = ({
           >
             {address.first_name} {address.last_name}
           </Heading>
-          {address.company && (
-            <Text
-              className="txt-compact-small text-ui-fg-base"
-              data-testid="address-company"
-            >
-              {address.company}
-            </Text>
-          )}
           <Text className="flex flex-col text-left text-base-regular mt-2">
             <span data-testid="address-address">
               {address.address_1}
@@ -94,7 +86,6 @@ const EditAddress: React.FC<EditAddressProps> = ({
               {[address.postal_code, address.city].filter(Boolean).join(", ")}
             </span>
             <span data-testid="address-province-country">
-              {address.province && `${address.province}, `}
               {address.country_code?.toUpperCase()}
             </span>
           </Text>
@@ -145,13 +136,8 @@ const EditAddress: React.FC<EditAddressProps> = ({
                   data-testid="last-name-input"
                 />
               </div>
-              <Input
-                label="Company"
-                name="company"
-                autoComplete="organization"
-                defaultValue={address.company || undefined}
-                data-testid="company-input"
-              />
+              {/* Not asked for in Lebanon; kept so saved values stay. */}
+              <input type="hidden" name="company" defaultValue={address.company ?? ""} />
               <Input
                 label="Address"
                 name="address_1"
@@ -175,14 +161,10 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 defaultValue={address.city || undefined}
                 data-testid="city-input"
               />
-              <Input
-                label="Province / State"
-                name="province"
-                autoComplete="address-level1"
-                defaultValue={address.province || undefined}
-                data-testid="state-input"
-              />
+              {/* Not asked for in Lebanon; kept so saved values stay. */}
+              <input type="hidden" name="province" defaultValue={address.province ?? ""} />
               <CountrySelect
+                label="Country"
                 name="country_code"
                 region={region}
                 required

@@ -128,10 +128,20 @@
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid rgb(var(--color-bone) / 0.24);
     -webkit-text-fill-color: rgb(var(--color-bone));
     -webkit-box-shadow: 0 0 0px 1000px rgb(var(--color-ink)) inset;
     transition: background-color 5000s ease-in-out 0s;
+    /* Lets the floating label hear autofill (input/index.tsx). */
+    animation: autofill-start 1ms;
+  }
+
+  @keyframes autofill-start {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   input[type="search"]::-webkit-search-decoration,

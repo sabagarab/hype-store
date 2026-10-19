@@ -1,4 +1,13 @@
-import React from "react"
+"use client"
+
+import React, { useId, useImperativeHandle } from "react"
+
+import {
+  FloatingLabel,
+  fieldClass,
+  useFloatingLabel,
+} from "@modules/common/components/input"
+import { clx } from "@modules/common/components/ui"
 
 type TextareaProps = Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
@@ -8,29 +17,52 @@ type TextareaProps = Omit<
   name: string
 }
 
-// Multi-line counterpart of the Input component: same field styling and the
-// same floating label (see the textarea rules in src/styles/globals.css).
+// Multi-line counterpart of the Input component (21st Floating Label): same
+// field surface and the same lifting label. Uses the card radius because a
+// pill doesn't fit several lines.
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ name, label, required, rows = 3, ...props }, ref) => {
+  (
+    { name, label, required, rows = 3, id, onFocus, onBlur, ...props },
+    ref
+  ) => {
+    const auto = useId()
+    const fieldId = id ?? `${auto}-field`
+    const floating = useFloatingLabel<HTMLTextAreaElement>({
+      value: props.value,
+      disabled: props.disabled,
+    })
+
+    useImperativeHandle(ref, () => floating.ref.current!)
+
     return (
-      <div className="flex relative z-0 w-full txt-compact-medium">
-        <textarea
-          id={name}
-          name={name}
-          rows={rows}
-          placeholder=" "
+      <div className="relative w-full pt-5">
+        <div className={clx(fieldClass(floating.focused), "rounded-card")}>
+          <textarea
+            ref={floating.ref}
+            id={fieldId}
+            name={name}
+            rows={rows}
+            required={required}
+            onFocus={(event) => {
+              floating.onFocus()
+              onFocus?.(event)
+            }}
+            onBlur={(event) => {
+              floating.onBlur()
+              onBlur?.(event)
+            }}
+            className="block w-full resize-y rounded-card bg-transparent px-4 py-3 text-base leading-6 text-bone outline-none focus-visible:outline-none"
+            {...props}
+          />
+        </div>
+        <FloatingLabel
+          htmlFor={fieldId}
+          label={label}
           required={required}
-          className="pt-5 pb-2 block w-full px-4 mt-0 bg-ui-bg-field border rounded-md appearance-none resize-y focus:outline-none focus:ring-0 focus:shadow-borders-interactive-with-active border-ui-border-base hover:bg-ui-bg-field-hover"
-          {...props}
-          ref={ref}
+          raised={floating.raised}
+          instant={floating.instant}
+          restTop={36}
         />
-        <label
-          htmlFor={name}
-          className="flex items-center justify-center mx-3 px-1 transition-all absolute duration-300 top-3 -z-1 origin-0 text-ui-fg-subtle"
-        >
-          {label}
-          {required && <span className="text-rose-500">*</span>}
-        </label>
       </div>
     )
   }

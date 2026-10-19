@@ -3,7 +3,7 @@
 import { isManual, isStripeLike } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
-import { Button } from "@modules/common/components/ui"
+import LoadingButton from "@modules/common/components/loading-button"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import { useParams } from "next/navigation"
 import React, { useState } from "react"
@@ -41,7 +41,11 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
       )
     default:
-      return <Button disabled>Select a payment method</Button>
+      return (
+        <LoadingButton disabled className="w-full">
+          Select a payment method
+        </LoadingButton>
+      )
   }
 }
 
@@ -139,15 +143,15 @@ const StripePaymentButton = ({
 
   return (
     <>
-      <Button
+      <LoadingButton
+        className="w-full"
         disabled={disabled || notReady}
-        onClick={handlePayment}
-        size="large"
-        isLoading={submitting}
+        onAction={handlePayment}
+        pending={submitting}
         data-testid={dataTestId}
       >
         Place order
-      </Button>
+      </LoadingButton>
       <ErrorMessage
         error={errorMessage}
         data-testid="stripe-payment-error-message"
@@ -178,15 +182,15 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
 
   return (
     <>
-      <Button
+      <LoadingButton
+        className="w-full"
         disabled={notReady}
-        isLoading={submitting}
-        onClick={handlePayment}
-        size="large"
+        pending={submitting}
+        onAction={handlePayment}
         data-testid="submit-order-button"
       >
         Place order
-      </Button>
+      </LoadingButton>
       <ErrorMessage
         error={errorMessage}
         data-testid="manual-payment-error-message"
