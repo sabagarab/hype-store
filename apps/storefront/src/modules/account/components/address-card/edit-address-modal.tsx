@@ -64,21 +64,19 @@ const EditAddress: React.FC<EditAddressProps> = ({
     <>
       <div
         className={clx(
-          "border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors",
-          {
-            "border-ui-border-interactive": isActive,
-          }
+          "flex h-full min-h-[220px] w-full flex-col justify-between rounded-card border bg-ink p-5 transition-colors duration-base ease-premium",
+          isActive ? "border-ember" : "border-hairline"
         )}
         data-testid="address-container"
       >
         <div className="flex flex-col">
           <Heading
-            className="text-left text-base-semi"
+            className="text-left text-sm font-bold"
             data-testid="address-name"
           >
             {address.first_name} {address.last_name}
           </Heading>
-          <Text className="flex flex-col text-left text-base-regular mt-2">
+          <Text className="flex flex-col text-left text-sm mt-2">
             <span data-testid="address-address">
               {address.address_1}
               {address.address_2 && <span>, {address.address_2}</span>}
@@ -93,7 +91,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
         </div>
         <div className="flex items-center gap-x-4">
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            className="flex min-h-control-sm items-center gap-x-2 text-xs text-bone transition-colors duration-base ease-premium hover:text-ember"
             onClick={open}
             data-testid="address-edit-button"
           >
@@ -101,7 +99,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
             Edit
           </button>
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            className="flex min-h-control-sm items-center gap-x-2 text-xs text-bone transition-colors duration-base ease-premium hover:text-ember"
             onClick={removeAddress}
             data-testid="address-delete-button"
           >

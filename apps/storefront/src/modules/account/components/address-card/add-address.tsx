@@ -47,11 +47,11 @@ const AddAddress = ({
   return (
     <>
       <button
-        className="border border-ui-border-base rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between"
+        className="flex h-full min-h-[220px] w-full flex-col justify-between rounded-card border border-dashed border-bone/20 p-5 text-bone/70 transition-colors duration-base ease-premium hover:border-bone/40 hover:text-bone"
         onClick={open}
         data-testid="add-address-button"
       >
-        <span className="text-base-semi">New address</span>
+        <span className="text-sm font-bold">New address</span>
         <Plus />
       </button>
 

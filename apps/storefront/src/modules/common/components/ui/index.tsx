@@ -42,7 +42,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
       <Component
         ref={ref}
         className={clsx(
-          "font-semibold",
+          "font-bold tracking-tight text-bone",
           Component === "h1" && "text-3xl",
           Component === "h2" && "text-2xl",
           Component === "h3" && "text-xl",
@@ -109,7 +109,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
     return (
       <div
         ref={ref}
-        className={clsx("bg-ui-bg-subtle rounded-lg p-4", className)}
+        className={clsx("rounded-card border border-hairline bg-ink p-4", className)}
         {...props}
       >
         {children}

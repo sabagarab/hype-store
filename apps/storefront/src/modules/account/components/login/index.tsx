@@ -14,16 +14,18 @@ const Login = ({ setCurrentView }: Props) => {
 
   return (
     <div
-      className="max-w-sm w-full flex flex-col items-center"
+      className="flex w-full max-w-sm flex-col items-center"
       data-testid="login-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">Welcome back</h1>
-      <p className="text-center text-base-regular text-ui-fg-base mb-8">
+      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight text-bone">
+        Welcome back
+      </h1>
+      <p className="mb-8 text-center text-sm text-bone/70">
         Sign in to see your orders and saved addresses.
       </p>
       {message?.state === "verification_required" && (
         <div
-          className="w-full mb-6 text-center text-base-regular text-ui-fg-base bg-ui-bg-subtle border border-ui-border-base rounded-rounded p-4"
+          className="mb-6 w-full rounded-card border border-hairline bg-ink p-4 text-center text-sm text-bone"
           data-testid="login-verification-message"
         >
           We sent a verification link to <strong>{message.email}</strong>.
@@ -58,11 +60,11 @@ const Login = ({ setCurrentView }: Props) => {
           Sign in
         </SubmitButton>
       </form>
-      <span className="text-center text-ui-fg-base text-small-regular mt-6">
+      <span className="mt-6 text-center text-sm text-bone/70">
         Not a member?{" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
-          className="underline"
+          className="inline-flex min-h-control-sm items-center font-medium text-bone underline underline-offset-4 transition-colors duration-base ease-premium hover:text-ember"
           data-testid="register-button"
         >
           Join us

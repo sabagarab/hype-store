@@ -9,6 +9,7 @@ import { retrieveCustomer } from "@lib/data/customer"
 import { getBaseURL } from "@lib/util/env"
 import { StoreCartShippingOption } from "@medusajs/types"
 import CartDrawer from "@modules/cart/components/cart-drawer"
+import PageFade from "@modules/common/components/page-fade"
 import { CartDrawerProvider } from "@modules/cart/components/cart-drawer/context"
 import AnnouncementBar from "@modules/layout/components/announcement-bar"
 import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
@@ -56,7 +57,7 @@ export default async function PageLayout(props: {
           shippingOptions={shippingOptions}
         />
       )}
-      {props.children}
+      <PageFade>{props.children}</PageFade>
       <Footer countryCode={countryCode} />
       <CartDrawer cart={cart} deliveryAmount={deliveryAmount} />
     </CartDrawerProvider>

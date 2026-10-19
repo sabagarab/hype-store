@@ -13,7 +13,7 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
         {orders.map((o) => (
           <div
             key={o.id}
-            className="border-b border-ui-border-base pb-6 last:pb-0 last:border-none"
+            className="border-b border-hairline pb-6 last:pb-0 last:border-none"
           >
             <OrderCard order={o} />
           </div>
@@ -27,8 +27,8 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
       className="w-full flex flex-col items-center gap-y-4"
       data-testid="no-orders-container"
     >
-      <h2 className="text-large-semi">Nothing to see here</h2>
-      <p className="text-base-regular">
+      <h2 className="text-lg font-bold tracking-tight">Nothing to see here</h2>
+      <p className="text-sm">
         You don&apos;t have any orders yet, let us change that {":)"}
       </p>
       <div className="mt-4">

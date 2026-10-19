@@ -182,6 +182,11 @@ module.exports = {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(0)" },
         },
+        // Page fade between routes (common/components/page-fade).
+        "page-fade": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
         // Magic UI Marquee (21st.dev). Width of one copy plus the gap.
         marquee: {
           from: { transform: "translateX(0)" },
@@ -203,6 +208,8 @@ module.exports = {
         "slide-in": "slide-in 1.2s cubic-bezier(.41,.73,.51,1.02)",
         leave: "leave 150ms ease-in forwards",
         marquee: "marquee var(--duration) linear infinite",
+        // duration-base + ease-premium; backwards fill so no stacking context stays.
+        "page-fade": "page-fade 200ms cubic-bezier(0.22, 1, 0.36, 1) backwards",
       },
     },
   },

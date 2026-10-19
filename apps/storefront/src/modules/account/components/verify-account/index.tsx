@@ -37,17 +37,17 @@ const VerifyAccount = () => {
       className="max-w-sm w-full flex flex-col items-center text-center gap-y-4"
       data-testid="verify-account-page"
     >
-      <h1 className="text-large-semi uppercase">Email verification</h1>
+      <h1 className="text-lg font-bold tracking-tight uppercase">Email verification</h1>
 
       {state === "verifying" && (
-        <p className="text-base-regular text-ui-fg-base">
+        <p className="text-sm text-bone">
           Verifying your email...
         </p>
       )}
 
       {state === "success" && (
         <>
-          <p className="text-base-regular text-ui-fg-base">
+          <p className="text-sm text-bone">
             Your email is verified. You can now sign in to your account.
           </p>
           <LocalizedClientLink href="/account" className={buttonClass()}>
@@ -58,7 +58,7 @@ const VerifyAccount = () => {
 
       {state === "error" && (
         <>
-          <p className="text-base-regular text-ui-fg-base">
+          <p className="text-sm text-bone">
             This verification link is invalid or has expired. Sign in to receive
             a new verification email.
           </p>

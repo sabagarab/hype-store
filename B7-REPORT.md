@@ -100,3 +100,43 @@ Storefront restyle, run as five sub-batches. One commit per sub-batch.
 **Unsure**
 - On phones the menu button is now an icon instead of the word "Menu". Say if you prefer the word back.
 - Cmd/Ctrl+Enter in search opens the result in the same tab (clicking with Cmd/Ctrl works normally).
+
+## B7.4 Footer and pages
+
+**What changed**
+- Footer: the scrollxui Footer with Minimal Outline.
+  - Shop / Help / Social columns (Social only when `lib/social.ts` is filled) and the copyright line.
+  - A large outlined STORE_NAME watermark that fades in whole (no stroke drawing). It's SVG so any name fits the width.
+  - The old stroke-drawing wordmark component is removed.
+- A thin ember progress bar at the very top. It starts when you click an internal link, creeps to 90% and fills and fades once the new page lands.
+  - It ignores clicks that end a drag (carousels) and gives up after 10s.
+  - Back/forward and `router.push` don't show it.
+- A 200ms fade (fade only) when the page changes: a CSS animation keyed on the path, so it works before JavaScript loads and doesn't fade on filter/sort changes. Off for reduced motion.
+- Account, login, register and order pages: every starter class (ui-*, *-semi, *-regular, txt-*, mixed radii, raw durations) is mapped to our tokens.
+  - Login and register get a centred title over a muted line.
+  - Account nav: active link in ember, 44px rows.
+  - Address cards are ink surfaces with the card radius; the add card is a quiet dashed outline.
+  - Success messages are plain text instead of green/red badges.
+  - The order thumbnails use the shared image loader.
+  - The Heading and Container shims now use our tokens.
+- The order confirmation's layout moved into a shared `OrderSections` component (no visible change on that page).
+
+**21st components**
+- Footer with Minimal Outline (scrollxui): as requested.
+- Loading progress bar (motiondotdev, Motion for React): a plain bar on a spring, nothing decorative.
+- Presence Fade (corr): fade only, done in CSS.
+
+**Review fixes** (from a separate reviewer)
+- The active address's ember border now shows.
+- The progress bar's give-up timer stops its trickle, and drags no longer start it.
+- Footer links render without JavaScript; only the watermark animates.
+- Visible dividers on the transfer pages.
+- 44px tap targets on address Edit/Remove, the Sign in/Join switch and the account nav.
+- Leftover junk class removed.
+- Success no longer shares the error colour.
+- A hydration warning on the login page: moving the progress bar to the end of `<body>` cleared it, so it was probably the bar's Suspense shifting React's generated ids.
+- **Restored:** I had moved the account order-details page onto the confirmation layout, but that dropped the "Need help?" block and the confirmation-email line and renamed labels ("Shipping Address" → "Delivery address"). That's a copy change, so I reverted to the original page and only restyled it.
+
+**Unsure**
+- Product thumbnails in cart and order lists are now 4:5 (was 9:16) to match the product photos. That's a small layout change in the cart page and order lists.
+- I didn't check pages behind sign-in (account overview, profile, addresses, order details) in the browser. They're covered by type-check and review only.

@@ -17,21 +17,21 @@ export default async function TransferPage({
       <div className="flex flex-col gap-y-6">
         {success && (
           <>
-            <Heading level="h1" className="text-xl text-ui-fg-base">
+            <Heading level="h1" className="text-xl text-bone">
               Order transfered!
             </Heading>
-            <Text className="text-ui-fg-subtle">
+            <Text className="text-bone/70">
               Order {id} has been successfully transfered to the new owner.
             </Text>
           </>
         )}
         {!success && (
           <>
-            <Text className="text-ui-fg-subtle">
+            <Text className="text-bone/70">
               There was an error accepting the transfer. Please try again.
             </Text>
             {error && (
-              <Text className="text-red-500">Error message: {error}</Text>
+              <Text className="text-ember">Error message: {error}</Text>
             )}
           </>
         )}

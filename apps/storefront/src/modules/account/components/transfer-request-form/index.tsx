@@ -26,10 +26,10 @@ export default function TransferRequestForm() {
     <div className="flex flex-col gap-y-4 w-full">
       <div className="grid sm:grid-cols-2 items-center gap-x-8 gap-y-4 w-full">
         <div className="flex flex-col gap-y-1">
-          <Heading level="h3" className="!text-sm font-semibold text-ui-fg-base">
+          <Heading level="h3" className="!text-sm font-semibold text-bone">
             Order transfers
           </Heading>
-          <p className="text-small-regular text-ui-fg-subtle">
+          <p className="text-xs text-bone/70">
             Can&apos;t find the order you are looking for?
             <br /> Connect an order to your account.
           </p>
@@ -51,19 +51,19 @@ export default function TransferRequestForm() {
         </form>
       </div>
       {!state.success && state.error && (
-        <Text className="text-base-regular text-rose-500 text-right">
+        <Text className="text-sm text-ember text-right">
           {state.error}
         </Text>
       )}
       {showSuccess && (
-        <div className="flex justify-between p-4 bg-ui-bg-subtle shadow-borders-base w-full self-stretch items-center">
+        <div className="flex w-full items-center justify-between self-stretch rounded-card border border-hairline bg-ink p-4">
           <div className="flex gap-x-2 items-center">
-            <CheckCircleMiniSolid className="w-4 h-4 text-emerald-500" />
+            <CheckCircleMiniSolid className="w-4 h-4 text-ember" />
             <div className="flex flex-col gap-y-1">
-              <Text className="text-medim-pl text-ui-fg-base">
+              <Text className="text-bone">
                 Transfer for order {state.order?.id} requested
               </Text>
-              <Text className="text-base-regular text-ui-fg-subtle">
+              <Text className="text-sm text-bone/70">
                 Transfer request email sent to {state.order?.email}
               </Text>
             </div>
@@ -72,7 +72,7 @@ export default function TransferRequestForm() {
             className="h-fit"
             onClick={() => setShowSuccess(false)}
           >
-            <XCircleSolid className="w-4 h-4 text-ui-fg-subtle" />
+            <XCircleSolid className="w-4 h-4 text-bone/70" />
           </IconButton>
         </div>
       )}

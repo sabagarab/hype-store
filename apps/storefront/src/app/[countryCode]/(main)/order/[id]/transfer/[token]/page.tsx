@@ -13,24 +13,24 @@ export default async function TransferPage({
     <div className="flex flex-col gap-y-4 items-start w-2/5 mx-auto mt-10 mb-20">
       <TransferImage />
       <div className="flex flex-col gap-y-6">
-        <Heading level="h1" className="text-xl text-ui-fg-base">
+        <Heading level="h1" className="text-xl text-bone">
           Transfer request for order {id}
         </Heading>
-        <Text className="text-ui-fg-subtle">
+        <Text className="text-bone/70">
           You&#39;ve received a request to transfer ownership of your order ({id}).
           If you agree to this request, you can approve the transfer by clicking
           the button below.
         </Text>
-        <div className="w-full h-px bg-ui-bg-component" />
-        <Text className="text-ui-fg-subtle">
+        <div className="h-px w-full bg-bone/10" />
+        <Text className="text-bone/70">
           If you accept, the new owner will take over all responsibilities and
           permissions associated with this order.
         </Text>
-        <Text className="text-ui-fg-subtle">
+        <Text className="text-bone/70">
           If you do not recognize this request or wish to retain ownership, no
           further action is required.
         </Text>
-        <div className="w-full h-px bg-ui-bg-component" />
+        <div className="h-px w-full bg-bone/10" />
         <TransferActions id={id} token={token} />
       </div>
     </div>
