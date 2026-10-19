@@ -1,26 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Toaster as Sonner } from "sonner"
 
-// App-wide toasts (sonner), styled with the brand tokens: solid ink, bone
-// text, ember accent. Placed so they never cover the cart drawer's actions:
-// bottom-center on desktop (beside the drawer), top-center on phones (where
-// the full-width drawer only has its header).
-const Toaster = () => {
-  const [isPhone, setIsPhone] = useState(false)
+import useMediaQuery, { DESKTOP_QUERY } from "@lib/hooks/use-media-query"
 
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 1023px)")
-    const update = () => setIsPhone(query.matches)
-    update()
-    query.addEventListener("change", update)
-    return () => query.removeEventListener("change", update)
-  }, [])
+// Sonner Toast from 21st.dev (@isaiahbjork/primitive-sonner): a quiet card
+// toast, title over a muted description. Adapted to the shared tokens: ink
+// surface, hairline border, card radius, glass shadow, bone text, ember icon;
+// next-themes and the demo trigger are dropped. Placed so toasts never cover
+// the cart drawer's actions: bottom-center on desktop (beside the side panel),
+// top-center on phones (where the bottom sheet only leaves the top free).
+const Toaster = () => {
+  const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
   return (
     <Sonner
-      position={isPhone ? "top-center" : "bottom-center"}
+      position={isDesktop ? "bottom-center" : "top-center"}
       offset={{ bottom: 32 }}
       mobileOffset={{ top: 16 }}
       duration={2500}
@@ -28,11 +23,11 @@ const Toaster = () => {
         unstyled: true,
         classNames: {
           toast:
-            "flex w-full items-center gap-x-3 rounded-large border border-bone/15 bg-ink px-4 py-3 text-sm font-medium text-bone shadow-lg",
+            "flex w-full items-center gap-x-3 rounded-card border border-hairline bg-ink px-4 py-4 text-sm font-medium text-bone shadow-glass",
           success: "[&_[data-icon]]:text-ember",
           error: "[&_[data-icon]]:text-ember",
-          title: "text-bone",
-          description: "text-bone/70",
+          title: "text-sm font-medium text-bone",
+          description: "text-sm leading-6 text-bone/70",
         },
       }}
     />

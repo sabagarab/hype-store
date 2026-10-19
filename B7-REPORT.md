@@ -33,3 +33,33 @@ Storefront restyle, run as five sub-batches. One commit per sub-batch.
 **Unsure**
 - The homepage tile now also has the hover swap and glow, so it matches the listing cards. Its 1px glow border is visible on phones too, but faint.
 - With slow images, the placeholder holds a photo back for at least 300ms (normal Skeleton Swap behaviour).
+
+## B7.2 Cart and overlays
+
+**What changed**
+- The Drawer has a responsive mode: a bottom sheet with drag to close on phones, and a 420px right-hand side panel (swipe right to close) from 1024px. Glass surface with a solid ink fallback, and the sheet rides above the iOS keyboard.
+  - The old slide animation never actually played (a `transition-[translate]` on Tailwind 3 transforms). It does now, and it is switched off while you drag.
+- The cart drawer, the phone size sheet and the account address add/edit forms all use that Drawer. Cart totals and actions sit in the footer that stays put while the list scrolls.
+- Every button is now the originui Button, and every button-styled link uses `buttonClass()`, "Continue shopping" included. Links no longer wrap a `<button>`. The old `isLoading` behaviour (disabled, "Loading...") is kept explicitly.
+- Toasts: card radius, hairline border, ink surface, title over a muted description. Same placement as before.
+- The cart total ticker uses the shared spring.
+- The cart-transfer error banner moved from orange to ink + ember. That fixes contrast (its button was unreadable on orange) and removes non-token colours.
+
+**21st components**
+- Drawer (wensity): already installed, and Base UI gives drag-to-close, focus trap and scroll lock. Extended rather than replaced, so the filter sheet and cart stay one family.
+- Button (originui): already installed.
+- Sonner Toast (isaiahbjork): a quiet card toast, title over a muted description, no icons or gradients.
+
+**Review fixes** (from a separate reviewer)
+- Banner contrast.
+- Keyboard inset on the bottom sheet.
+- Shadow only on the bottom sheet.
+- Empty cart centred again on desktop.
+- "Close cart" label restored.
+- Text inside the drawer can be selected.
+- Last raw durations removed.
+- The free-shipping nudge (still rendered by the main layout) moved to the new Button.
+
+**Unsure**
+- The filter sheet also gets the glass surface now, for consistency.
+- I couldn't open the address drawers in the browser (they need a signed-in customer). They're checked by type-check and review only.

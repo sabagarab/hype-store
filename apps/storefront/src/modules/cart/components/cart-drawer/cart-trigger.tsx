@@ -11,7 +11,7 @@ const CartTrigger = ({ count }: { count: number }) => {
       type="button"
       onClick={openCart}
       aria-haspopup="dialog"
-      className="flex h-11 items-center transition-colors duration-200 hover:text-ember"
+      className="flex h-11 items-center transition-colors duration-base ease-premium hover:text-ember"
       data-testid="nav-cart-link"
     >
       Cart ({count})

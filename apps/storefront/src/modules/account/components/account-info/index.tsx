@@ -1,5 +1,6 @@
 import { Disclosure } from "@headlessui/react"
-import { Badge, Button, clx } from "@modules/common/components/ui"
+import Button from "@modules/common/components/button"
+import { Badge, clx } from "@modules/common/components/ui"
 import { useEffect } from "react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
@@ -57,7 +58,8 @@ const AccountInfo = ({
         <div>
           <Button
             variant="secondary"
-            className="w-[100px] min-h-[25px] py-1"
+            size="sm"
+            className="w-[100px]"
             onClick={handleToggle}
             type={state ? "reset" : "button"}
             data-testid="edit-button"
@@ -121,12 +123,12 @@ const AccountInfo = ({
             <div>{children}</div>
             <div className="flex items-center justify-end mt-2">
               <Button
-                isLoading={pending}
-                className="w-full small:max-w-[140px]"
+                disabled={pending}
+                className="w-full small:max-w-[160px]"
                 type="submit"
                 data-testid="save-button"
               >
-                Save changes
+                {pending ? "Loading..." : "Save changes"}
               </Button>
             </div>
           </div>

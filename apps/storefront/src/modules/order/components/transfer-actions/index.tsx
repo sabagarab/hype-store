@@ -1,7 +1,8 @@
 "use client"
 
 import { acceptTransferRequest, declineTransferRequest } from "@lib/data/orders"
-import { Button, Text } from "@modules/common/components/ui"
+import Button from "@modules/common/components/button"
+import { Text } from "@modules/common/components/ui"
 import { useState } from "react"
 
 type TransferStatus = "pending" | "success" | "error"
@@ -51,25 +52,21 @@ const TransferActions = ({ id, token }: { id: string; token: string }) => {
       {status?.accept !== "success" && status?.decline !== "success" && (
         <div className="flex gap-x-4">
           <Button
-            size="large"
             onClick={acceptTransfer}
-            isLoading={status?.accept === "pending"}
             disabled={
               status?.accept === "pending" || status?.decline === "pending"
             }
           >
-            Accept transfer
+            {status?.accept === "pending" ? "Loading..." : "Accept transfer"}
           </Button>
           <Button
-            size="large"
             variant="secondary"
             onClick={declineTransfer}
-            isLoading={status?.decline === "pending"}
             disabled={
               status?.accept === "pending" || status?.decline === "pending"
             }
           >
-            Decline transfer
+            {status?.decline === "pending" ? "Loading..." : "Decline transfer"}
           </Button>
         </div>
       )}

@@ -3,6 +3,7 @@
 import { useMotionValue, useReducedMotion, useSpring } from "motion/react"
 import { useEffect, useRef } from "react"
 
+import { SPRING } from "@lib/motion"
 import { convertToLocale } from "@lib/util/money"
 import { clx } from "@modules/common/components/ui"
 
@@ -16,12 +17,12 @@ type NumberTickerProps = {
 // starts at the current value and only animates when the value changes (no
 // count-up from 0 on mount), formats as currency, and jumps straight to the
 // new value with reduced motion. The first render is the plain formatted
-// value, so server and client markup match.
+// value, so server and client markup match. Runs on the shared SPRING token.
 const NumberTicker = ({ value, currencyCode, className }: NumberTickerProps) => {
   const ref = useRef<HTMLSpanElement>(null)
   const reduceMotion = useReducedMotion()
   const motionValue = useMotionValue(value)
-  const springValue = useSpring(motionValue, { damping: 60, stiffness: 400 })
+  const springValue = useSpring(motionValue, SPRING)
 
   useEffect(() => {
     if (reduceMotion) {

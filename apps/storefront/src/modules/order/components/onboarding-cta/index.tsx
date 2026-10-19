@@ -1,7 +1,8 @@
 "use client"
 
 import { resetOnboardingState } from "@lib/data/onboarding"
-import { Button, Container, Text } from "@modules/common/components/ui"
+import Button from "@modules/common/components/button"
+import { Container, Text } from "@modules/common/components/ui"
 
 const OnboardingCta = ({ orderId }: { orderId: string }) => {
   return (
@@ -15,7 +16,6 @@ const OnboardingCta = ({ orderId }: { orderId: string }) => {
         </Text>
         <Button
           className="w-fit"
-          size="large"
           onClick={() => resetOnboardingState(orderId)}
         >
           Complete setup in admin

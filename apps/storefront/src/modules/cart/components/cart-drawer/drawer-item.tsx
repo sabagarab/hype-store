@@ -44,26 +44,31 @@ const DrawerItem = ({
   }
 
   const image = (
-    <div className="relative aspect-[4/5] w-20 shrink-0 overflow-hidden rounded-rounded bg-ink">
-      {item.thumbnail ? (
-        <FadeInImage
-          src={item.thumbnail}
-          alt={title}
-          fill
-          sizes="80px"
-          className={clx("object-cover", unavailable && "opacity-50 grayscale")}
-          fallback={<ImagePlaceholder />}
-        />
-      ) : (
-        <ImagePlaceholder />
-      )}
+    <div className="relative aspect-[4/5] w-20 shrink-0 overflow-hidden rounded-card bg-ink">
+      {/* Dimmed on a wrapper: FadeInImage owns the image's own opacity. */}
+      <div
+        className={clx("absolute inset-0", unavailable && "opacity-50 grayscale")}
+      >
+        {item.thumbnail ? (
+          <FadeInImage
+            src={item.thumbnail}
+            alt={title}
+            fill
+            sizes="80px"
+            className="object-cover"
+            fallback={<ImagePlaceholder />}
+          />
+        ) : (
+          <ImagePlaceholder />
+        )}
+      </div>
     </div>
   )
 
   return (
     <li
       className={clx(
-        "flex gap-x-4 py-4 transition-opacity duration-200",
+        "flex gap-x-4 py-4 transition-opacity duration-base ease-premium",
         removing && "opacity-50"
       )}
       data-testid="cart-drawer-item"
@@ -104,7 +109,7 @@ const DrawerItem = ({
         <p
           className={clx(
             "mt-auto pt-2 text-sm font-bold",
-            unavailable ? "text-ui-fg-muted line-through" : "text-ember"
+            unavailable ? "text-bone/55 line-through" : "text-ember"
           )}
         >
           {convertToLocale({
@@ -119,7 +124,7 @@ const DrawerItem = ({
         onClick={remove}
         disabled={removing}
         aria-label={`Remove ${title}`}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-bone/60 transition-colors duration-200 hover:text-ember disabled:cursor-wait"
+        className="flex h-control-sm w-11 shrink-0 items-center justify-center rounded-control text-bone/60 transition-colors duration-base ease-premium hover:text-ember disabled:cursor-wait"
         data-testid="cart-drawer-remove"
       >
         {removing ? <Spinner /> : <Trash />}

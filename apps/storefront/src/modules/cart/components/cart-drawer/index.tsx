@@ -1,15 +1,14 @@
 "use client"
 
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react"
-import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
-import { Fragment, useEffect } from "react"
+import { useEffect } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { convertToLocale } from "@lib/util/money"
+import Button, { buttonClass } from "@modules/common/components/button"
+import { Drawer, DrawerContent } from "@modules/common/components/drawer"
 import NumberTicker from "@modules/common/components/number-ticker"
 import { TRUST_CONTENT } from "@modules/common/components/trust-line/content"
-import { clx } from "@modules/common/components/ui"
 import { useCartDrawer } from "./context"
 import DrawerItem from "./drawer-item"
 import useCartProducts from "./use-cart-products"
@@ -22,12 +21,10 @@ type CartDrawerProps = {
 
 const PENDING_OPEN_FALLBACK_MS = 2500
 
-const BUTTON_CLASS =
-  "flex h-[52px] w-full items-center justify-center rounded-full text-base font-bold uppercase tracking-wide transition-colors duration-200"
-
-// Glass cart drawer from the right (full width on phones). Headless UI's
-// Dialog provides the focus trap, Esc/click-outside to close, scroll lock and
-// focus return.
+// Cart on the 21st Drawer: a bottom sheet with drag to close on phones, a
+// glass side panel on desktop. Base UI provides the focus trap, Esc /
+// click-outside to close, scroll lock and focus return. Totals and actions
+// sit in the fixed footer.
 const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
   const { isOpen, openCart, closeCart, pendingVariantId } = useCartDrawer()
   const items = cart?.items ?? []
@@ -57,156 +54,119 @@ const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
     (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1
   )
 
-  return (
-    <Transition show={isOpen} as={Fragment}>
-      <Dialog onClose={closeCart} className="relative z-[80]">
-        <TransitionChild
-          as={Fragment}
-          enter="ease-out duration-300 motion-reduce:duration-0"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200 motion-reduce:duration-0"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-        </TransitionChild>
-
-        <div className="fixed inset-y-0 right-0 flex w-full xsmall:max-w-[420px]">
-          <TransitionChild
-            as={Fragment}
-            enter="ease-out duration-300 motion-reduce:duration-0"
-            enterFrom="translate-x-full motion-reduce:translate-x-0 motion-reduce:opacity-0"
-            enterTo="translate-x-0 motion-reduce:opacity-100"
-            leave="ease-in duration-200 motion-reduce:duration-0"
-            leaveFrom="translate-x-0 motion-reduce:opacity-100"
-            leaveTo="translate-x-full motion-reduce:translate-x-0 motion-reduce:opacity-0"
-          >
-            <DialogPanel
-              className="glass flex h-full w-full flex-col border-l border-bone/10 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
-              data-testid="cart-drawer"
-            >
-              <div className="flex items-center justify-between border-b border-bone/10 px-6 py-3">
-                <DialogTitle className="text-lg font-black uppercase tracking-tight text-bone">
-                  Cart{items.length > 0 && ` (${items.length})`}
-                </DialogTitle>
-                <button
-                  type="button"
-                  onClick={closeCart}
-                  aria-label="Close cart"
-                  className="-mr-3 flex h-11 w-11 items-center justify-center rounded-full text-bone transition-colors duration-200 hover:text-ember"
-                >
-                  <XMark />
-                </button>
-              </div>
-
-              {items.length === 0 ? (
-                <div className="flex flex-1 flex-col items-center justify-center gap-y-6 px-6 text-center">
-                  <p className="text-xl font-bold text-bone">
-                    Your cart is empty
-                  </p>
-                  <LocalizedClientLink
-                    href="/store"
-                    onClick={closeCart}
-                    className={clx(BUTTON_CLASS, "max-w-xs bg-ember text-black hover:bg-ember-deep hover:text-bone")}
-                  >
-                    Shop now
-                  </LocalizedClientLink>
-                </div>
-              ) : (
-                <>
-                  <ul className="flex-1 divide-y divide-bone/10 overflow-y-auto px-6">
-                    {sortedItems.map((item) => {
-                      const info = lineInfo(item)
-                      return (
-                        <DrawerItem
-                          key={item.id}
-                          item={item}
-                          currencyCode={currencyCode}
-                          brand={info.brand}
-                          unavailable={info.unavailable}
-                          onNavigate={closeCart}
-                        />
-                      )
-                    })}
-                  </ul>
-
-                  <div className="flex flex-col gap-y-3 border-t border-bone/10 px-6 py-5">
-                    <dl className="flex flex-col gap-y-1.5 text-sm">
-                      <div className="flex items-center justify-between">
-                        <dt className="text-bone/70">Subtotal</dt>
-                        <dd className="text-bone">
-                          {convertToLocale({
-                            amount: subtotal,
-                            currency_code: currencyCode,
-                          })}
-                        </dd>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <dt className="text-bone/70">
-                          {TRUST_CONTENT.deliveryLabel}
-                        </dt>
-                        <dd className="text-bone">
-                          {deliveryAmount !== null
-                            ? convertToLocale({
-                                amount: deliveryAmount,
-                                currency_code: currencyCode,
-                              })
-                            : TRUST_CONTENT.deliveryPending}
-                        </dd>
-                      </div>
-                      <div className="mt-1.5 flex items-center justify-between border-t border-hairline pt-3 text-base">
-                        <dt className="font-bold text-bone">Total</dt>
-                        <dd>
-                          <NumberTicker
-                            value={subtotal + (deliveryAmount ?? 0)}
-                            currencyCode={currencyCode}
-                            className="font-bold text-bone"
-                          />
-                        </dd>
-                      </div>
-                    </dl>
-
-                    {hasUnavailable && (
-                      <p role="alert" className="text-sm font-medium text-ember">
-                        Remove unavailable items to continue.
-                      </p>
-                    )}
-
-                    {hasUnavailable ? (
-                      <button
-                        type="button"
-                        disabled
-                        className={clx(BUTTON_CLASS, "cursor-not-allowed border border-ui-border-base bg-ink text-bone/50")}
-                        data-testid="cart-drawer-checkout"
-                      >
-                        Checkout
-                      </button>
-                    ) : (
-                      <LocalizedClientLink
-                        href="/checkout?step=address"
-                        onClick={closeCart}
-                        className={clx(BUTTON_CLASS, "bg-ember text-black hover:bg-ember-deep hover:text-bone")}
-                        data-testid="cart-drawer-checkout"
-                      >
-                        Checkout
-                      </LocalizedClientLink>
-                    )}
-                    <button
-                      type="button"
-                      onClick={closeCart}
-                      className="mx-auto h-11 px-4 text-sm font-medium text-bone/70 underline-offset-4 transition-colors duration-200 hover:text-bone hover:underline"
-                    >
-                      Continue shopping
-                    </button>
-                  </div>
-                </>
-              )}
-            </DialogPanel>
-          </TransitionChild>
+  const totals = (
+    <div className="flex flex-col gap-y-3">
+      <dl className="flex flex-col gap-y-1.5 text-sm">
+        <div className="flex items-center justify-between">
+          <dt className="text-bone/70">Subtotal</dt>
+          <dd className="text-bone">
+            {convertToLocale({
+              amount: subtotal,
+              currency_code: currencyCode,
+            })}
+          </dd>
         </div>
-      </Dialog>
-    </Transition>
+        <div className="flex items-center justify-between">
+          <dt className="text-bone/70">{TRUST_CONTENT.deliveryLabel}</dt>
+          <dd className="text-bone">
+            {deliveryAmount !== null
+              ? convertToLocale({
+                  amount: deliveryAmount,
+                  currency_code: currencyCode,
+                })
+              : TRUST_CONTENT.deliveryPending}
+          </dd>
+        </div>
+        <div className="mt-1.5 flex items-center justify-between border-t border-hairline pt-3 text-base">
+          <dt className="font-bold text-bone">Total</dt>
+          <dd>
+            <NumberTicker
+              value={subtotal + (deliveryAmount ?? 0)}
+              currencyCode={currencyCode}
+              className="font-bold text-bone"
+            />
+          </dd>
+        </div>
+      </dl>
+
+      {hasUnavailable && (
+        <p role="alert" className="text-sm font-medium text-ember">
+          Remove unavailable items to continue.
+        </p>
+      )}
+
+      {hasUnavailable ? (
+        <Button
+          variant="secondary"
+          disabled
+          className="w-full"
+          data-testid="cart-drawer-checkout"
+        >
+          Checkout
+        </Button>
+      ) : (
+        <LocalizedClientLink
+          href="/checkout?step=address"
+          onClick={closeCart}
+          className={buttonClass({ className: "w-full" })}
+          data-testid="cart-drawer-checkout"
+        >
+          Checkout
+        </LocalizedClientLink>
+      )}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={closeCart}
+        className="mx-auto"
+      >
+        Continue shopping
+      </Button>
+    </div>
+  )
+
+  return (
+    <Drawer
+      open={isOpen}
+      onOpenChange={(open) => (open ? openCart() : closeCart())}
+      responsive
+    >
+      <DrawerContent
+        title={`Cart${items.length > 0 ? ` (${items.length})` : ""}`}
+        footer={items.length > 0 ? totals : undefined}
+        closeLabel="Close cart"
+        data-testid="cart-drawer"
+      >
+        {items.length === 0 ? (
+          <div className="flex min-h-full flex-col items-center justify-center gap-y-6 py-16 text-center">
+            <p className="text-xl font-bold text-bone">Your cart is empty</p>
+            <LocalizedClientLink
+              href="/store"
+              onClick={closeCart}
+              className={buttonClass({ className: "w-full max-w-xs" })}
+            >
+              Shop now
+            </LocalizedClientLink>
+          </div>
+        ) : (
+          <ul className="divide-y divide-hairline">
+            {sortedItems.map((item) => {
+              const info = lineInfo(item)
+              return (
+                <DrawerItem
+                  key={item.id}
+                  item={item}
+                  currencyCode={currencyCode}
+                  brand={info.brand}
+                  unavailable={info.unavailable}
+                  onNavigate={closeCart}
+                />
+              )
+            })}
+          </ul>
+        )}
+      </DrawerContent>
+    </Drawer>
   )
 }
 

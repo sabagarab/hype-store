@@ -9,7 +9,8 @@ import {
   StorePrice,
 } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { Button, clx } from "@modules/common/components/ui"
+import Button from "@modules/common/components/button"
+import { clx } from "@modules/common/components/ui"
 import { useState } from "react"
 import { StoreFreeShippingPrice } from "types/global"
 
@@ -211,7 +212,9 @@ function FreeShippingPopup({
     >
       <div>
         <Button
-          className="rounded-full bg-ink text-bone shadow-none outline-none border-none text-[15px] p-2"
+          variant="ghost"
+          size="sm"
+          aria-label="Close"
           onClick={() => setIsClosed(true)}
         >
           <XMark />

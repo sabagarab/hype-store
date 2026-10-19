@@ -1,4 +1,4 @@
-import { Button } from "@modules/common/components/ui"
+import { buttonClass } from "@modules/common/components/button"
 import { useMemo } from "react"
 
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -74,10 +74,12 @@ const OrderCard = ({ order }: OrderCardProps) => {
         )}
       </div>
       <div className="flex justify-end">
-        <LocalizedClientLink href={`/account/orders/details/${order.id}`}>
-          <Button data-testid="order-details-link" variant="secondary">
-            See details
-          </Button>
+        <LocalizedClientLink
+          href={`/account/orders/details/${order.id}`}
+          className={buttonClass({ variant: "secondary", size: "sm" })}
+          data-testid="order-details-link"
+        >
+          See details
         </LocalizedClientLink>
       </div>
     </div>

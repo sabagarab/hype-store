@@ -1,7 +1,6 @@
 "use client"
 
 import { Plus } from "@medusajs/icons"
-import { Button, Heading } from "@modules/common/components/ui"
 import { useActionState, useEffect, useState } from "react"
 
 import { addCustomerAddress } from "@lib/data/customer"
@@ -10,7 +9,8 @@ import { HttpTypes } from "@medusajs/types"
 import CountrySelect from "@modules/checkout/components/country-select"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import Input from "@modules/common/components/input"
-import Modal from "@modules/common/components/modal"
+import Button from "@modules/common/components/button"
+import { Drawer, DrawerContent } from "@modules/common/components/drawer"
 
 const AddAddress = ({
   region,
@@ -55,12 +55,13 @@ const AddAddress = ({
         <Plus />
       </button>
 
-      <Modal isOpen={state} close={close} data-testid="add-address-modal">
-        <Modal.Title>
-          <Heading className="mb-2">Add address</Heading>
-        </Modal.Title>
-        <form action={formAction}>
-          <Modal.Body>
+      <Drawer
+        open={state}
+        onOpenChange={(next) => (next ? open() : close())}
+        responsive
+      >
+        <DrawerContent title="Add address" data-testid="add-address-modal">
+          <form action={formAction} className="py-5">
             <div className="flex flex-col gap-y-2">
               <div className="grid grid-cols-2 gap-x-2">
                 <Input
@@ -121,29 +122,29 @@ const AddAddress = ({
             </div>
             {formState.error && (
               <div
-                className="text-rose-500 text-small-regular py-2"
+                className="py-2 text-sm text-ember"
                 data-testid="address-error"
               >
                 {formState.error}
               </div>
             )}
-          </Modal.Body>
-          <Modal.Footer>
             <div className="flex gap-3 mt-6">
               <Button
                 type="reset"
                 variant="secondary"
                 onClick={close}
-                className="h-10"
+                className="flex-1"
                 data-testid="cancel-button"
               >
                 Cancel
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton className="flex-1" data-testid="save-button">
+                Save
+              </SubmitButton>
             </div>
-          </Modal.Footer>
-        </form>
-      </Modal>
+          </form>
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }

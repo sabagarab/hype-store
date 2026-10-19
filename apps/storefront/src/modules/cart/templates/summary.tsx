@@ -1,6 +1,7 @@
 "use client"
 
-import { Button, Heading } from "@modules/common/components/ui"
+import Button, { buttonClass } from "@modules/common/components/button"
+import { Heading } from "@modules/common/components/ui"
 
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
@@ -42,16 +43,22 @@ const Summary = ({ cart, blocked = false, deliveryAmount }: SummaryProps) => {
           <p role="alert" className="text-sm font-medium text-ember">
             Remove unavailable items to continue.
           </p>
-          <Button className="w-full h-10" disabled data-testid="checkout-button">
+          <Button
+            variant="secondary"
+            className="w-full"
+            disabled
+            data-testid="checkout-button"
+          >
             Go to checkout
           </Button>
         </>
       ) : (
         <LocalizedClientLink
           href={"/checkout?step=" + step}
+          className={buttonClass({ className: "w-full" })}
           data-testid="checkout-button"
         >
-          <Button className="w-full h-10">Go to checkout</Button>
+          Go to checkout
         </LocalizedClientLink>
       )}
     </div>

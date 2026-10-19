@@ -1,11 +1,10 @@
-import { Dialog, Transition } from "@headlessui/react"
+import { Drawer, DrawerContent } from "@modules/common/components/drawer"
 import LoadingButton from "@modules/common/components/loading-button"
 import StickyBar from "@modules/common/components/sticky-bar"
 import { clx } from "@modules/common/components/ui"
-import React, { Fragment, useMemo } from "react"
+import React, { useMemo } from "react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
-import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
@@ -28,8 +27,8 @@ type MobileActionsProps = {
 }
 
 // Sticky glass bar on phones/tablets, shown once the main Add to cart button
-// scrolls out of view. Products with several variants open a sheet with the
-// same size pills.
+// scrolls out of view. Products with several variants open the 21st Drawer
+// (bottom sheet, drag to close) with the same size pills.
 const MobileActions: React.FC<MobileActionsProps> = ({
   product,
   variant,
@@ -118,77 +117,40 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           </LoadingButton>
         )}
       </StickyBar>
-      <Transition appear show={state} as={Fragment}>
-        <Dialog as="div" className="relative z-[75]" onClose={close}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
-          </Transition.Child>
-
-          <div className="fixed inset-x-0 bottom-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-200"
-              enterFrom="opacity-0 translate-y-4"
-              enterTo="opacity-100 translate-y-0"
-              leave="ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-4"
+      <Drawer open={state} onOpenChange={(next) => (next ? open() : close())}>
+        <DrawerContent
+          title={product.title}
+          data-testid="mobile-actions-modal"
+          footer={
+            <LoadingButton
+              onAction={async () => {
+                await handleAddToCart()
+                close()
+              }}
+              disabled={!variant || !inStock}
+              pendingLabel="Adding"
+              successLabel={successLabel}
+              className="w-full"
             >
-              <Dialog.Panel
-                className="glass rounded-t-large border-t border-bone/10 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)]"
-                data-testid="mobile-actions-modal"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <Dialog.Title className="text-sm font-bold text-bone">
-                    {product.title}
-                  </Dialog.Title>
-                  <button
-                    onClick={close}
-                    aria-label="Close"
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-bone"
-                    data-testid="close-modal-button"
-                  >
-                    <X />
-                  </button>
-                </div>
-                <div className="flex flex-col gap-y-5">
-                  {(product.options || []).map((option) => (
-                    <OptionSelect
-                      key={option.id}
-                      option={option}
-                      current={options[option.id]}
-                      updateOption={updateOptions}
-                      title={option.title ?? ""}
-                      soldOutValues={soldOutValues(option.id)}
-                      disabled={optionsDisabled}
-                    />
-                  ))}
-                </div>
-                <LoadingButton
-                  onAction={async () => {
-                    await handleAddToCart()
-                    close()
-                  }}
-                  disabled={!variant || !inStock}
-                  pendingLabel="Adding"
-                  successLabel={successLabel}
-                  className="mt-6 w-full"
-                >
-                  {!variant ? selectLabel : "Add to cart"}
-                </LoadingButton>
-              </Dialog.Panel>
-            </Transition.Child>
+              {!variant ? selectLabel : "Add to cart"}
+            </LoadingButton>
+          }
+        >
+          <div className="flex flex-col gap-y-5 py-5">
+            {(product.options || []).map((option) => (
+              <OptionSelect
+                key={option.id}
+                option={option}
+                current={options[option.id]}
+                updateOption={updateOptions}
+                title={option.title ?? ""}
+                soldOutValues={soldOutValues(option.id)}
+                disabled={optionsDisabled}
+              />
+            ))}
           </div>
-        </Dialog>
-      </Transition>
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }

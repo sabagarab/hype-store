@@ -10,8 +10,9 @@ import { HttpTypes } from "@medusajs/types"
 import CountrySelect from "@modules/checkout/components/country-select"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import Input from "@modules/common/components/input"
-import Modal from "@modules/common/components/modal"
-import { Button, Heading, Text, clx } from "@modules/common/components/ui"
+import Button from "@modules/common/components/button"
+import { Drawer, DrawerContent } from "@modules/common/components/drawer"
+import { Heading, Text, clx } from "@modules/common/components/ui"
 import Spinner from "@modules/common/icons/spinner"
 import React, { useActionState, useEffect, useState } from "react"
 
@@ -110,13 +111,14 @@ const EditAddress: React.FC<EditAddressProps> = ({
         </div>
       </div>
 
-      <Modal isOpen={state} close={close} data-testid="edit-address-modal">
-        <Modal.Title>
-          <Heading className="mb-2">Edit address</Heading>
-        </Modal.Title>
-        <form action={formAction}>
-          <input type="hidden" name="addressId" value={address.id} />
-          <Modal.Body>
+      <Drawer
+        open={state}
+        onOpenChange={(next) => (next ? open() : close())}
+        responsive
+      >
+        <DrawerContent title="Edit address" data-testid="edit-address-modal">
+          <form action={formAction} className="py-5">
+            <input type="hidden" name="addressId" value={address.id} />
             <div className="grid grid-cols-1 gap-y-2">
               <div className="grid grid-cols-2 gap-x-2">
                 <Input
@@ -137,7 +139,11 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 />
               </div>
               {/* Not asked for in Lebanon; kept so saved values stay. */}
-              <input type="hidden" name="company" defaultValue={address.company ?? ""} />
+              <input
+                type="hidden"
+                name="company"
+                defaultValue={address.company ?? ""}
+              />
               <Input
                 label="Address"
                 name="address_1"
@@ -162,7 +168,11 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 data-testid="city-input"
               />
               {/* Not asked for in Lebanon; kept so saved values stay. */}
-              <input type="hidden" name="province" defaultValue={address.province ?? ""} />
+              <input
+                type="hidden"
+                name="province"
+                defaultValue={address.province ?? ""}
+              />
               <CountrySelect
                 label="Country"
                 name="country_code"
@@ -183,27 +193,25 @@ const EditAddress: React.FC<EditAddressProps> = ({
               />
             </div>
             {formState.error && (
-              <div className="text-rose-500 text-small-regular py-2">
-                {formState.error}
-              </div>
+              <div className="py-2 text-sm text-ember">{formState.error}</div>
             )}
-          </Modal.Body>
-          <Modal.Footer>
             <div className="flex gap-3 mt-6">
               <Button
                 type="reset"
                 variant="secondary"
                 onClick={close}
-                className="h-10"
+                className="flex-1"
                 data-testid="cancel-button"
               >
                 Cancel
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton className="flex-1" data-testid="save-button">
+                Save
+              </SubmitButton>
             </div>
-          </Modal.Footer>
-        </form>
-      </Modal>
+          </form>
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }
