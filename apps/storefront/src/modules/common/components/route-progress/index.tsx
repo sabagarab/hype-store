@@ -1,7 +1,6 @@
 "use client"
 
 import { AnimatePresence, motion, useReducedMotion, useSpring } from "motion/react"
-import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 
 import { DURATION, EASE_PREMIUM, INSTANT } from "@lib/motion"
@@ -50,13 +49,15 @@ const isNavigationClick = (event: MouseEvent, dragged: boolean) => {
 }
 
 export default function RouteProgress() {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
   const reduced = useReducedMotion()
   const [active, setActive] = useState(false)
+  // Bumped on every start so a click right after a finished navigation
+  // restarts the URL watch (and cancels its pending hide).
+  const [run, setRun] = useState(0)
   const progress = useSpring(0, { stiffness: 120, damping: 24 })
   const trickle = useRef<number | undefined>(undefined)
   const giveUp = useRef<number | undefined>(undefined)
+  const startHref = useRef("")
 
   const stopTimers = () => {
     window.clearInterval(trickle.current)
@@ -74,8 +75,10 @@ export default function RouteProgress() {
         Math.hypot(event.clientX - down.x, event.clientY - down.y) > DRAG_PX
       if (!isNavigationClick(event, dragged)) return
       stopTimers()
+      startHref.current = window.location.href
       progress.jump(0.08)
       setActive(true)
+      setRun((n) => n + 1)
       if (reduced) {
         progress.jump(CAP)
       } else {
@@ -97,22 +100,33 @@ export default function RouteProgress() {
     }
   }, [progress, reduced])
 
-  // Finish when the URL changes.
-  const url = `${pathname}?${searchParams.toString()}`
-  const first = useRef(true)
+  // Finish when the URL changes. Polled per frame only while the bar shows,
+  // so no router hooks (useSearchParams would need a Suspense boundary in
+  // the root layout, which shifted React's useId values and broke
+  // hydration).
   useEffect(() => {
-    if (first.current) {
-      first.current = false
-      return
+    if (!active) return
+    let frame = 0
+    let done = 0
+    const check = () => {
+      if (window.location.href !== startHref.current) {
+        stopTimers()
+        if (reduced) progress.jump(1)
+        else progress.set(1)
+        done = window.setTimeout(
+          () => setActive(false),
+          reduced ? 0 : DURATION.base * 1000
+        )
+        return
+      }
+      frame = window.requestAnimationFrame(check)
     }
-    stopTimers()
-    progress.set(1)
-    const done = window.setTimeout(
-      () => setActive(false),
-      reduced ? 0 : DURATION.base * 1000
-    )
-    return () => window.clearTimeout(done)
-  }, [url, progress, reduced])
+    frame = window.requestAnimationFrame(check)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(done)
+    }
+  }, [active, run, progress, reduced])
 
   useEffect(() => stopTimers, [])
 

@@ -47,7 +47,7 @@ const AddAddress = ({
   return (
     <>
       <button
-        className="flex h-full min-h-[220px] w-full flex-col justify-between rounded-card border border-dashed border-bone/20 p-5 text-bone/70 transition-colors duration-base ease-premium hover:border-bone/40 hover:text-bone"
+        className="flex h-full min-h-[220px] w-full flex-col items-start justify-between rounded-card border border-dashed border-bone/20 p-5 text-bone/70 transition-colors duration-base ease-premium hover:border-bone/40 hover:text-bone"
         onClick={open}
         data-testid="add-address-button"
       >

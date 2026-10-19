@@ -43,15 +43,17 @@ const AccountInfo = ({
   }, [isSuccess, close])
 
   return (
-    <div className="text-xs" data-testid={dataTestid}>
-      <div className="flex items-end justify-between">
-        <div className="flex flex-col">
+    <div className="text-sm" data-testid={dataTestid}>
+      <div className="flex items-end justify-between gap-x-4">
+        <div className="flex min-w-0 flex-col">
           <span className="mb-1 text-xs font-medium uppercase tracking-widest text-bone/55">
             {label}
           </span>
-          <div className="flex items-center flex-1 basis-0 justify-end gap-x-4">
+          <div className="flex min-w-0 items-center gap-x-4 text-bone">
             {typeof currentInfo === "string" ? (
-              <span className="font-semibold" data-testid="current-info">{currentInfo}</span>
+              <span className="break-words font-medium" data-testid="current-info">
+                {currentInfo}
+              </span>
             ) : (
               currentInfo
             )}
@@ -86,7 +88,7 @@ const AccountInfo = ({
           data-testid="success-message"
         >
           <p className="my-4 text-sm font-medium text-bone">
-            {label} updated succesfully
+            {label} updated successfully
           </p>
         </Disclosure.Panel>
       </Disclosure>

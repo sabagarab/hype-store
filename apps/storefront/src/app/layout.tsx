@@ -3,8 +3,6 @@ import { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 import "styles/globals.css"
 
-import { Suspense } from "react"
-
 import RouteProgress from "@modules/common/components/route-progress"
 import Toaster from "@modules/common/components/toaster"
 
@@ -40,11 +38,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       <body>
         <main className="relative">{props.children}</main>
         <Toaster />
-        {/* Last in <body> so it can't shift useId paths of the page above.
-            useSearchParams needs a Suspense boundary in the root layout. */}
-        <Suspense fallback={null}>
-          <RouteProgress />
-        </Suspense>
+        <RouteProgress />
       </body>
     </html>
   )
