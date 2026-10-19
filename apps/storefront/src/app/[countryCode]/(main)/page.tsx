@@ -10,6 +10,7 @@ import { listBrands } from "@lib/data/brands"
 import BrandsSection from "@modules/home/components/brands-carousel"
 import { HeroProduct } from "@modules/home/components/hero-parallax"
 import { getRegion } from "@lib/data/regions"
+import { getDeliveryAmount } from "@lib/data/cart"
 
 export const metadata: Metadata = {
   title: STORE_NAME,
@@ -53,26 +54,37 @@ export default async function Home(props: {
 
   const region = await getRegion(countryCode)
 
-  const [{ collections }, heroProducts, brands] = await Promise.all([
-    listCollections({
-      fields: "id, handle, title",
-    }),
-    getHeroProducts(countryCode),
-    // A failure hides the brands section instead of breaking the page.
-    listBrands(countryCode).catch(() => []),
-  ])
+  const [{ collections }, heroProducts, brands, deliveryAmount] =
+    await Promise.all([
+      listCollections({
+        fields: "id, handle, title",
+      }),
+      getHeroProducts(countryCode),
+      // A failure hides the brands section instead of breaking the page.
+      listBrands(countryCode).catch(() => []),
+      getDeliveryAmount(),
+    ])
 
   if (!collections || !region) {
     return null
   }
 
+  // The "hero" collection only feeds the hero photos; it never gets a rail.
+  const railCollections = collections.filter(
+    (collection) => collection.handle !== HERO_CONTENT.collectionHandle
+  )
+
   return (
     <>
-      <Hero products={heroProducts} />
+      <Hero
+        products={heroProducts}
+        deliveryAmount={deliveryAmount}
+        currencyCode={region.currency_code}
+      />
       <BrandsSection brands={brands} />
       <div className="py-12">
         <ul className="flex flex-col gap-x-6">
-          <FeaturedProducts collections={collections} region={region} />
+          <FeaturedProducts collections={railCollections} region={region} />
         </ul>
       </div>
     </>

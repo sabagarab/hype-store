@@ -1,6 +1,10 @@
 import { Metadata } from "next"
 
-import { listCartOptions, retrieveCart } from "@lib/data/cart"
+import {
+  getDeliveryAmount,
+  listCartOptions,
+  retrieveCart,
+} from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { getBaseURL } from "@lib/util/env"
 import { StoreCartShippingOption } from "@medusajs/types"
@@ -35,9 +39,7 @@ export default async function PageLayout(props: {
 
   // The drawer's delivery note reads the price of the region's "Delivery"
   // option (set in Admin); null shows "Delivery added at checkout".
-  const deliveryAmount =
-    shippingOptions.find((option) => option.name === "Delivery")?.amount ??
-    null
+  const deliveryAmount = await getDeliveryAmount()
 
   return (
     <CartDrawerProvider>

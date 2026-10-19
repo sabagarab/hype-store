@@ -48,7 +48,7 @@ const MenuSheet = ({
       label: brand.name,
       href: `/brands/${brand.handle}`,
     })),
-    { label: "Delivery & returns", href: "/delivery-returns" },
+    { label: "Delivery", href: "/delivery" },
     { label: "Contact", href: "/contact" },
     { label: "Account", href: "/account" },
   ]

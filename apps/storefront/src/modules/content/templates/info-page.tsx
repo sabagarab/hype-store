@@ -1,4 +1,4 @@
-// Simple text page (delivery & returns, contact, ...): a heading and
+// Simple text page (delivery, contact, ...): a heading and
 // paragraphs from the page's content.ts, plus optional extra content.
 const InfoPage = ({
   title,

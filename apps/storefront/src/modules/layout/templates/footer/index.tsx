@@ -50,7 +50,7 @@ export default async function Footer({ countryCode }: { countryCode: string }) {
   ]
 
   const help: FooterLink[] = [
-    { label: "Delivery & returns", href: "/delivery-returns" },
+    { label: "Delivery", href: "/delivery" },
     { label: "Contact", href: "/contact" },
   ]
 

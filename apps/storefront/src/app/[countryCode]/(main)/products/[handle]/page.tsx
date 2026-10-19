@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import { getDeliveryAmount } from "@lib/data/cart"
 import ProductTemplate from "@modules/products/templates"
 import { HttpTypes } from "@medusajs/types"
 import { STORE_NAME } from "@lib/constants"
@@ -78,6 +79,7 @@ export default async function ProductPage(props: Props) {
   }
 
   const images = getImagesForVariant(pricedProduct, selectedVariantId)
+  const deliveryAmount = await getDeliveryAmount()
 
   return (
     <ProductTemplate
@@ -85,6 +87,7 @@ export default async function ProductPage(props: Props) {
       region={region}
       countryCode={params.countryCode}
       images={images ?? []}
+      deliveryAmount={deliveryAmount}
     />
   )
 }

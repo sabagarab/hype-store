@@ -3,6 +3,7 @@ import FadeInImage from "@modules/common/components/fade-in-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Marquee from "@modules/common/components/marquee"
 import ShimmerLink from "@modules/common/components/shimmer-link"
+import TrustStrip from "@modules/common/components/trust-strip"
 import { clx } from "@modules/common/components/ui"
 import HeroParallax, {
   HeroProduct,
@@ -22,7 +23,14 @@ const fillSlots = (products: HeroProduct[]) =>
     (_, i) => products[i % products.length]
   )
 
-const Hero = ({ products }: { products: HeroProduct[] }) => {
+type HeroProps = {
+  products: HeroProduct[]
+  /** Price of the "Delivery" shipping option for the trust strip. */
+  deliveryAmount: number | null
+  currencyCode: string
+}
+
+const Hero = ({ products, deliveryAmount, currencyCode }: HeroProps) => {
   const hasParallax = products.length >= PARALLAX_MIN_PRODUCTS
   const hasRow = products.length >= ROW_MIN_PRODUCTS
 
@@ -51,6 +59,11 @@ const Hero = ({ products }: { products: HeroProduct[] }) => {
           <ShimmerLink href={HERO_CONTENT.cta.href} data-testid="hero-cta">
             {HERO_CONTENT.cta.label}
           </ShimmerLink>
+          <TrustStrip
+            deliveryAmount={deliveryAmount}
+            currencyCode={currencyCode}
+            className="pt-2"
+          />
         </div>
 
         {hasRow && (

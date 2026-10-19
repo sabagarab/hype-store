@@ -1,6 +1,6 @@
 import React from "react"
 
-import UnderlineLink from "@modules/common/components/interactive-link"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 import AccountNav from "../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
@@ -21,20 +21,15 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
           <div>{customer && <AccountNav customer={customer} />}</div>
           <div className="flex-1">{children}</div>
         </div>
-        <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-ui-border-base py-12 gap-8">
-          <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
-            </span>
-          </div>
-          <div>
-            <UnderlineLink href="/customer-service">
-              Customer Service
-            </UnderlineLink>
-          </div>
-        </div>
+        <p className="border-t border-bone/10 py-12 text-base text-bone/70">
+          Questions about an order?{" "}
+          <LocalizedClientLink
+            href="/contact"
+            className="font-medium text-bone underline underline-offset-4 transition-colors duration-200 hover:text-ember"
+          >
+            Contact us
+          </LocalizedClientLink>
+        </p>
       </div>
     </div>
   )

@@ -5,7 +5,10 @@ import { Heading, Text, clx } from "@modules/common/components/ui"
 import PaymentButton from "../payment-button"
 import { useSearchParams } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
-import { STORE_NAME } from "@lib/constants"
+
+// Shown under the Place order button. There is no return policy.
+const CHECKOUT_FINAL_SALE_NOTE =
+  "All sales are final. Check measurements before ordering."
 
 const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
   const searchParams = useSearchParams()
@@ -38,17 +41,13 @@ const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
       </div>
       {isOpen && previousStepsCompleted && (
         <>
-          <div className="flex items-start gap-x-1 w-full mb-6">
-            <div className="w-full">
-              <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                By clicking the Place Order button, you confirm that you have
-                read, understand and accept our Terms of Use, Terms of Sale and
-                Returns Policy and acknowledge that you have read {STORE_NAME}&apos;s Privacy
-                Policy.
-              </Text>
-            </div>
-          </div>
           <PaymentButton cart={cart} data-testid="submit-order-button" />
+          <Text
+            className="mt-3 text-sm text-bone/70"
+            data-testid="final-sale-note"
+          >
+            {CHECKOUT_FINAL_SALE_NOTE}
+          </Text>
         </>
       )}
     </div>

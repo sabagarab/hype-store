@@ -7,6 +7,7 @@ import ProductInfo from "@modules/products/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
+import TrustStrip from "@modules/common/components/trust-strip"
 import ProductActionsWrapper from "./product-actions-wrapper"
 
 type ProductTemplateProps = {
@@ -14,6 +15,8 @@ type ProductTemplateProps = {
   region: HttpTypes.StoreRegion
   countryCode: string
   images: HttpTypes.StoreProductImage[]
+  /** Price of the "Delivery" shipping option for the trust strip. */
+  deliveryAmount: number | null
 }
 
 // Gallery on the left, sticky info panel on the right (desktop); a single
@@ -23,6 +26,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   region,
   countryCode,
   images,
+  deliveryAmount,
 }) => {
   if (!product || !product.id) {
     return notFound()
@@ -49,6 +53,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           >
             <ProductActionsWrapper id={product.id} region={region} />
           </Suspense>
+          <TrustStrip
+            deliveryAmount={deliveryAmount}
+            currencyCode={region.currency_code}
+          />
           <Measurements product={product} />
         </div>
       </div>

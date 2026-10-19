@@ -53,14 +53,9 @@ export default async function RelatedProducts({
 
   return (
     <div className="product-page-constraint">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-ui-fg-subtle mb-6">
-          Related products
-        </span>
-        <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          You might also want to check out these products.
-        </p>
-      </div>
+      <h2 className="mb-8 text-2xl font-black uppercase tracking-tight text-bone small:text-3xl">
+        More to shop
+      </h2>
 
       <ul className={PRODUCT_GRID_CLASS}>
         {products.map((product, i) => (

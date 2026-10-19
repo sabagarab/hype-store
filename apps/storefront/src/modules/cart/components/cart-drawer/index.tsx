@@ -5,9 +5,9 @@ import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Fragment } from "react"
 
-import { convertToLocale } from "@lib/util/money"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import NumberTicker from "@modules/common/components/number-ticker"
+import TrustStrip from "@modules/common/components/trust-strip"
 import { clx } from "@modules/common/components/ui"
 import { useCartDrawer } from "./context"
 import DrawerItem from "./drawer-item"
@@ -118,14 +118,11 @@ const CartDrawer = ({ cart, deliveryAmount }: CartDrawerProps) => {
                         className="font-bold text-bone"
                       />
                     </div>
-                    <p className="text-xs text-bone/55">
-                      {deliveryAmount !== null
-                        ? `Delivery: ${convertToLocale({
-                            amount: deliveryAmount,
-                            currency_code: currencyCode,
-                          })}, added at checkout`
-                        : "Delivery added at checkout"}
-                    </p>
+                    <TrustStrip
+                      deliveryAmount={deliveryAmount}
+                      currencyCode={currencyCode}
+                      className="gap-x-4 text-xs"
+                    />
 
                     {hasUnavailable && (
                       <p role="alert" className="text-sm font-medium text-ember">

@@ -21,12 +21,9 @@ const Register = ({ setCurrentView }: Props) => {
       className="max-w-sm flex flex-col items-center"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">
-        Become a {STORE_NAME} Member
-      </h1>
+      <h1 className="text-large-semi uppercase mb-6">Create an account</h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        Create your {STORE_NAME} Member profile, and get access to an enhanced
-        shopping experience.
+        Track your orders and check out faster with saved addresses.
       </p>
       {message?.state === "verification_required" && (
         <div

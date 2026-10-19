@@ -507,3 +507,28 @@ export async function listCartOptions() {
     cache: "force-cache",
   })
 }
+
+// Name of the region's flat delivery option, as set in Admin.
+const DELIVERY_OPTION_NAME = "Delivery"
+
+/**
+ * Price of the region's "Delivery" shipping option, read through the current
+ * cart. Medusa only lists shipping options for a cart, so this is null when
+ * there is no cart yet (or the option can't be loaded).
+ */
+export async function getDeliveryAmount(): Promise<number | null> {
+  const cartId = await getCartId()
+
+  if (!cartId) {
+    return null
+  }
+
+  const shippingOptions = await listCartOptions()
+    .then(({ shipping_options }) => shipping_options)
+    .catch(() => [] as HttpTypes.StoreCartShippingOption[])
+
+  return (
+    shippingOptions.find((option) => option.name === DELIVERY_OPTION_NAME)
+      ?.amount ?? null
+  )
+}
